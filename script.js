@@ -1,125 +1,85 @@
-const I18N = {
-    en: {
-        run: "RUN", copy: "COPY", input: "INPUT", output: "OUTPUT", tools: "TOOLS",
-        tools_data: [
-            { id: 'json-fmt', name: 'JSON Prettify', desc: 'Prettify and validate JSON data' },
-            { id: 'sql-fmt', name: 'SQL Format', desc: 'Format and beautify SQL queries' }
-        ],
-        tools_sec: [
-            { id: 'b64-e', name: 'Base64 Encode', desc: 'Encode text to Base64' },
-            { id: 'sha256', name: 'SHA-256 Hash', desc: 'Generate secure hash' }
-        ],
-        tools_util: [
-            { id: 'qr-gen', name: 'QR Code Gen', desc: 'Generate QR image' },
-            { id: 'uuid-gen', name: 'UUID v4', desc: 'Generate unique ID' }
-        ]
-    },
-    ja: {
-        run: "実行", copy: "コピー", input: "入力", output: "出力", tools: "ツール一覧",
-        tools_data: [
-            { id: 'json-fmt', name: 'JSON整形', desc: 'JSONを見やすく整形・検証します' },
-            { id: 'sql-fmt', name: 'SQL整形', desc: 'SQLクエリを綺麗に整形します' }
-        ],
-        tools_sec: [
-            { id: 'b64-e', name: 'Base64変換', desc: 'テキストをBase64にエンコードします' },
-            { id: 'sha256', name: 'SHA-256', desc: 'ハッシュ値を計算します' }
-        ],
-        tools_util: [
-            { id: 'qr-gen', name: 'QR作成', desc: 'テキストからQRコードを生成します' },
-            { id: 'uuid-gen', name: 'UUID生成', desc: '一意のUUID v4を生成します' }
-        ]
-    }
-};
+const TOOLS = [
+    { id: 'json', cat: 'data', en: 'JSON Format', ja: 'JSON整形', ed: 'Prettify JSON', jd: 'JSONを整形します' },
+    { id: 'sql', cat: 'data', en: 'SQL Format', ja: 'SQL整形', ed: 'Beautify SQL', jd: 'SQLを整形します' },
+    { id: 'b64e', cat: 'security', en: 'Base64 Enc', ja: 'B64エンコード', ed: 'Encode to B64', jd: 'Base64に変換' },
+    { id: 'sha', cat: 'security', en: 'SHA-256', ja: 'SHA-256', ed: 'Generate Hash', jd: 'ハッシュ計算' },
+    { id: 'qr', cat: 'utils', en: 'QR Code', ja: 'QR作成', ed: 'Generate QR', jd: 'QRコード生成' },
+    { id: 'uuid', cat: 'utils', en: 'UUID Gen', ja: 'UUID生成', ed: 'Create UUID', jd: 'UUIDを生成' }
+];
 
-let currentLang = localStorage.getItem('pro_lang') || 'en';
-let state = { cat: 'data', tool: 'json-fmt' };
-
-window.onload = () => {
-    document.querySelectorAll('.rail-btn').forEach(btn => {
-        btn.onclick = () => {
-            state.cat = btn.dataset.cat;
-            const tools = getToolsByCat(state.cat);
-            state.tool = tools[0].id;
-            render();
-        };
-    });
-    
-    document.getElementById('langToggle').onclick = () => {
-        currentLang = currentLang === 'en' ? 'ja' : 'en';
-        localStorage.setItem('pro_lang', currentLang);
-        render();
-    };
-
-    document.getElementById('themeToggle').onclick = () => document.body.classList.toggle('light');
-    
-    render();
-};
-
-function getToolsByCat(cat) {
-    const lang = I18N[currentLang];
-    if (cat === 'data') return lang.tools_data;
-    if (cat === 'security') return lang.tools_sec;
-    return lang.tools_util;
-}
+let lang = localStorage.getItem('lang') || 'en';
+let currentCat = 'data';
+let currentTool = 'json';
 
 function render() {
-    const lang = I18N[currentLang];
-    
-    // UI Labels
-    document.getElementById('i18n-run').innerText = lang.run;
-    document.getElementById('i18n-copy').innerText = lang.copy;
-    document.getElementById('i18n-input').innerText = lang.input;
-    document.getElementById('i18n-output').innerText = lang.output;
-    document.getElementById('i18n-tools').innerText = lang.tools;
-    document.getElementById('langToggle').innerText = currentLang.toUpperCase();
+    // UI Label Update
+    const isEn = lang === 'en';
+    document.getElementById('lbl-run').innerText = isEn ? 'RUN' : '実行';
+    document.getElementById('lbl-copy').innerText = isEn ? 'COPY' : 'コピー';
+    document.getElementById('lbl-input').innerText = isEn ? 'INPUT' : '入力';
+    document.getElementById('lbl-output').innerText = isEn ? 'OUTPUT' : '出力';
+    document.getElementById('lbl-tools').innerText = isEn ? 'TOOLS' : 'ツール';
+    document.getElementById('langBtn').innerText = lang.toUpperCase();
 
-    // Rail
-    document.querySelectorAll('.rail-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === state.cat));
-
-    // Sidebar
+    // Sidebar Render
     const list = document.getElementById('toolList');
-    list.innerHTML = "";
-    const tools = getToolsByCat(state.cat);
-    tools.forEach(t => {
+    list.innerHTML = '';
+    TOOLS.filter(t => t.cat === currentCat).forEach(t => {
         const btn = document.createElement('button');
-        btn.className = `tool-item ${state.tool === t.id ? 'active' : ''}`;
-        btn.innerText = t.name;
-        btn.onclick = () => { state.tool = t.id; render(); };
+        btn.className = `tool-item ${currentTool === t.id ? 'active' : ''}`;
+        btn.innerText = isEn ? t.en : t.ja;
+        btn.onclick = () => { currentTool = t.id; render(); };
         list.appendChild(btn);
     });
 
-    const active = tools.find(t => t.id === state.tool) || tools[0];
-    document.getElementById('toolName').innerText = active.name;
-    document.getElementById('toolDesc').innerText = active.desc;
+    const active = TOOLS.find(t => t.id === currentTool);
+    document.getElementById('toolName').innerText = isEn ? active.en : active.ja;
+    document.getElementById('toolDesc').innerText = isEn ? active.ed : active.jd;
+}
+
+function setCat(cat) {
+    currentCat = cat;
+    currentTool = TOOLS.find(t => t.cat === cat).id;
+    document.querySelectorAll('.rail-btn').forEach((b, i) => {
+        const cats = ['data', 'security', 'utils'];
+        b.classList.toggle('active', cats[i] === cat);
+    });
+    render();
+}
+
+function toggleLang() {
+    lang = lang === 'en' ? 'ja' : 'en';
+    localStorage.setItem('lang', lang);
+    render();
 }
 
 function execute() {
-    const input = document.getElementById('input').value;
-    const outText = document.getElementById('outputText');
-    const outImg = document.getElementById('imageResult');
+    const val = document.getElementById('input').value;
+    const txt = document.getElementById('outputText');
+    const img = document.getElementById('imageResult');
+    const pre = document.getElementById('outputPre');
     
-    outText.innerText = "";
-    outImg.style.display = "none";
+    txt.innerText = ''; img.style.display = 'none'; pre.style.display = 'block';
 
     try {
         let res = "";
-        if (state.tool === 'json-fmt') res = JSON.stringify(JSON.parse(input), null, 4);
-        if (state.tool === 'sql-fmt') res = sqlFormatter.format(input);
-        if (state.tool === 'b64-e') res = btoa(unescape(encodeURIComponent(input)));
-        if (state.tool === 'sha256') res = CryptoJS.SHA256(input).toString();
-        if (state.tool === 'uuid-gen') res = crypto.randomUUID();
-        if (state.tool === 'qr-gen') {
-            const qr = qrcode(0, 'M'); qr.addData(input); qr.make();
-            outImg.innerHTML = qr.createImgTag(8);
-            outImg.style.display = "block";
+        if (currentTool === 'json') res = JSON.stringify(JSON.parse(val), null, 4);
+        if (currentTool === 'sql') res = sqlFormatter.format(val);
+        if (currentTool === 'b64e') res = btoa(val);
+        if (currentTool === 'sha') res = CryptoJS.SHA256(val).toString();
+        if (currentTool === 'uuid') res = crypto.randomUUID();
+        if (currentTool === 'qr') {
+            const q = qrcode(0, 'M'); q.addData(val); q.make();
+            img.innerHTML = q.createImgTag(6);
+            img.style.display = 'block'; pre.style.display = 'none';
         }
-        outText.innerText = res;
-        if(res) hljs.highlightElement(outText);
-    } catch (e) { outText.innerText = "Error: " + e.message; }
+        txt.innerText = res;
+        if(res) hljs.highlightElement(txt);
+    } catch (e) { txt.innerText = "Error: " + e.message; }
 }
 
 function copyResult() {
     navigator.clipboard.writeText(document.getElementById('outputText').innerText);
 }
 
-window.onkeydown = (e) => { if (e.ctrlKey && e.key === 'Enter') execute(); };
+render();
