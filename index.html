@@ -4,15 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DevTools Pro</title>
-    
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql-formatter/15.3.1/sql-formatter.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="dark">
@@ -20,18 +17,18 @@
 <div class="app-shell">
     <nav class="nav-rail">
         <div class="rail-group">
-            <button class="rail-btn active" data-cat="data">📦</button>
-            <button class="rail-btn" data-cat="security">🔐</button>
-            <button class="rail-btn" data-cat="utils">🛠️</button>
+            <button class="rail-btn active" onclick="setCat('data')">📦</button>
+            <button class="rail-btn" onclick="setCat('security')">🔐</button>
+            <button class="rail-btn" onclick="setCat('utils')">🛠️</button>
         </div>
         <div class="rail-spacer"></div>
-        <button id="langToggle" class="control-btn lang-btn">EN</button>
-        <button id="themeToggle" class="control-btn">🌙</button>
+        <button id="langBtn" class="control-btn" onclick="toggleLang()">EN</button>
+        <button class="control-btn" onclick="document.body.classList.toggle('light')">🌓</button>
     </nav>
 
     <aside class="tool-sidebar">
-        <div class="sidebar-title" id="i18n-tools">TOOLS</div>
-        <div id="toolList" class="tool-list custom-scroll"></div>
+        <div class="sidebar-title" id="lbl-tools">TOOLS</div>
+        <div id="toolList" class="tool-list"></div>
     </aside>
 
     <main class="workspace">
@@ -40,30 +37,25 @@
                 <h1 id="toolName">---</h1>
                 <p id="toolDesc">---</p>
             </div>
-            <div class="header-actions">
-                <button class="btn-run" id="i18n-run" onclick="execute()">RUN</button>
-            </div>
+            <button class="btn-run" id="lbl-run" onclick="execute()">RUN</button>
         </header>
 
         <div class="editor-grid">
             <div class="pane">
-                <div class="pane-header" id="i18n-input">INPUT</div>
-                <textarea id="input" spellcheck="false" placeholder="Paste data here..."></textarea>
+                <div class="pane-header" id="lbl-input">INPUT</div>
+                <textarea id="input" spellcheck="false" placeholder="Paste here..."></textarea>
             </div>
             <div class="pane">
                 <div class="pane-header">
-                    <span id="i18n-output">OUTPUT</span>
-                    <button class="btn-mini-copy" id="i18n-copy" onclick="copyResult()">COPY</button>
+                    <span id="lbl-output">OUTPUT</span>
+                    <button class="btn-mini-copy" id="lbl-copy" onclick="copyResult()">COPY</button>
                 </div>
-                <div class="output-viewer custom-scroll">
-                    <div id="imageResult" class="image-center"></div>
-                    <pre><code id="outputText" class="hljs"></code></pre>
-                </div>
+                <div id="imageResult" class="image-center"></div>
+                <pre id="outputPre"><code id="outputText" class="hljs"></code></pre>
             </div>
         </div>
     </main>
 </div>
-
 <script src="script.js"></script>
 </body>
 </html>
