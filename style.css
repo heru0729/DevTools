@@ -1,3 +1,6 @@
+/* =========================================
+   DevTools Pro - Core Settings
+   ========================================= */
 :root {
     --bg: #0c0c0e;
     --sidebar: #141418;
@@ -30,19 +33,21 @@ body {
     font-family: 'Plus Jakarta Sans', sans-serif;
     background: var(--bg);
     color: var(--text);
+    /* 🛠 修正: 画面の高さを100%に固定し、中身だけをスクロールさせる */
     height: 100vh;
+    height: 100svh; /* Safari/iOS対応の高さ */
     width: 100vw;
-    overflow: hidden;
+    overflow: hidden; 
 }
 
 .app-shell {
     display: flex;
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
 }
 
 /* =========================================
-   🚦 Navigation Rail (Leftmost)
+   🚦 Navigation Rail (Desktop: Left, Mobile: Top)
    ========================================= */
 .nav-rail {
     width: 72px;
@@ -74,11 +79,9 @@ body {
     color: var(--text-dim);
 }
 
-.rail-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
 .rail-btn.active {
     background: var(--accent);
     color: white;
-    box-shadow: 0 4px 15px var(--accent-glow);
 }
 
 .rail-footer {
@@ -100,12 +103,13 @@ body {
 }
 
 /* =========================================
-   📂 Sidebar & Main Content Wrapper
+   📂 Main Content & Sidebar
    ========================================= */
 .main-content {
     flex: 1;
     display: flex;
     min-width: 0;
+    overflow: hidden; /* 親での突き抜け防止 */
 }
 
 .tool-sidebar {
@@ -120,7 +124,7 @@ body {
 .tool-list {
     flex: 1;
     padding: 20px 12px;
-    overflow-y: auto;
+    overflow-y: auto; /* 🛠 ツールが多ければここで縦スクロール */
 }
 
 .tool-item {
@@ -137,15 +141,13 @@ body {
     margin-bottom: 4px;
 }
 
-.tool-item:hover { background: rgba(255,255,255,0.03); color: var(--text); }
 .tool-item.active {
     background: var(--panel);
     color: var(--accent);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 /* =========================================
-   🖥️ Workspace & Editor Grid
+   🖥️ Workspace & Editors
    ========================================= */
 .workspace {
     flex: 1;
@@ -156,54 +158,53 @@ body {
 }
 
 .workspace-header {
-    padding: 24px 32px;
+    padding: 20px 30px;
     border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-shrink: 0; /* ヘッダーの高さを固定 */
 }
 
-.title-area h1 { margin: 0; font-size: 22px; font-weight: 800; }
-.title-area p { margin: 4px 0 0; font-size: 13px; color: var(--text-dim); }
+.title-area h1 { margin: 0; font-size: 20px; font-weight: 800; }
+.title-area p { margin: 2px 0 0; font-size: 12px; color: var(--text-dim); }
 
-.action-bar { display: flex; gap: 10px; }
-
+.action-bar { display: flex; gap: 8px; margin-top: 10px; }
 button.primary {
     background: var(--accent);
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 10px;
+    padding: 8px 16px;
+    border-radius: 8px;
     font-weight: 700;
-    font-size: 13px;
+    font-size: 12px;
     cursor: pointer;
-    box-shadow: 0 4px 12px var(--accent-glow);
 }
 
+/* 🛠 修正: 縦スクロールを可能にする設定 */
 .editor-grid {
     flex: 1;
     display: grid;
     grid-template-columns: 1fr 1fr;
     background: var(--border);
     gap: 1px;
-    min-height: 0;
+    overflow-y: auto; /* スマホで全体が入り切らない場合にスクロールさせる */
 }
 
 .editor-container {
     background: var(--bg);
     display: flex;
     flex-direction: column;
-    position: relative;
-    overflow: hidden;
+    min-height: 250px; /* スマホで縦に並んだとき、ある程度の高さを確保 */
 }
 
 .editor-label {
-    padding: 10px 20px;
+    padding: 8px 20px;
     font-size: 10px;
     font-weight: 800;
     color: var(--text-dim);
     border-bottom: 1px solid var(--border);
-    background: rgba(0,0,0,0.02);
+    position: sticky; /* スクロールしてもラベルが見えるように */
+    top: 0;
+    background: var(--bg);
+    z-index: 5;
 }
 
 textarea {
@@ -211,7 +212,7 @@ textarea {
     background: transparent;
     border: none;
     color: var(--text);
-    padding: 24px;
+    padding: 20px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
     line-height: 1.6;
@@ -219,113 +220,101 @@ textarea {
     outline: none;
 }
 
-/* Output Area (Theme Sync) */
 .output-viewer {
     flex: 1;
     position: relative;
     background: var(--bg);
-    overflow: hidden;
+    min-height: 200px;
 }
 
 pre {
     margin: 0;
-    padding: 24px;
-    height: 100%;
-    overflow: auto;
-}
-
-code {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    background: transparent !important;
+    padding: 20px;
+    color: var(--text);
+    overflow: visible; /* 親のeditor-gridにスクロールを任せる */
 }
 
 .fab-copy {
     position: absolute;
-    top: 15px;
-    right: 20px;
+    top: 10px;
+    right: 15px;
     background: var(--panel);
     color: var(--text);
     border: 1px solid var(--border);
-    padding: 8px 14px;
-    border-radius: 8px;
+    padding: 5px 10px;
+    border-radius: 6px;
     font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
     z-index: 10;
 }
 
-/* =========================================
-   📢 Google AdSense Footer
-   ========================================= */
 .ad-footer-container {
     width: 100%;
     background: var(--sidebar);
     border-top: 1px solid var(--border);
     padding: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100px;
+    flex-shrink: 0;
 }
 
 /* =========================================
-   📱 Mobile Responsive
+   📱 スマホ専用レイアウト (縦スクロール対応)
    ========================================= */
 @media (max-width: 768px) {
     .app-shell { flex-direction: column; }
     
-    /* 1. Category Bar (Top) */
     .nav-rail {
         width: 100%;
-        height: 60px;
+        height: auto;
         flex-direction: row;
         border-right: none;
         border-bottom: 1px solid var(--border);
-        padding: 0 15px;
+        padding: 5px 15px;
     }
     
-    .nav-group { flex-direction: row; justify-content: center; gap: 10px; }
-    .rail-footer { flex-direction: row; gap: 10px; }
-    
-    /* 2. Tool List (Below Category) */
-    .main-content { flex-direction: column; }
+    .nav-group { flex-direction: row; justify-content: flex-start; gap: 8px; }
+    .rail-btn { width: 40px; height: 40px; font-size: 18px; }
+    .rail-footer { flex-direction: row; gap: 8px; margin-left: auto; }
+    .control-btn { width: 38px; height: 38px; }
+
+    .main-content { flex-direction: column; overflow-y: auto; } /* 🛠 スマホで縦スクロールを許可 */
     
     .tool-sidebar {
         width: 100%;
-        height: 50px;
+        height: 45px;
         border-right: none;
         border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
     }
     
     .tool-list {
         display: flex;
         flex-direction: row;
-        padding: 6px;
+        padding: 5px 10px;
         gap: 8px;
         overflow-x: auto;
+        overflow-y: hidden;
         white-space: nowrap;
     }
-    .tool-list::-webkit-scrollbar { display: none; }
     
-    .tool-item {
-        width: auto;
-        padding: 6px 15px;
-        margin-bottom: 0;
-        font-size: 12px;
+    .tool-item { width: auto; padding: 6px 12px; margin-bottom: 0; font-size: 12px; }
+
+    /* エディタを縦に並べ、個別にスクロールさせない(全体でさせる) */
+    .editor-grid {
+        display: block; /* gridから解除して自然に縦に並べる */
+        overflow-y: visible; 
+    }
+    
+    .editor-container {
+        height: auto;
+        min-height: 300px; /* 入力欄の高さを確保 */
+        border-bottom: 1px solid var(--border);
     }
 
-    /* 3. Editor Stack (Vertical) */
-    .editor-grid {
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr;
+    .output-viewer {
+        height: auto;
+        min-height: 300px;
     }
-    
-    .workspace-header { padding: 15px 20px; flex-direction: column; align-items: flex-start; }
-    .title-area h1 { font-size: 18px; }
-    .action-bar { margin-top: 10px; width: 100%; overflow-x: auto; }
 }
 
-/* Custom Scrollbar */
-.custom-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
+/* Scrollbar */
+.custom-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
 .custom-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
