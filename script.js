@@ -1,21 +1,65 @@
 let currentLang = 'en';
 
-// --- 言語切り替え ---
+// --- Language Toggle Logic ---
 const langToggle = document.getElementById('langToggle');
-langToggle.addEventListener('click', () => {
-    currentLang = (currentLang === 'en') ? 'ja' : 'en';
-    document.querySelectorAll('.lang').forEach(el => {
-        el.textContent = el.getAttribute(`data-${currentLang}`);
+if (langToggle) {
+    langToggle.addEventListener('click', () => {
+        currentLang = (currentLang === 'en') ? 'ja' : 'en';
+        
+        // Update all elements with class "lang"
+        document.querySelectorAll('.lang').forEach(el => {
+            const text = el.getAttribute(`data-${currentLang}`);
+            if (text) {
+                // Keep the emoji if it exists in the original HTML but not in data attribute
+                const hasEmoji = el.textContent.match(/^[\uD800-\uDBFF][\uDC00-\uDFFF]|^[^\x00-\x7F]/);
+                el.textContent = text;
+            }
+        });
+
+        // Update Textarea placeholders
+        document.querySelectorAll('textarea').forEach(el => {
+            el.placeholder = currentLang === 'en' ? "Paste data here..." : "ここにデータを入力...";
+        });
+
+        // Update the Toggle Button text itself
+        langToggle.textContent = currentLang === 'en' ? "🇯🇵 日本語へ" : "🇺🇸 To English";
+        
+        // Update Theme Button Text Sync
+        updateThemeButtonText();
     });
-    // placeholderの切り替え
-    document.querySelectorAll('textarea').forEach(el => {
-        el.placeholder = currentLang === 'en' ? "Paste data here..." : "ここにデータを入力...";
+}
+
+// --- Theme Toggle Logic ---
+const themeToggle = document.getElementById('themeToggle');
+if (themeToggle) {
+    themeToggle.addEventListener('click', function() {
+        document.body.classList.toggle('light');
+        updateThemeButtonText();
     });
-    langToggle.textContent = currentLang === 'en' ? "🇯🇵 日本語へ" : "🇺🇸 To English";
+}
+
+function updateThemeButtonText() {
+    const isLight = document.body.classList.contains('light');
+    if (currentLang === 'en') {
+        themeToggle.textContent = isLight ? "☀️ Light Mode" : "🌙 Dark Mode";
+    } else {
+        themeToggle.textContent = isLight ? "☀️ ライトモード" : "🌙 ダークモード";
+    }
+}
+
+// --- Tab Switching ---
+document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item, .panel').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        const target = document.getElementById(btn.dataset.tab);
+        if (target) target.classList.add('active');
+    });
 });
 
-// --- UI操作 ---
+// --- Core Functions ---
 function highlight(el) { if (typeof hljs !== 'undefined') hljs.highlightElement(el); }
+
 function copyText(id) {
     const txt = document.getElementById(id).textContent;
     navigator.clipboard.writeText(txt).then(() => {
@@ -23,22 +67,6 @@ function copyText(id) {
     });
 }
 
-document.querySelectorAll('.nav-item').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.nav-item, .panel').forEach(el => el.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.tab).classList.add('active');
-    });
-});
-
-document.getElementById('themeToggle').addEventListener('click', function() {
-    const isLight = document.body.classList.toggle('light');
-    this.textContent = isLight ? 
-        (currentLang === 'en' ? "☀️ Light Mode" : "☀️ ライトモード") : 
-        (currentLang === 'en' ? "🌙 Dark Mode" : "🌙 ダークモード");
-});
-
-// --- 📦 各種機能 ---
 function runJSON(mode) {
     const input = document.getElementById('input1').value;
     const output = document.getElementById('output1');
