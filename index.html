@@ -2,8 +2,8 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DevTools Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevTools Pro - Lite Edition</title>
     
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9619368699008291" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
@@ -12,59 +12,140 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql-formatter/15.3.1/sql-formatter.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root { --bg: #0c0c0e; --card: #141418; --accent: #818cf8; --border: #27272a; --text: #f4f4f5; --text-dim: #71717a; }
+        body.light { --bg: #f8fafc; --card: #ffffff; --accent: #4f46e5; --border: #e2e8f0; --text: #0f172a; --text-dim: #64748b; }
+
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+
+        .app-header { background: var(--card); border-bottom: 1px solid var(--border); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+        .logo { font-weight: 800; font-size: 18px; color: var(--accent); }
+
+        .main-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        
+        .tool-nav { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 20px; }
+        .tool-nav::-webkit-scrollbar { display: none; }
+        .nav-item { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 10px 18px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 13px; white-space: nowrap; }
+        .nav-item.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .workspace { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        .pane { background: var(--card); border: 1px solid var(--border); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; height: 600px; }
+        .pane-header { padding: 12px 20px; background: rgba(0,0,0,0.05); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 800; color: var(--text-dim); display: flex; justify-content: space-between; align-items: center; }
+
+        textarea { flex: 1; width: 100%; background: transparent; border: none; color: var(--text); padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 14px; resize: none; outline: none; }
+        .output-view { flex: 1; overflow: auto; padding: 20px; position: relative; }
+        pre { margin: 0; }
+
+        .action-bar { margin-top: 20px; display: flex; gap: 10px; align-items: center; }
+        .btn-primary { background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-secondary { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 12px 20px; border-radius: 12px; cursor: pointer; }
+        
+        .ad-unit { margin-top: 30px; text-align: center; border-top: 1px solid var(--border); padding-top: 20px; }
+
+        @media (max-width: 900px) {
+            .workspace { grid-template-columns: 1fr; }
+            .pane { height: 400px; }
+            .main-container { padding: 15px; }
+        }
+    </style>
 </head>
 <body class="dark">
 
-<div class="app-shell">
-    <nav class="nav-rail">
-        <div class="rail-group">
-            <button class="rail-btn active" data-cat="data">📦</button>
-            <button class="rail-btn" data-cat="security">🔐</button>
-            <button class="rail-btn" data-cat="frontend">🎨</button>
-            <button class="rail-btn" data-cat="utils">🛠️</button>
-        </div>
-        <button id="themeSwitcher" class="control-btn">🌙</button>
-    </nav>
+<header class="app-header">
+    <div class="logo">DevTools Lite</div>
+    <button class="btn-secondary" onclick="document.body.classList.toggle('light')">🌓</button>
+</header>
 
-    <aside class="tool-sidebar">
-        <div class="sidebar-label">TOOLS</div>
-        <div id="toolList" class="tool-list custom-scroll"></div>
-    </aside>
+<main class="main-container">
+    <div id="toolNav" class="tool-nav">
+        <button class="nav-item active" onclick="setTool('json')">JSON整形</button>
+        <button class="nav-item" onclick="setTool('sql')">SQL整形</button>
+        <button class="nav-item" onclick="setTool('b64e')">Base64エンコード</button>
+        <button class="nav-item" onclick="setTool('b64d')">Base64デコード</button>
+        <button class="nav-item" onclick="setTool('sha256')">SHA-256</button>
+    </div>
 
-    <main class="workspace">
-        <header class="workspace-header">
-            <div class="title-info">
-                <h1 id="activeToolName">---</h1>
-                <p id="activeToolDesc">---</p>
-            </div>
-            <div id="toolActions" class="actions"></div>
-        </header>
-
-        <div class="editor-grid">
-            <div class="editor-pane">
-                <div class="pane-header">INPUT</div>
-                <textarea id="mainInput" placeholder="ここに貼り付け..."></textarea>
-            </div>
-            <div class="editor-pane">
-                <div class="pane-header">OUTPUT</div>
-                <div class="output-wrapper custom-scroll">
-                    <div id="imageOutput" class="img-box"></div>
-                    <pre><code id="mainOutput" class="hljs"></code></pre>
-                    <button id="copyBtn" class="copy-fab">COPY</button>
-                </div>
-            </div>
+    <div class="workspace">
+        <div class="pane">
+            <div class="pane-header">INPUT</div>
+            <textarea id="input" placeholder="ここに貼り付けてください..."></textarea>
         </div>
 
-        <div class="ad-footer">
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9619368699008291" data-ad-slot="6699940875" data-ad-format="auto" data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        <div class="pane">
+            <div class="pane-header">
+                OUTPUT
+                <span id="copyStatus" style="color: var(--accent)"></span>
+            </div>
+            <div class="output-view">
+                <pre><code id="output" class="hljs"></code></pre>
+            </div>
         </div>
-    </main>
-</div>
+    </div>
 
-<script src="script.js"></script>
+    <div class="action-bar">
+        <button class="btn-primary" onclick="run()">実行 (Run)</button>
+        <button class="btn-secondary" onclick="copy()">結果をコピー</button>
+        <span style="font-size: 12px; color: var(--text-dim); margin-left: 10px;">Ctrl + Enter でも実行可</span>
+    </div>
+
+    <div class="ad-unit">
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9619368699008291" data-ad-slot="6699940875" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+</main>
+
+<script>
+    let currentTool = 'json';
+
+    function setTool(tool) {
+        currentTool = tool;
+        document.querySelectorAll('.nav-item').forEach(btn => {
+            btn.classList.toggle('active', btn.innerText.toLowerCase().includes(tool.substring(0,2)));
+        });
+        run();
+    }
+
+    function run() {
+        const input = document.getElementById('input').value;
+        const out = document.getElementById('output');
+        if (!input) return;
+
+        try {
+            let result = "";
+            if (currentTool === 'json') result = JSON.stringify(JSON.parse(input), null, 4);
+            if (currentTool === 'sql') result = sqlFormatter.format(input);
+            if (currentTool === 'b64e') result = btoa(unescape(encodeURIComponent(input)));
+            if (currentTool === 'b64d') result = decodeURIComponent(escape(atob(input)));
+            if (currentTool === 'sha256') result = CryptoJS.SHA256(input).toString();
+
+            out.textContent = result;
+            hljs.highlightElement(out);
+            localStorage.setItem('saved_input', input);
+        } catch (e) {
+            out.textContent = "エラー: " + e.message;
+        }
+    }
+
+    function copy() {
+        navigator.clipboard.writeText(document.getElementById('output').textContent);
+        const s = document.getElementById('copyStatus');
+        s.textContent = "Copied!";
+        setTimeout(() => s.textContent = "", 2000);
+    }
+
+    // 読み込み時
+    window.onload = () => {
+        document.getElementById('input').value = localStorage.getItem('saved_input') || "";
+    };
+
+    // ショートカット
+    window.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'Enter') run();
+    });
+</script>
+
 </body>
 </html>
