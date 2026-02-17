@@ -4,57 +4,61 @@
 }
 
 body.light {
-    --bg: #ffffff; --sidebar: #f2f2f5; --panel: #f2f2f5;
+    --bg: #ffffff; --sidebar: #f2f2f5; --panel: #ffffff;
     --border: #e4e4e7; --text: #09090b; --text-dim: #71717a; --accent: #4f46e5;
 }
 
-* { box-sizing: border-box; transition: 0.2s ease; }
-body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
+* { box-sizing: border-box; transition: 0.15s ease; }
+body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); height: 100vh; width: 100vw; overflow: hidden; }
 
-.app-shell { display: flex; height: 100vh; }
+.app-shell { display: flex; height: 100vh; width: 100vw; }
 
-/* Desktop Navigation */
-.nav-rail { width: 72px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 20px 0; }
+/* 🚦 左端：カテゴリレール */
+.nav-rail { width: 72px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 20px 0; flex-shrink: 0; }
 .nav-group { display: flex; flex-direction: column; gap: 15px; flex: 1; }
 .rail-btn { width: 48px; height: 48px; border-radius: 12px; border: none; background: transparent; font-size: 20px; cursor: pointer; color: var(--text-dim); }
 .rail-btn.active { background: var(--accent); color: white; }
-.control-btn { width: 44px; height: 44px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; color: var(--text); cursor: pointer; font-size: 11px; font-weight: 800; margin-bottom: 10px;}
+.control-btn { width: 44px; height: 44px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; color: var(--text); cursor: pointer; font-size: 11px; font-weight: 800; margin-bottom: 10px; }
 
-.main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+/* 📂 中央左：ツール一覧 */
+.tool-sidebar { width: 240px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+.sidebar-header { padding: 25px 20px 10px; font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 0.1em; }
+.tool-list { flex: 1; padding: 10px; overflow-y: auto; }
+.tool-item { width: 100%; padding: 12px 15px; border: none; background: transparent; color: var(--text-dim); text-align: left; cursor: pointer; border-radius: 8px; font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.tool-item.active { background: var(--panel); color: var(--accent); }
 
-/* Tool List */
-.tool-sidebar { height: 60px; background: var(--sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; }
-.tool-list { display: flex; padding: 0 20px; gap: 10px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
-.tool-list::-webkit-scrollbar { display: none; }
-.tool-item { padding: 8px 16px; border: 1px solid transparent; background: transparent; color: var(--text-dim); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
-.tool-item.active { background: var(--bg); color: var(--accent); border-color: var(--border); }
-
-/* Workspace */
-.workspace { flex: 1; display: flex; flex-direction: column; }
+/* 🖥️ 右側：メイン作業域 */
+.workspace { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 .workspace-header { padding: 20px 30px; border-bottom: 1px solid var(--border); }
-.title-area h1 { margin: 0; font-size: 20px; }
+.title-area h1 { margin: 0; font-size: 22px; }
 .title-area p { margin: 2px 0 0; font-size: 12px; color: var(--text-dim); }
-.action-bar { display: flex; gap: 8px; margin-top: 10px; }
-button.primary { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+.action-bar { display: flex; gap: 8px; margin-top: 12px; }
+button.primary { background: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; }
 
 .editor-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; background: var(--border); gap: 1px; }
-.editor-container { background: var(--bg); display: flex; flex-direction: column; }
-.editor-label { padding: 8px 20px; font-size: 10px; font-weight: 800; color: var(--text-dim); border-bottom: 1px solid var(--border); }
+.editor-container { background: var(--bg); display: flex; flex-direction: column; overflow: hidden; }
+.editor-label { padding: 8px 20px; font-size: 10px; font-weight: 800; color: var(--text-dim); border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.02); }
 
 textarea { flex: 1; background: transparent; border: none; color: var(--text); padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; resize: none; outline: none; }
-
-/* 出力欄 - テーマ同期 */
 .output-viewer { flex: 1; position: relative; background: var(--bg); overflow: hidden; }
 pre { margin: 0; padding: 20px; color: var(--text); }
-.fab-copy { position: absolute; top: 15px; right: 15px; background: var(--panel); color: var(--text); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; }
+.fab-copy { position: absolute; top: 15px; right: 15px; background: var(--panel); color: var(--text); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; z-index: 10; }
 
-/* Mobile */
+/* 📱 スマホ版レイアウト修正 */
 @media (max-width: 768px) {
     .app-shell { flex-direction: column; }
-    .nav-rail { width: 100%; height: 60px; flex-direction: row; border-right: none; border-bottom: 1px solid var(--border); order: 0; padding: 0 15px; }
-    .nav-group { flex-direction: row; justify-content: flex-start; gap: 10px; }
+    .nav-rail { width: 100%; height: 60px; flex-direction: row; border-right: none; border-bottom: 1px solid var(--border); padding: 0 15px; }
+    .nav-group { flex-direction: row; justify-content: space-around; width: 100%; }
     .rail-footer { flex-direction: row; margin: 0; gap: 8px; }
-    .tool-sidebar { order: 1; }
-    .workspace { order: 2; }
-    .editor-grid { grid-template-columns: 1fr; }
+    
+    .tool-sidebar { width: 100%; height: 50px; border-right: none; border-bottom: 1px solid var(--border); }
+    .sidebar-header { display: none; }
+    .tool-list { flex-direction: row; overflow-x: auto; white-space: nowrap; padding: 5px; }
+    .tool-item { width: auto; padding: 8px 15px; margin-bottom: 0; font-size: 12px; }
+    
+    .editor-grid { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+    .workspace-header { padding: 15px; }
 }
+
+.custom-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
+.custom-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
