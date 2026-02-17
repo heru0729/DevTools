@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -20,57 +20,48 @@
 
 <div class="app-shell">
     <nav class="nav-rail">
-        <div class="nav-group">
-            <button class="rail-btn active" data-cat="data">📦</button>
-            <button class="rail-btn" data-cat="security">🔐</button>
-            <button class="rail-btn" data-cat="frontend">🎨</button>
-            <button class="rail-btn" data-cat="utils">🛠️</button>
-        </div>
-        <div class="rail-footer">
-            <button id="themeSwitcher" class="control-btn">🌙</button>
-        </div>
+        <button class="rail-btn active" data-cat="data">📦</button>
+        <button class="rail-btn" data-cat="security">🔐</button>
+        <button class="rail-btn" data-cat="frontend">🎨</button>
+        <button class="rail-btn" data-cat="utils">🛠️</button>
+        <div class="rail-spacer"></div>
+        <button id="themeSwitcher" class="control-btn">🌙</button>
     </nav>
 
-    <div class="main-body">
-        <aside class="tool-sidebar">
-            <div class="search-area">
-                <input type="text" id="toolSearch" placeholder="Search Tools (Ctrl+K)">
+    <aside class="tool-sidebar">
+        <div class="sidebar-label">TOOLS</div>
+        <div id="toolList" class="tool-list"></div>
+    </aside>
+
+    <main class="workspace">
+        <header class="workspace-header">
+            <div class="title-info">
+                <h1 id="activeToolName">---</h1>
+                <p id="activeToolDesc">---</p>
             </div>
-            <div id="toolList" class="tool-list custom-scroll"></div>
-        </aside>
+            <div id="toolActions" class="actions"></div>
+        </header>
 
-        <main class="workspace">
-            <header class="workspace-header">
-                <div class="title-area">
-                    <h1 id="activeToolName">---</h1>
-                    <p id="activeToolDesc">---</p>
-                </div>
-                <div class="header-actions">
-                    <div id="toolActions"></div>
-                </div>
-            </header>
-
-            <div class="editor-grid">
-                <div class="editor-pane">
-                    <div class="pane-label">INPUT</div>
-                    <textarea id="mainInput" spellcheck="false" placeholder="Paste source here..."></textarea>
-                </div>
-                <div class="editor-pane">
-                    <div class="pane-label">OUTPUT</div>
-                    <div class="output-wrapper">
-                        <div id="imageOutput" class="img-preview"></div>
-                        <pre><code id="mainOutput" class="custom-scroll"></code></pre>
-                        <button id="copyBtn" class="fab-copy">Copy Result</button>
-                    </div>
+        <div class="editor-grid">
+            <div class="editor-pane">
+                <div class="pane-header">INPUT</div>
+                <textarea id="mainInput" placeholder="Paste source here..."></textarea>
+            </div>
+            <div class="editor-pane">
+                <div class="pane-header">OUTPUT</div>
+                <div class="output-wrapper">
+                    <div id="imageOutput" class="img-box"></div>
+                    <pre><code id="mainOutput" class="custom-scroll"></code></pre>
+                    <button id="copyBtn" class="copy-fab">COPY</button>
                 </div>
             </div>
+        </div>
 
-            <div class="ad-footer">
-                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9619368699008291" data-ad-slot="6699940875" data-ad-format="auto" data-full-width-responsive="true"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            </div>
-        </main>
-    </div>
+        <div class="ad-footer">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9619368699008291" data-ad-slot="6699940875" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+    </main>
 </div>
 
 <script src="script.js"></script>
