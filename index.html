@@ -1,62 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevTools Pro</title>
+    <title>DevTools OS - Ultimate Edition</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Fira+Code&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql-formatter/15.3.1/sql-formatter.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="dark">
 
-<div class="app-layout">
-    <aside class="sidebar">
-        <div class="logo">
-            <span class="logo-icon">🛠️</span>
-            <span class="logo-text">DevTools <span>Pro</span></span>
+<div id="commandPalette" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span>🔍</span>
+            <input type="text" id="toolSearch" placeholder="ツールを検索... (例: JWT, Diff, SQL, QR)" autofocus>
         </div>
-        <nav class="nav-menu">
-            <button class="nav-item active" data-tab="json-section">
-                <span class="lang" data-en="📦 Data Formatter" data-ja="📦 データ整形">📦 Data Formatter</span>
-            </button>
-            <button class="nav-item" data-tab="crypto-section">
-                <span class="lang" data-en="🔐 Crypto & Encode" data-ja="🔐 暗号・エンコード">🔐 Crypto & Encode</span>
-            </button>
-            <button class="nav-item" data-tab="convert-section">
-                <span class="lang" data-en="🔄 Convert & Types" data-ja="🔄 変換・型生成">🔄 Convert & Types</span>
-            </button>
-            <button class="nav-item" data-tab="gen-section">
-                <span class="lang" data-en="🎲 Generators" data-ja="🎲 生成・情報">🎲 Generators</span>
-            </button>
+        <div id="searchResult" class="custom-scroll"></div>
+        <div class="modal-footer">
+            <kbd>↑↓</kbd> 選択 <kbd>Enter</kbd> 実行 <kbd>ESC</kbd> 閉じる
+        </div>
+    </div>
+</div>
+
+<div class="app-shell">
+    <aside class="side-nav">
+        <div class="app-logo">OS</div>
+        <nav class="icon-menu">
+            <button class="icon-btn active" title="Formatter" onclick="switchCategory('data')">📦</button>
+            <button class="icon-btn" title="Security" onclick="switchCategory('security')">🔐</button>
+            <button class="icon-btn" title="Frontend" onclick="switchCategory('frontend')">🎨</button>
+            <button class="icon-btn" title="Utilities" onclick="switchCategory('utils')">🛠️</button>
         </nav>
-        <div class="sidebar-footer">
-            <button id="langToggle" class="footer-btn">🇯🇵 日本語へ</button>
-            <button id="themeToggle" class="footer-btn lang" data-en="🌙 Dark Mode" data-ja="🌙 ダークモード">🌙 Dark Mode</button>
+        <div class="side-bottom">
+            <button onclick="toggleTheme()" title="Theme">🌗</button>
         </div>
     </aside>
 
-    <main class="main-content">
-        <section class="panel active" id="json-section">
-            <header class="panel-header">
-                <h2 class="lang" data-en="Data Formatter" data-ja="データ整形">Data Formatter</h2>
-                <div class="action-group">
-                    <button class="primary lang" onclick="runJSON('format')" data-en="JSON Format" data-ja="JSON整形">JSON Format</button>
-                    <button class="lang" onclick="runJSON('minify')" data-en="JSON Minify" data-ja="JSON圧縮">JSON Minify</button>
-                    <button class="lang" onclick="runSQL()" data-en="SQL Format" data-ja="SQL整形">SQL Format</button>
-                    <button class="lang" onclick="runYaml()" data-en="YAML Convert" data-ja="YAML変換">YAML Convert</button>
-                    <button class="lang" onclick="runCsv()" data-en="CSV to JSON" data-ja="CSV→JSON">CSV to JSON</button>
+    <aside class="sub-nav custom-scroll">
+        <div class="sub-nav-header" id="currentCatTitle">DATA MAGIC</div>
+        <div id="toolList" class="tool-list">
+            </div>
+    </aside>
+
+    <main class="main-stage">
+        <header class="stage-header">
+            <div class="tool-info">
+                <h1 id="activeToolName">JSON Formatter</h1>
+                <p id="activeToolDesc">JSONデータを美しく整形し、構造を解析します。</p>
+            </div>
+            <div class="stage-actions" id="toolActions">
                 </div>
-            </header>
-            <div class="editor-grid">
-                <textarea id="input1" class="custom-scroll" placeholder="Paste data here..."></textarea>
-                <div class="output-container">
-                    <pre><code id="output1" class="language-json"></code></pre>
-                    <button class
+        </header>
+
+        <div class="workspace">
+            <div class="editor-pane">
+                <div class="pane-label">INPUT</div>
+                <textarea id="mainInput" class="custom-scroll" placeholder="ここにデータを入力..."></textarea>
+            </div>
+            
+            <div class="editor-pane">
+                <div class="pane-label">OUTPUT</div>
+                <div class="output-wrapper">
+                    <div id="imageContainer" class="img-preview"></div>
+                    <pre><code id="mainOutput" class="custom-scroll"></code></pre>
+                    <button class="copy-fab" onclick="copyResult(event)">Copy Result</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
