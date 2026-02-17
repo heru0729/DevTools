@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevTools OS - Ultimate Edition</title>
+    <title>DevTools Pro</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql-formatter/15.3.1/sql-formatter.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
@@ -20,60 +21,64 @@
 <div id="commandPalette" class="modal">
     <div class="modal-content">
         <div class="search-header">
-            <span>🔍</span>
-            <input type="text" id="toolSearch" placeholder="ツールを検索... (例: JWT, Diff, SQL, QR)" autofocus>
+            <input type="text" id="toolSearch" placeholder="Search Tools... (Ctrl+K)" autofocus>
         </div>
         <div id="searchResult" class="custom-scroll"></div>
-        <div class="modal-footer">
-            <kbd>↑↓</kbd> 選択 <kbd>Enter</kbd> 実行 <kbd>ESC</kbd> 閉じる
-        </div>
     </div>
 </div>
 
 <div class="app-shell">
     <aside class="side-nav">
-        <div class="app-logo">OS</div>
+        <div class="app-logo">DP</div>
         <nav class="icon-menu">
-            <button class="icon-btn active" title="Formatter" onclick="switchCategory('data')">📦</button>
-            <button class="icon-btn" title="Security" onclick="switchCategory('security')">🔐</button>
-            <button class="icon-btn" title="Frontend" onclick="switchCategory('frontend')">🎨</button>
-            <button class="icon-btn" title="Utilities" onclick="switchCategory('utils')">🛠️</button>
+            <button class="icon-btn active" data-cat="data" title="Format">📦</button>
+            <button class="icon-btn" data-cat="security" title="Security">🔐</button>
+            <button class="icon-btn" data-cat="frontend" title="Frontend">🎨</button>
+            <button class="icon-btn" data-cat="utils" title="Utilities">🛠️</button>
         </nav>
         <div class="side-bottom">
-            <button onclick="toggleTheme()" title="Theme">🌗</button>
+            <button id="langSwitcher" class="tool-tip-trigger">EN</button>
+            <button id="themeSwitcher">🌗</button>
         </div>
     </aside>
 
-    <aside class="sub-nav custom-scroll">
-        <div class="sub-nav-header" id="currentCatTitle">DATA MAGIC</div>
-        <div id="toolList" class="tool-list">
-            </div>
+    <aside class="sub-nav">
+        <div class="sub-nav-header" id="catLabel">DATA MAGIC</div>
+        <div id="toolList" class="tool-list custom-scroll"></div>
+        
+        <div class="ad-space sidebar-ad">
+            <div class="ad-label">ADVERTISEMENT</div>
+            <div class="ad-content">Your Ad Here</div>
+        </div>
     </aside>
 
     <main class="main-stage">
         <header class="stage-header">
             <div class="tool-info">
                 <h1 id="activeToolName">JSON Formatter</h1>
-                <p id="activeToolDesc">JSONデータを美しく整形し、構造を解析します。</p>
+                <p id="activeToolDesc">Prettify and validate JSON data structures.</p>
             </div>
-            <div class="stage-actions" id="toolActions">
-                </div>
+            <div class="stage-actions" id="toolActions"></div>
         </header>
 
         <div class="workspace">
             <div class="editor-pane">
-                <div class="pane-label">INPUT</div>
-                <textarea id="mainInput" class="custom-scroll" placeholder="ここにデータを入力..."></textarea>
+                <div class="pane-header">INPUT</div>
+                <textarea id="mainInput" placeholder="Paste your data here..."></textarea>
             </div>
             
             <div class="editor-pane">
-                <div class="pane-label">OUTPUT</div>
+                <div class="pane-header">OUTPUT</div>
                 <div class="output-wrapper">
-                    <div id="imageContainer" class="img-preview"></div>
+                    <div id="imageContainer"></div>
                     <pre><code id="mainOutput" class="custom-scroll"></code></pre>
-                    <button class="copy-fab" onclick="copyResult(event)">Copy Result</button>
+                    <button class="copy-btn" id="copyBtn">Copy Result</button>
                 </div>
             </div>
+        </div>
+
+        <div class="ad-space footer-ad">
+            <div class="ad-content">Banner Ad Space - 728x90</div>
         </div>
     </main>
 </div>
