@@ -1,40 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- タイトル -->
-<title>DevTools Lite | Free JSON Formatter, API Tester, Base64, UUID, JWT, Diff Tool</title>
-
-<!-- SEO用メタ -->
-<meta name="description" content="Free online JSON formatter, API tester, Base64 encoder, UUID generator, JWT decoder, Diff tool. Fast, secure, no signup required.">
-<meta name="keywords" content="JSON formatter, API tester, Base64, UUID, JWT, Diff tool, developer tools, online tools">
-<meta name="author" content="Heru">
-<meta name="robots" content="index, follow">
-
-<!-- Open Graph (SNSシェア用) -->
-<meta property="og:title" content="DevTools Lite - Online JSON & API Tool">
-<meta property="og:description" content="Free online JSON formatter, API tester, Base64 encoder, UUID generator, JWT decoder, Diff tool. Fast, secure, no signup required.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://devtools.f5.si/">
-<meta property="og:image" content="https://devtools.f5.si/og-image.png">
-
-<link rel="stylesheet" href="style.css">
-
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-JEW06PPQN4"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-JEW06PPQN4');
-</script>
-
-<!-- Google AdSense -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9619368699008291"
-     crossorigin="anonymous"></script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevTools Lite | Developer Toolkit</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -42,12 +12,9 @@
     <h1 id="mainTitle">DevTools Lite</h1>
 
     <div class="top-controls">
-        <div class="theme-switch">
-            <button id="themeToggle">Light</button>
-        </div>
+        <button id="themeToggle">Switch Theme</button>
     </div>
 
-    <!-- Tabs -->
     <div class="tabs">
         <button class="tab active" data-tab="json">JSON</button>
         <button class="tab" data-tab="diff">Diff</button>
@@ -57,33 +24,61 @@
         <button class="tab" data-tab="jwt">JWT</button>
     </div>
 
-    <!-- JSON Section -->
     <section class="tab-content active" id="json">
-        <textarea id="jsonInput" placeholder="Enter JSON here"></textarea>
+        <textarea id="jsonInput" rows="10" placeholder="Enter JSON here"></textarea>
         <div class="btn-group">
             <button id="formatBtn">Format</button>
             <button id="minifyBtn">Minify</button>
             <button id="copyJsonBtn">Copy</button>
         </div>
-        <div class="output-wrapper">
-            <pre id="jsonOutput"></pre>
-            <button class="copy-btn" id="copyJsonInline">Copy</button>
-        </div>
+        <pre id="jsonOutput"></pre>
     </section>
 
-    <!-- Diff Section -->
     <section class="tab-content" id="diff">
-        <textarea id="jsonA" placeholder="JSON A"></textarea>
-        <textarea id="jsonB" placeholder="JSON B"></textarea>
+        <textarea id="jsonA" rows="5" placeholder="JSON A"></textarea>
+        <textarea id="jsonB" rows="5" placeholder="JSON B"></textarea>
         <button id="diffBtn">Compare</button>
-        <div class="output-wrapper">
-            <pre id="diffOutput"></pre>
-            <button class="copy-btn" id="copyDiffInline">Copy</button>
-        </div>
+        <pre id="diffOutput"></pre>
     </section>
 
-    <!-- Base64 Section -->
     <section class="tab-content" id="base64">
-        <textarea id="base64Input" placeholder="Enter text"></textarea>
+        <textarea id="base64Input" rows="5" placeholder="Enter text"></textarea>
         <div class="btn-group">
-            <button id="en
+            <button id="encodeBtn">Encode</button>
+            <button id="decodeBtn">Decode</button>
+        </div>
+        <pre id="base64Output"></pre>
+    </section>
+
+    <section class="tab-content" id="uuid">
+        <button id="uuidBtn">Generate UUID v4</button>
+        <pre id="uuidOutput"></pre>
+    </section>
+
+    <section class="tab-content" id="api">
+        <input type="text" id="apiUrl" placeholder="https://api.example.com/data">
+        <select id="apiMethod">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+        </select>
+        <textarea id="apiBody" rows="5" placeholder="Body (JSON)"></textarea>
+        <button id="sendBtn">Send</button>
+        <div id="loading" class="loading">Loading...</div>
+        <pre id="apiOutput"></pre>
+    </section>
+
+    <section class="tab-content" id="jwt">
+        <textarea id="jwtInput" rows="3" placeholder="Paste JWT"></textarea>
+        <button id="decodeJwtBtn">Decode</button>
+        <div id="jwtStatus"></div>
+        <div class="jwt-sections">
+            Header: <pre id="jwtHeader"></pre>
+            Payload: <pre id="jwtPayload"></pre>
+            Signature: <pre id="jwtSignature"></pre>
+        </div>
+    </section>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
