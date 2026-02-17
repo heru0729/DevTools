@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevTools Pro | All-in-One Developer Toolkit</title>
+    <title>DevTools Pro</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Fira+Code&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
@@ -31,7 +31,7 @@
                 <span class="lang" data-en="🔐 Crypto & Encode" data-ja="🔐 暗号・エンコード">🔐 Crypto & Encode</span>
             </button>
             <button class="nav-item" data-tab="convert-section">
-                <span class="lang" data-en="🔄 Convert & Types" data-ja="🔄 変換・型生成">🔄 変換・型生成</span>
+                <span class="lang" data-en="🔄 Convert & Types" data-ja="🔄 変換・型生成">🔄 Convert & Types</span>
             </button>
             <button class="nav-item" data-tab="gen-section">
                 <span class="lang" data-en="🎲 Generators" data-ja="🎲 生成・情報">🎲 Generators</span>
@@ -39,7 +39,7 @@
         </nav>
         <div class="sidebar-footer">
             <button id="langToggle" class="footer-btn">🇯🇵 日本語へ</button>
-            <button id="themeToggle" class="footer-btn">🌙 Dark Mode</button>
+            <button id="themeToggle" class="footer-btn lang" data-en="🌙 Dark Mode" data-ja="🌙 ダークモード">🌙 Dark Mode</button>
         </div>
     </aside>
 
@@ -47,7 +47,6 @@
         <section class="panel active" id="json-section">
             <header class="panel-header">
                 <h2 class="lang" data-en="Data Formatter" data-ja="データ整形">Data Formatter</h2>
-                <small class="lang" data-en="DevTools Pro Formatter" data-ja="DevTools Pro フォーマッタ">DevTools Pro Formatter</small>
                 <div class="action-group">
                     <button class="primary lang" onclick="runJSON('format')" data-en="JSON Format" data-ja="JSON整形">JSON Format</button>
                     <button class="lang" onclick="runJSON('minify')" data-en="JSON Minify" data-ja="JSON圧縮">JSON Minify</button>
@@ -87,7 +86,7 @@
 
         <section class="panel" id="convert-section">
             <header class="panel-header">
-                <h2 class="lang" data-en="Convert" data-ja="変換">Convert</h2>
+                <h2 class="lang" data-en="Convert & Types" data-ja="変換・型生成">Convert & Types</h2>
                 <div class="action-group">
                     <button class="primary lang" onclick="runTypeGen()" data-en="TS Type Gen" data-ja="TS型生成">TS Type Gen</button>
                     <button class="lang" onclick="runUrl('enc')" data-en="URL Encode" data-ja="URLエンコード">URL Encode</button>
