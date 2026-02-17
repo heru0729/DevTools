@@ -1,153 +1,60 @@
-/* ===============================
-   基本レイアウト
-=============================== */
 body {
-    background:#111;
-    color:#eee;
+    background: #111;
+    color: #eee;
     font-family: monospace;
-    margin:0;
-    padding:20px;
-    user-select:text; /* テキスト選択は可能 */
+    margin: 0;
+    padding: 20px;
 }
 
 body.light {
-    background:#f5f5f5;
-    color:#111;
+    background: #f5f5f5;
+    color: #111;
 }
 
-/* 入力・出力枠 */
+.container { max-width: 1000px; margin: auto; }
+
 textarea, input, select, pre {
-    width:100%;
-    margin-bottom:10px;
-    padding:8px;
-    background:#000;
-    color:#0f0;
-    border:1px solid #333;
-    user-select:text !important;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    background: #000;
+    color: #0f0;
+    border: 1px solid #333;
+    box-sizing: border-box;
 }
 
-body.light textarea,
-body.light input,
-body.light select,
-body.light pre {
-    background:#ffffff;
-    color:#000000;
-    border:1px solid #ccc;
+body.light textarea, body.light input, body.light select, body.light pre {
+    background: #fff;
+    color: #000;
+    border: 1px solid #ccc;
 }
 
-/* コンテナ */
-.container { max-width:1000px; margin:auto; }
-
-/* 上部操作 */
-.top-controls {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:10px;
-    flex-wrap:wrap;
-}
-
-/* タブ */
-.tabs {
-    display:flex;
-    flex-wrap:wrap;
-    gap:5px;
-    margin-bottom:15px;
-}
+.tabs { display: flex; gap: 5px; margin-bottom: 15px; flex-wrap: wrap; }
 
 .tab {
-    padding:8px 12px;
-    background:#333;
-    border:none;
-    color:white;
-    cursor:pointer;
-    user-select:none; /* タブは選択させない */
+    padding: 8px 12px;
+    background: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
 }
 
-.tab.active { background:#555; }
+.tab.active { background: #555; border-bottom: 2px solid #0f0; }
 
-.tab-content { display:none; }
-.tab-content.active { display:block; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
 
-/* ボタン共通 */
 button {
-    padding:8px 12px;
-    background:#333;
-    color:white;
-    border:none;
-    cursor:pointer;
-    margin-right:5px;
-    user-select:none; /* ボタンは選択不可 */
-    touch-action: manipulation; /* モバイルで押せるように */
+    padding: 8px 12px;
+    background: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 5px;
 }
 
-button:hover { background:#555; }
+button:hover { background: #555; }
 
-/* 出力枠 */
-.output-wrapper {
-    position:relative;
-}
+.loading { display: none; color: orange; }
 
-.copy-btn {
-    position:absolute;
-    top:5px;
-    right:5px;
-    font-size:12px;
-    padding:4px 6px;
-    user-select:none;
-}
-
-/* エラー表示 */
-pre.error {
-    border:2px solid red;
-    color:red;
-}
-
-/* ローディング */
-.loading {
-    display:none;
-    margin-bottom:10px;
-    color:orange;
-}
-
-/* JWT */
-.jwt-sections {
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-
-/* JSON構文ハイライト */
-.json-key { color:#ff9800; }
-.json-string { color:#4caf50; }
-.json-number { color:#03a9f4; }
-.json-boolean { color:#e91e63; }
-.json-null { color:#9c27b0; }
-
-/* レスポンシブ */
-@media (max-width:768px){
-    .tabs { flex-direction:row; flex-wrap:wrap; }
-    button { width:auto; margin-bottom:5px; }
-    .top-controls { flex-direction:row; align-items:center; flex-wrap:wrap; gap:5px; }
-}
-
-/* 広告枠 */
-.ad-bottom {
-    margin-top:20px;
-    text-align:center;
-}
-
-/* 出力枠の高さを入力枠と揃える */
-.output-wrapper pre {
-    min-height:100px;
-    padding:8px;
-    background:#000;
-    color:#0f0;
-    border:1px solid #333;
-}
-
-body.light .output-wrapper pre {
-    background:#fff;
-    color:#000;
-    border:1px solid #ccc;
-}
+pre.error { border-color: red; color: red; }
