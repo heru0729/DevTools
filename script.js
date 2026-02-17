@@ -1,176 +1,106 @@
-// --- 基本のUI操作 ---
-document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', () => {
+// --- 共通処理 ---
+function highlight(el) { if (typeof hljs !== 'undefined') hljs.highlightElement(el); }
+function copyText(id) {
+    const txt = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(txt).then(() => alert("コピーしました！"));
+}
+
+// タブ切り替え
+document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
         document.querySelectorAll('.nav-item, .panel').forEach(el => el.classList.remove('active'));
-        item.classList.add('active');
-        document.getElementById(item.dataset.tab).classList.add('active');
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
     });
 });
 
-// テーマ切替
-const themeToggle = document.getElementById('themeToggle');
-themeToggle.addEventListener('click', () => {
+// テーマ切り替え
+document.getElementById('themeToggle').addEventListener('click', function() {
     const isLight = document.body.classList.toggle('light');
-    themeToggle.textContent = isLight ? "☀️ ライトモード" : "🌙 ダークモード";
+    this.textContent = isLight ? "☀️ ライトモード" : "🌙 ダークモード";
 });
 
-// 汎用コピー関数
-function copyResult(id) {
-    const text = document.getElementById(id).textContent;
-    navigator.clipboard.writeText(text);
-    alert('Copied to clipboard!');
-}
-
-// --- JSON / XML / YAML / CSV ロジック ---
-function processJSON(mode) {
-    const input = document.getElementById('mainInput').value;
-    const output = document.getElementById('mainOutput');
-    try {
-        const parsed = JSON.parse(input);
-        output.textContent = mode === 'format' ? JSON.stringify(parsed, null, 4) : JSON.stringify(parsed);
-        hljs.highlightElement(output);
-    } catch (e) { output.textContent = "Error: Invalid JSON"; }
-}
-
-function jsonToYaml() {
-    const input = document.getElementById('mainInput').value;
-    const output = document.getElementById('mainOutput');
+// --- 📦 データ整形機能 ---
+function runJSON(mode) {
+    const input = document.getElementById('input1').value;
+    const output = document.getElementById('output1');
     try {
         const obj = JSON.parse(input);
-        output.textContent = jsyaml.dump(obj);
-    } catch (e) {
-        try {
-            const obj = jsyaml.load(input);
-            output.textContent = JSON.stringify(obj, null, 4);
-        } catch(e2) { output.textContent = "Conversion Error"; }
-    }
+        output.textContent = (mode === 'format') ? JSON.stringify(obj, null, 4) : JSON.stringify(obj);
+        highlight(output);
+    } catch (e) { output.textContent = "Invalid JSON"; }
 }
 
-function csvToJson() {
-    const input = document.getElementById('mainInput').value;
-    const lines = input.split('\n');
-    const headers = lines[0].split(',');
-    const result = lines.slice(1).map(line => {
-        const data = line.split(',');
-        return headers.reduce((obj, header, i) => {
-            obj[header.trim()] = data[i]?.trim();
-            return obj;
-        }, {});
+function runSQL() {
+    const input = document.getElementById('input1').value;
+    document.getElementById('output1').textContent = sqlFormatter.format(input);
+}
+
+function runYaml() {
+    const input = document.getElementById('input1').value;
+    try {
+        const obj = JSON.parse(input);
+        document.getElementById('output1').textContent = jsyaml.dump(obj);
+    } catch { document.getElementById('output1').textContent = "Invalid JSON"; }
+}
+
+function runCsv() {
+    const input = document.getElementById('input1').value.trim().split('\n');
+    const headers = input[0].split(',');
+    const json = input.slice(1).map(row => {
+        const cols = row.split(',');
+        return headers.reduce((acc, h, i) => ({ ...acc, [h.trim()]: cols[i]?.trim() }), {});
     });
-    document.getElementById('mainOutput').textContent = JSON.stringify(result, null, 4);
+    document.getElementById('output1').textContent = JSON.stringify(json, null, 4);
 }
 
-// --- SQL & Text ---
-function formatSQL() {
-    const sql = document.getElementById('textInput').value;
-    document.getElementById('textOutput').textContent = sqlFormatter.format(sql);
+// --- 🔐 セキュリティ機能 ---
+function runHash(algo) {
+    const input = document.getElementById('input2').value;
+    document.getElementById('output2').textContent = CryptoJS[algo](input).toString();
 }
 
-function textStats() {
-    const val = document.getElementById('textInput').value;
-    document.getElementById('textOutput').textContent = 
-        `Characters: ${val.length}\nWords: ${val.trim().split(/\s+/).length}\nLines: ${val.split('\n').length}`;
-}
-
-// --- Crypto ---
-function hashIt(algo) {
-    const txt = document.getElementById('cryptoInput').value;
-    document.getElementById('cryptoOutput').textContent = CryptoJS[algo](txt).toString();
-}
-
-function handleBase64(mode) {
-    const txt = document.getElementById('cryptoInput').value;
+function runBase64(mode) {
+    const input = document.getElementById('input2').value;
     try {
-        if(mode === 'enc') {
-            document.getElementById('cryptoOutput').textContent = btoa(unescape(encodeURIComponent(txt)));
-        } else {
-            document.getElementById('cryptoOutput').textContent = decodeURIComponent(escape(atob(txt)));
-        }
-    } catch(e) { document.getElementById('cryptoOutput').textContent = "Base64 Error"; }
+        document.getElementById('output2').textContent = mode === 'enc' ? btoa(unescape(encodeURIComponent(input))) : decodeURIComponent(escape(atob(input)));
+    } catch { document.getElementById('output2').textContent = "Base64 Error"; }
 }
 
-function imageToBase64() {
-    const file = document.getElementById('imageFile').files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => { document.getElementById('cryptoOutput').textContent = reader.result; };
-    if(file) reader.readAsDataURL(file);
-}
-
-// --- Type Generation ---
-function genTypeScript() {
+function runJWT() {
     try {
-        const obj = JSON.parse(document.getElementById('typeInput').value);
-        let res = "interface RootObject {\n";
-        for(let key in obj) {
-            res += `  ${key}: ${typeof obj[key]};\n`;
-        }
-        res += "}";
-        document.getElementById('typeOutput').textContent = res;
-    } catch(e) { document.getElementById('typeOutput').textContent = "Invalid JSON"; }
-}
-
-// --- Security / JWT ---
-function debugJWT() {
-    const token = document.getElementById('jwtInput').value;
-    try {
-        const parts = token.split('.');
-        const header = JSON.parse(atob(parts[0]));
+        const parts = document.getElementById('input2').value.split('.');
         const payload = JSON.parse(atob(parts[1]));
-        document.getElementById('jwtHeader').textContent = JSON.stringify(header, null, 2);
-        document.getElementById('jwtPayload').textContent = JSON.stringify(payload, null, 2);
-        
-        // Expiration check
-        if(payload.exp) {
-            const date = new Date(payload.exp * 1000);
-            document.getElementById('jwtPayload').textContent += `\n\n// Expires at: ${date.toLocaleString()}`;
-        }
-    } catch(e) { alert("Invalid JWT Token"); }
+        document.getElementById('output2').textContent = JSON.stringify(payload, null, 4);
+    } catch { document.getElementById('output2').textContent = "Invalid JWT"; }
 }
 
-// --- Cron ---
-function parseCron() {
-    const cron = document.getElementById('cronInput').value.split(' ');
-    if(cron.length < 5) { document.getElementById('cronOutput').textContent = "Invalid Cron (need 5 parts)"; return; }
-    document.getElementById('cronOutput').textContent = `Minute: ${cron[0]}\nHour: ${cron[1]}\nDay: ${cron[2]}\nMonth: ${cron[3]}\nWeekday: ${cron[4]}`;
+// --- 🔄 変換機能 ---
+function runTypeGen() {
+    try {
+        const obj = JSON.parse(document.getElementById('input3').value);
+        let ts = "interface Root {\n";
+        for (let key in obj) ts += `  ${key}: ${typeof obj[key]};\n`;
+        document.getElementById('output3').textContent = ts + "}";
+    } catch { document.getElementById('output3').textContent = "Invalid JSON"; }
 }
 
-// --- Client Info ---
-function getClientInfo() {
-    const data = {
-        "User Agent": navigator.userAgent,
-        "Language": navigator.language,
-        "Screen": `${window.screen.width}x${window.screen.height}`,
-        "Online Status": navigator.onLine ? "Online" : "Offline",
-        "Platform": navigator.platform,
-        "Cookies Enabled": navigator.cookieEnabled
-    };
-    let html = "";
-    for(let k in data) html += `<tr><th>${k}</th><td>${data[k]}</td></tr>`;
-    document.getElementById('clientTable').innerHTML = html;
+function runUrl(mode) {
+    const val = document.getElementById('input3').value;
+    document.getElementById('output3').textContent = mode === 'enc' ? encodeURIComponent(val) : decodeURIComponent(val);
 }
 
-// --- Generator ---
-function generate(type) {
-    const out = document.getElementById('genOutput');
-    if(type === 'uuid') out.textContent = crypto.randomUUID();
-    if(type === 'lorem') out.textContent = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.";
-    if(type === 'pass') {
-        const set = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789!@#$%^&*";
-        let p = "";
-        for(let i=0; i<20; i++) p += set.charAt(Math.floor(Math.random() * set.length));
-        out.textContent = p;
-    }
+function runCase(mode) {
+    document.getElementById('output3').textContent = document.getElementById('input3').value.toUpperCase();
 }
 
-// --- Diff ---
-function runDiff() {
-    const l = document.getElementById('diff1').value.split('\n');
-    const r = document.getElementById('diff2').value.split('\n');
-    let res = "";
-    const max = Math.max(l.length, r.length);
-    for(let i=0; i<max; i++) {
-        if(l[i] !== r[i]) res += `Line ${i+1}: ❌\n  A: ${l[i] || ""}\n  B: ${r[i] || ""}\n`;
-    }
-    document.getElementById('diffOutput').textContent = res || "Everything matches!";
+// --- 🎲 その他 ---
+function runGen(type) {
+    const out = document.getElementById('output4');
+    if (type === 'uuid') out.textContent = crypto.randomUUID();
+    else out.textContent = Math.random().toString(36).slice(-12);
 }
 
+function runClient() {
+    document.getElementById('output4').textContent = `UA: ${navigator.userAgent}\nScreen: ${window.screen.width}x${window.screen.height}\nLang: ${navigator.language}`;
+}
