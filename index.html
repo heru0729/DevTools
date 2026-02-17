@@ -3,8 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevTools Lite | Developer Toolkit</title>
+    <title>DevTools Lite | Free JSON Formatter, API Tester, Base64, UUID, JWT, Diff Tool</title>
+
+    <meta name="description" content="Free online JSON formatter, API tester, Base64 encoder, UUID generator, JWT decoder, Diff tool.">
+    <meta name="keywords" content="JSON formatter, API tester, Base64, UUID, JWT, Diff tool, developer tools">
+    <meta name="author" content="Heru">
+    <meta property="og:title" content="DevTools Lite - Online JSON & API Tool">
+    <meta property="og:url" content="https://devtools.f5.si/">
+
     <link rel="stylesheet" href="style.css">
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JEW06PPQN4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-JEW06PPQN4');
+    </script>
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9619368699008291" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -12,7 +29,7 @@
     <h1 id="mainTitle">DevTools Lite</h1>
 
     <div class="top-controls">
-        <button id="themeToggle">Switch Theme</button>
+        <button id="themeToggle">Light</button>
     </div>
 
     <div class="tabs">
@@ -25,34 +42,44 @@
     </div>
 
     <section class="tab-content active" id="json">
-        <textarea id="jsonInput" rows="10" placeholder="Enter JSON here"></textarea>
+        <textarea id="jsonInput" placeholder="Enter JSON here"></textarea>
         <div class="btn-group">
             <button id="formatBtn">Format</button>
             <button id="minifyBtn">Minify</button>
-            <button id="copyJsonBtn">Copy</button>
+            <button id="copyJsonBtn">Copy Result</button>
         </div>
-        <pre id="jsonOutput"></pre>
+        <div class="output-wrapper">
+            <pre id="jsonOutput"></pre>
+        </div>
     </section>
 
     <section class="tab-content" id="diff">
-        <textarea id="jsonA" rows="5" placeholder="JSON A"></textarea>
-        <textarea id="jsonB" rows="5" placeholder="JSON B"></textarea>
+        <textarea id="jsonA" placeholder="JSON A"></textarea>
+        <textarea id="jsonB" placeholder="JSON B"></textarea>
         <button id="diffBtn">Compare</button>
-        <pre id="diffOutput"></pre>
+        <div class="output-wrapper">
+            <pre id="diffOutput"></pre>
+        </div>
     </section>
 
     <section class="tab-content" id="base64">
-        <textarea id="base64Input" rows="5" placeholder="Enter text"></textarea>
+        <textarea id="base64Input" placeholder="Enter text (Japanese supported)"></textarea>
         <div class="btn-group">
             <button id="encodeBtn">Encode</button>
             <button id="decodeBtn">Decode</button>
+            <button id="copyBase64Btn">Copy</button>
         </div>
-        <pre id="base64Output"></pre>
+        <div class="output-wrapper">
+            <pre id="base64Output"></pre>
+        </div>
     </section>
 
     <section class="tab-content" id="uuid">
         <button id="uuidBtn">Generate UUID v4</button>
-        <pre id="uuidOutput"></pre>
+        <button id="copyUuidBtn">Copy</button>
+        <div class="output-wrapper">
+            <pre id="uuidOutput"></pre>
+        </div>
     </section>
 
     <section class="tab-content" id="api">
@@ -61,22 +88,34 @@
             <option value="GET">GET</option>
             <option value="POST">POST</option>
         </select>
-        <textarea id="apiBody" rows="5" placeholder="Body (JSON)"></textarea>
-        <button id="sendBtn">Send</button>
-        <div id="loading" class="loading">Loading...</div>
-        <pre id="apiOutput"></pre>
+        <textarea id="apiBody" placeholder="Request Body (JSON for POST)"></textarea>
+        <button id="sendBtn">Send Request</button>
+        <div id="loading" class="loading">Sending...</div>
+        <div class="output-wrapper">
+            <pre id="apiOutput"></pre>
+        </div>
     </section>
 
     <section class="tab-content" id="jwt">
-        <textarea id="jwtInput" rows="3" placeholder="Paste JWT"></textarea>
-        <button id="decodeJwtBtn">Decode</button>
+        <textarea id="jwtInput" placeholder="Paste JWT here"></textarea>
+        <button id="decodeJwtBtn">Decode JWT</button>
         <div id="jwtStatus"></div>
         <div class="jwt-sections">
-            Header: <pre id="jwtHeader"></pre>
-            Payload: <pre id="jwtPayload"></pre>
-            Signature: <pre id="jwtSignature"></pre>
+            <div>Header: <pre id="jwtHeader"></pre></div>
+            <div>Payload: <pre id="jwtPayload"></pre></div>
+            <div>Signature: <pre id="jwtSignature"></pre></div>
         </div>
     </section>
+
+    <div class="ad-bottom">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-9619368699008291"
+             data-ad-slot="YOUR_AD_SLOT"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
 </main>
 
 <script src="script.js"></script>
