@@ -1,110 +1,73 @@
-/* =========================================
-   DevTools Pro - Universal Core
-   ========================================= */
 :root {
     --bg: #0c0c0e; --sidebar: #141418; --panel: #1c1c22;
     --accent: #818cf8; --border: #27272a; --text: #f4f4f5; --text-dim: #71717a;
 }
-
 body.light {
     --bg: #ffffff; --sidebar: #f2f2f5; --panel: #ffffff;
     --border: #e4e4e7; --text: #09090b; --text-dim: #71717a; --accent: #4f46e5;
 }
 
-* { box-sizing: border-box; transition: background 0.15s; }
-body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); height: 100vh; width: 100vw; overflow: hidden; }
+* { box-sizing: border-box; transition: background 0.15s, color 0.15s; }
+body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
 
 .app-shell { display: flex; height: 100vh; width: 100vw; }
 
-/* 🚦 左端カテゴリ (PC) */
-.nav-rail {
-    width: 72px; background: var(--sidebar); border-right: 1px solid var(--border);
-    display: flex; flex-direction: column; align-items: center; padding: 20px 0; flex-shrink: 0;
-}
+/* Navigation Rail */
+.nav-rail { width: 72px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 20px 0; flex-shrink: 0; }
 .nav-group { display: flex; flex-direction: column; gap: 15px; flex: 1; }
-.rail-btn {
-    width: 48px; height: 48px; border-radius: 12px; border: none; background: transparent;
-    font-size: 20px; cursor: pointer; color: var(--text-dim);
-}
-.rail-btn.active { background: var(--accent); color: white; }
-.control-btn { width: 44px; height: 44px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; color: var(--text); cursor: pointer; font-size: 11px; font-weight: 800; margin-bottom: 10px; }
+.rail-btn { width: 48px; height: 48px; border-radius: 12px; border: none; background: transparent; font-size: 20px; cursor: pointer; color: var(--text-dim); }
+.rail-btn.active { background: var(--accent); color: white; box-shadow: 0 4px 15px rgba(129, 140, 248, 0.3); }
 
-/* 📂 コンテンツエリア (Sidebar + Workspace) */
+/* Sidebar & Search */
 .main-content { flex: 1; display: flex; min-width: 0; height: 100%; }
+.tool-sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+.search-box { padding: 15px; }
+.search-box input { width: 100%; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 10px; color: var(--text); outline: none; font-size: 13px; }
 
-/* ツールサイドバー (PC) */
-.tool-sidebar {
-    width: 240px; background: var(--sidebar); border-right: 1px solid var(--border);
-    display: flex; flex-direction: column; flex-shrink: 0;
-}
 .tool-list { flex: 1; padding: 10px; overflow-y: auto; }
-.tool-item {
-    width: 100%; padding: 12px 15px; border: none; background: transparent;
-    color: var(--text-dim); text-align: left; cursor: pointer; border-radius: 8px;
-    font-size: 13px; font-weight: 600; margin-bottom: 2px;
-}
-.tool-item.active { background: var(--panel); color: var(--accent); }
+.tool-item-wrapper { display: flex; align-items: center; border-radius: 10px; margin-bottom: 2px; }
+.tool-item-wrapper.active { background: var(--panel); }
+.tool-btn { flex: 1; padding: 12px 15px; border: none; background: transparent; color: var(--text-dim); text-align: left; cursor: pointer; font-size: 13px; font-weight: 600; }
+.tool-item-wrapper.active .tool-btn { color: var(--accent); }
+.fav-star { cursor: pointer; padding: 0 15px; color: var(--text-dim); font-size: 14px; }
+.fav-star.active { color: #fbbf24; }
 
-/* 🖥️ ワークスペース */
-.workspace { flex: 1; display: flex; flex-direction: column; min-width: 0; height: 100%; }
-.workspace-header { padding: 20px 30px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-.title-area h1 { margin: 0; font-size: 20px; }
-.title-area p { margin: 2px 0 0; font-size: 12px; color: var(--text-dim); }
+/* Workspace */
+.workspace { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.workspace-header { padding: 20px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.action-bar-container { display: flex; align-items: center; gap: 15px; }
+.mobile-tabs { display: none; }
 
-/* 🛠️ エディタグリッド (PCで横並び、スマホで縦) */
-.editor-grid {
-    flex: 1; display: grid; grid-template-columns: 1fr 1fr;
-    background: var(--border); gap: 1px; overflow: hidden; /* PCは内部スクロール */
-}
+/* Editor Grid (PC Default: Horizontal) */
+.editor-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; background: var(--border); gap: 1px; overflow: hidden; }
+.editor-grid.vertical-mode { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; overflow-y: auto; }
 
 .editor-container { background: var(--bg); display: flex; flex-direction: column; min-width: 0; }
-.editor-label {
-    padding: 8px 20px; font-size: 10px; font-weight: 800; color: var(--text-dim);
-    border-bottom: 1px solid var(--border); background: var(--bg);
-}
-
-textarea {
-    flex: 1; background: transparent; border: none; color: var(--text);
-    padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px;
-    resize: none; outline: none;
-}
+.editor-label { padding: 8px 20px; font-size: 10px; font-weight: 800; color: var(--text-dim); border-bottom: 1px solid var(--border); background: var(--bg); }
+textarea { flex: 1; background: transparent; border: none; color: var(--text); padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; resize: none; outline: none; line-height: 1.6; }
 .output-viewer { flex: 1; position: relative; background: var(--bg); overflow: auto; }
-pre { margin: 0; padding: 20px; color: var(--text); }
+pre { margin: 0; padding: 20px; }
+.fab-copy { position: absolute; top: 10px; right: 20px; background: var(--panel); color: var(--text); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; z-index: 10; }
 
-.fab-copy {
-    position: absolute; top: 10px; right: 15px; background: var(--panel);
-    color: var(--text); border: 1px solid var(--border); padding: 5px 10px;
-    border-radius: 6px; font-size: 11px; z-index: 10;
-}
+.ad-footer-container { width: 100%; background: var(--sidebar); border-top: 1px solid var(--border); padding: 10px; min-height: 100px; display: flex; justify-content: center; }
 
-.ad-footer-container { width: 100%; background: var(--sidebar); border-top: 1px solid var(--border); padding: 10px; flex-shrink: 0; }
-
-/* =========================================
-   📱 スマホ専用: レイアウト崩れを防止
-   ========================================= */
+/* Mobile Optimization */
 @media (max-width: 768px) {
     .app-shell { flex-direction: column; }
-    
-    .nav-rail {
-        width: 100%; height: 60px; flex-direction: row; 
-        border-right: none; border-bottom: 1px solid var(--border); padding: 0 15px;
-    }
-    .nav-group { flex-direction: row; justify-content: flex-start; width: auto; }
+    .nav-rail { width: 100%; height: 60px; flex-direction: row; border-right: none; border-bottom: 1px solid var(--border); padding: 0 15px; }
+    .nav-group { flex-direction: row; justify-content: flex-start; }
     .rail-footer { flex-direction: row; margin-left: auto; }
-
-    .main-content { flex-direction: column; overflow-y: auto; } /* スマホ全体をスクロール可能に */
-
-    .tool-sidebar { width: 100%; height: 50px; border-right: none; border-bottom: 1px solid var(--border); }
-    .tool-list { display: flex; flex-direction: row; overflow-x: auto; padding: 5px; white-space: nowrap; }
-    .tool-item { width: auto; padding: 8px 15px; margin-bottom: 0; }
-
-    /* 🛠️ ここが重要: スマホの時はGridを1カラムにする */
-    .editor-grid {
-        display: block; /* 横並びを解除 */
-        height: auto;
-        overflow: visible;
-    }
-    .editor-container { min-height: 300px; border-bottom: 1px solid var(--border); }
+    .main-content { flex-direction: column; overflow-y: auto; }
+    .tool-sidebar { width: 100%; height: auto; border-right: none; }
+    .tool-list { display: flex; flex-direction: row; overflow-x: auto; white-space: nowrap; padding: 10px; }
+    .tool-item-wrapper { width: auto; }
+    .workspace-header { flex-direction: column; align-items: flex-start; gap: 10px; padding: 15px; }
+    .mobile-tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--sidebar); }
+    .mobile-tab { flex: 1; padding: 12px; text-align: center; font-size: 12px; font-weight: 800; cursor: pointer; color: var(--text-dim); }
+    .mobile-tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+    .editor-grid { display: block; overflow: visible; }
+    .editor-container.hidden-mobile { display: none; }
+    .editor-container { min-height: 400px; }
 }
 
 .custom-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
