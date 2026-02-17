@@ -1,152 +1,123 @@
-let currentLang = 'en';
+// --- 500選のコア機能データベース ---
+const tools = [
+    { id: 'json-fmt', cat: 'data', name: 'JSON Formatter', desc: 'JSONの整形・圧縮', tags: 'json, format, minify' },
+    { id: 'sql-fmt', cat: 'data', name: 'SQL Formatter', desc: 'SQLクエリの整形', tags: 'sql, db, format' },
+    { id: 'yaml-json', cat: 'data', name: 'YAML ↔ JSON', desc: 'YAMLとJSONの相互変換', tags: 'yaml, json, convert' },
+    { id: 'jwt-dec', cat: 'security', name: 'JWT Decoder', desc: 'JWTトークンの解析', tags: 'jwt, auth, token' },
+    { id: 'hash-gen', cat: 'security', name: 'Hash Generator', desc: 'SHA256, MD5ハッシュ生成', tags: 'sha256, md5, hash' },
+    { id: 'b64-dec', cat: 'security', name: 'Base64 Tool', desc: 'Base64のエンコード・デコード', tags: 'base64, enc, dec' },
+    { id: 'qr-gen', cat: 'frontend', name: 'QR Code', desc: 'テキストからQRコードを生成', tags: 'qr, code, image' },
+    { id: 'px-rem', cat: 'frontend', name: 'PX ↔ REM', desc: 'フォントサイズ変換', tags: 'css, px, rem' },
+    { id: 'unix-tm', cat: 'utils', name: 'Unix Timestamp', desc: '時間のスタンプ変換', tags: 'time, unix, stamp' },
+    { id: 'uuid-gen', cat: 'utils', name: 'UUID Generator', desc: 'UUID v4, v7の生成', tags: 'uuid, id, gen' }
+];
 
-// --- Language Toggle Logic ---
-const langToggle = document.getElementById('langToggle');
-if (langToggle) {
-    langToggle.addEventListener('click', () => {
-        currentLang = (currentLang === 'en') ? 'ja' : 'en';
-        
-        document.querySelectorAll('.lang').forEach(el => {
-            const text = el.getAttribute(`data-${currentLang}`);
-            if (text) el.textContent = text;
-        });
+let currentTool = tools[0];
 
-        document.querySelectorAll('textarea').forEach(el => {
-            el.placeholder = currentLang === 'en' ? "Paste data here..." : "ここにデータを入力...";
-        });
+// --- 初期化 ---
+window.onload = () => {
+    switchCategory('data');
+    renderTool();
+    
+    // Ctrl + K 検索呼び出し
+    window.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'k') {
+            e.preventDefault();
+            document.getElementById('commandPalette').classList.add('active');
+            document.getElementById('toolSearch').focus();
+        }
+        if (e.key === 'Escape') document.getElementById('commandPalette').classList.remove('active');
+    });
+};
 
-        langToggle.textContent = currentLang === 'en' ? "🇯🇵 日本語へ" : "🇺🇸 To English";
-        updateThemeButtonText();
+// --- カテゴリ切り替え ---
+function switchCategory(cat) {
+    document.querySelectorAll('.icon-btn').forEach(b => b.classList.remove('active'));
+    event?.target?.classList?.add('active');
+    
+    document.getElementById('currentCatTitle').textContent = cat.toUpperCase();
+    const list = document.getElementById('toolList');
+    list.innerHTML = "";
+    
+    tools.filter(t => t.cat === cat).forEach(t => {
+        const btn = document.createElement('button');
+        btn.className = `tool-item ${t.id === currentTool.id ? 'active' : ''}`;
+        btn.textContent = t.name;
+        btn.onclick = () => {
+            currentTool = t;
+            renderTool();
+            switchCategory(cat); // 再描画
+        };
+        list.appendChild(btn);
     });
 }
 
-// --- Theme Toggle Logic ---
-const themeToggle = document.getElementById('themeToggle');
-if (themeToggle) {
-    themeToggle.addEventListener('click', function() {
-        document.body.classList.toggle('light');
-        updateThemeButtonText();
-    });
+// --- ツール描画 & アクション生成 ---
+function renderTool() {
+    document.getElementById('activeToolName').textContent = currentTool.name;
+    document.getElementById('activeToolDesc').textContent = currentTool.desc;
+    const actionArea = document.getElementById('toolActions');
+    actionArea.innerHTML = "";
+
+    // ツールごとの専用ボタンを生成
+    if (currentTool.id === 'json-fmt') {
+        createAction('Prettify', () => processData(val => JSON.stringify(JSON.parse(val), null, 4)));
+        createAction('Minify', () => processData(val => JSON.stringify(JSON.parse(val))));
+    } else if (currentTool.id === 'hash-gen') {
+        createAction('SHA256', () => processData(val => CryptoJS.SHA256(val).toString()));
+        createAction('MD5', () => processData(val => CryptoJS.MD5(val).toString()));
+    } else if (currentTool.id === 'qr-gen') {
+        createAction('Generate', () => {
+            const val = document.getElementById('mainInput').value;
+            const qr = qrcode(0, 'M'); qr.addData(val); qr.make();
+            document.getElementById('imageContainer').innerHTML = qr.createImgTag(5);
+            document.getElementById('mainOutput').textContent = "QR Code Generated Above";
+        });
+    }
+    // 他の機能も同様にelse ifで追加可能...
 }
 
-function updateThemeButtonText() {
-    const isLight = document.body.classList.contains('light');
-    if (currentLang === 'en') {
-        themeToggle.textContent = isLight ? "☀️ Light Mode" : "🌙 Dark Mode";
-    } else {
-        themeToggle.textContent = isLight ? "☀️ ライトモード" : "🌙 ダークモード";
+function createAction(label, fn) {
+    const b = document.createElement('button');
+    b.className = "primary";
+    b.textContent = label;
+    b.onclick = fn;
+    document.getElementById('toolActions').appendChild(b);
+}
+
+// --- 共通データ処理 ---
+function processData(callback) {
+    const input = document.getElementById('mainInput').value;
+    const output = document.getElementById('mainOutput');
+    document.getElementById('imageContainer').innerHTML = ""; // 画像クリア
+    try {
+        output.textContent = callback(input);
+        hljs.highlightElement(output);
+    } catch (e) {
+        output.textContent = "Error: " + e.message;
     }
 }
 
-// --- Copy Function with Visual Feedback ---
-function copyText(id, event) {
-    const text = document.getElementById(id).textContent;
-    const btn = event.target;
-    const originalText = btn.textContent;
-
-    navigator.clipboard.writeText(text).then(() => {
-        btn.textContent = currentLang === 'en' ? "Copied! ✅" : "完了 ✅";
-        btn.style.backgroundColor = "#22c55e";
-        btn.style.color = "#fff";
-        
-        setTimeout(() => {
-            btn.textContent = originalText;
-            btn.style.backgroundColor = "";
-            btn.style.color = "";
-        }, 1500);
+// --- 検索エンジン ---
+document.getElementById('toolSearch').oninput = (e) => {
+    const val = e.target.value.toLowerCase();
+    const res = document.getElementById('searchResult');
+    res.innerHTML = "";
+    tools.filter(t => t.name.toLowerCase().includes(val) || t.tags.includes(val)).forEach(t => {
+        const d = document.createElement('div');
+        d.className = "search-item";
+        d.innerHTML = `<span>${t.name}</span><small>${t.cat}</small>`;
+        d.onclick = () => { currentTool = t; renderTool(); document.getElementById('commandPalette').classList.remove('active'); };
+        res.appendChild(d);
     });
+};
+
+function copyResult(e) {
+    const txt = document.getElementById('mainOutput').textContent;
+    navigator.clipboard.writeText(txt);
+    const btn = e.target;
+    btn.textContent = "Copied! ✅";
+    setTimeout(() => btn.textContent = "Copy Result", 2000);
 }
 
-// --- Tab Switching ---
-document.querySelectorAll('.nav-item').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.nav-item, .panel').forEach(el => el.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.tab).classList.add('active');
-    });
-});
-
-// --- Feature Functions ---
-function highlight(el) { if (typeof hljs !== 'undefined') hljs.highlightElement(el); }
-
-function runJSON(mode) {
-    const input = document.getElementById('input1').value;
-    const output = document.getElementById('output1');
-    try {
-        const obj = JSON.parse(input);
-        output.textContent = (mode === 'format') ? JSON.stringify(obj, null, 4) : JSON.stringify(obj);
-        highlight(output);
-    } catch (e) { output.textContent = "Error: Invalid JSON"; }
-}
-
-function runSQL() {
-    const input = document.getElementById('input1').value;
-    document.getElementById('output1').textContent = sqlFormatter.format(input);
-}
-
-function runYaml() {
-    const input = document.getElementById('input1').value;
-    try {
-        const obj = JSON.parse(input);
-        document.getElementById('output1').textContent = jsyaml.dump(obj);
-    } catch { document.getElementById('output1').textContent = "Error"; }
-}
-
-function runCsv() {
-    const input = document.getElementById('input1').value.trim().split('\n');
-    if(input.length < 2) return;
-    const headers = input[0].split(',');
-    const json = input.slice(1).map(row => {
-        const cols = row.split(',');
-        return headers.reduce((acc, h, i) => ({ ...acc, [h.trim()]: cols[i]?.trim() }), {});
-    });
-    document.getElementById('output1').textContent = JSON.stringify(json, null, 4);
-}
-
-function runHash(algo) {
-    const input = document.getElementById('input2').value;
-    document.getElementById('output2').textContent = CryptoJS[algo](input).toString();
-}
-
-function runBase64(mode) {
-    const input = document.getElementById('input2').value;
-    try {
-        document.getElementById('output2').textContent = mode === 'enc' ? btoa(unescape(encodeURIComponent(input))) : decodeURIComponent(escape(atob(input)));
-    } catch { document.getElementById('output2').textContent = "Error"; }
-}
-
-function runJWT() {
-    try {
-        const parts = document.getElementById('input2').value.split('.');
-        const payload = JSON.parse(atob(parts[1]));
-        document.getElementById('output2').textContent = JSON.stringify(payload, null, 4);
-    } catch { document.getElementById('output2').textContent = "Error"; }
-}
-
-function runTypeGen() {
-    try {
-        const obj = JSON.parse(document.getElementById('input3').value);
-        let ts = "interface Root {\n";
-        for (let key in obj) ts += `  ${key}: ${typeof obj[key]};\n`;
-        document.getElementById('output3').textContent = ts + "}";
-    } catch { document.getElementById('output3').textContent = "Error"; }
-}
-
-function runUrl(mode) {
-    const val = document.getElementById('input3').value;
-    document.getElementById('output3').textContent = mode === 'enc' ? encodeURIComponent(val) : decodeURIComponent(val);
-}
-
-function runCase(mode) {
-    document.getElementById('output3').textContent = document.getElementById('input3').value.toUpperCase();
-}
-
-function runGen(type) {
-    const out = document.getElementById('output4');
-    if (type === 'uuid') out.textContent = crypto.randomUUID();
-    else out.textContent = Math.random().toString(36).slice(-12);
-}
-
-function runClient() {
-    document.getElementById('output4').textContent = `UserAgent: ${navigator.userAgent}\nScreen: ${window.screen.width}x${window.screen.height}\nLanguage: ${navigator.language}`;
-}
+function toggleTheme() { document.body.classList.toggle('light'); }
