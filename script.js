@@ -1,11 +1,28 @@
-// --- 共通処理 ---
+let currentLang = 'en';
+
+// --- 言語切り替え ---
+const langToggle = document.getElementById('langToggle');
+langToggle.addEventListener('click', () => {
+    currentLang = (currentLang === 'en') ? 'ja' : 'en';
+    document.querySelectorAll('.lang').forEach(el => {
+        el.textContent = el.getAttribute(`data-${currentLang}`);
+    });
+    // placeholderの切り替え
+    document.querySelectorAll('textarea').forEach(el => {
+        el.placeholder = currentLang === 'en' ? "Paste data here..." : "ここにデータを入力...";
+    });
+    langToggle.textContent = currentLang === 'en' ? "🇯🇵 日本語へ" : "🇺🇸 To English";
+});
+
+// --- UI操作 ---
 function highlight(el) { if (typeof hljs !== 'undefined') hljs.highlightElement(el); }
 function copyText(id) {
     const txt = document.getElementById(id).textContent;
-    navigator.clipboard.writeText(txt).then(() => alert("コピーしました！"));
+    navigator.clipboard.writeText(txt).then(() => {
+        alert(currentLang === 'en' ? "Copied!" : "コピーしました！");
+    });
 }
 
-// タブ切り替え
 document.querySelectorAll('.nav-item').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.nav-item, .panel').forEach(el => el.classList.remove('active'));
@@ -14,13 +31,14 @@ document.querySelectorAll('.nav-item').forEach(btn => {
     });
 });
 
-// テーマ切り替え
 document.getElementById('themeToggle').addEventListener('click', function() {
     const isLight = document.body.classList.toggle('light');
-    this.textContent = isLight ? "☀️ ライトモード" : "🌙 ダークモード";
+    this.textContent = isLight ? 
+        (currentLang === 'en' ? "☀️ Light Mode" : "☀️ ライトモード") : 
+        (currentLang === 'en' ? "🌙 Dark Mode" : "🌙 ダークモード");
 });
 
-// --- 📦 データ整形機能 ---
+// --- 📦 各種機能 ---
 function runJSON(mode) {
     const input = document.getElementById('input1').value;
     const output = document.getElementById('output1');
@@ -28,7 +46,7 @@ function runJSON(mode) {
         const obj = JSON.parse(input);
         output.textContent = (mode === 'format') ? JSON.stringify(obj, null, 4) : JSON.stringify(obj);
         highlight(output);
-    } catch (e) { output.textContent = "Invalid JSON"; }
+    } catch (e) { output.textContent = "Error: Invalid JSON format"; }
 }
 
 function runSQL() {
@@ -41,11 +59,12 @@ function runYaml() {
     try {
         const obj = JSON.parse(input);
         document.getElementById('output1').textContent = jsyaml.dump(obj);
-    } catch { document.getElementById('output1').textContent = "Invalid JSON"; }
+    } catch { document.getElementById('output1').textContent = "Error: Please input valid JSON"; }
 }
 
 function runCsv() {
     const input = document.getElementById('input1').value.trim().split('\n');
+    if(input.length < 2) return;
     const headers = input[0].split(',');
     const json = input.slice(1).map(row => {
         const cols = row.split(',');
@@ -54,7 +73,6 @@ function runCsv() {
     document.getElementById('output1').textContent = JSON.stringify(json, null, 4);
 }
 
-// --- 🔐 セキュリティ機能 ---
 function runHash(algo) {
     const input = document.getElementById('input2').value;
     document.getElementById('output2').textContent = CryptoJS[algo](input).toString();
@@ -75,7 +93,6 @@ function runJWT() {
     } catch { document.getElementById('output2').textContent = "Invalid JWT"; }
 }
 
-// --- 🔄 変換機能 ---
 function runTypeGen() {
     try {
         const obj = JSON.parse(document.getElementById('input3').value);
@@ -94,7 +111,6 @@ function runCase(mode) {
     document.getElementById('output3').textContent = document.getElementById('input3').value.toUpperCase();
 }
 
-// --- 🎲 その他 ---
 function runGen(type) {
     const out = document.getElementById('output4');
     if (type === 'uuid') out.textContent = crypto.randomUUID();
@@ -102,5 +118,5 @@ function runGen(type) {
 }
 
 function runClient() {
-    document.getElementById('output4').textContent = `UA: ${navigator.userAgent}\nScreen: ${window.screen.width}x${window.screen.height}\nLang: ${navigator.language}`;
+    document.getElementById('output4').textContent = `UserAgent: ${navigator.userAgent}\nScreen: ${window.screen.width}x${window.screen.height}\nLanguage: ${navigator.language}`;
 }
