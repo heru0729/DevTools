@@ -2,90 +2,123 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DevTools Pro - 500 Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevTools Lite</title>
     
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9619368699008291" crossorigin="anonymous"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css" id="hljs-theme">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql-formatter/15.3.1/sql-formatter.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root { --bg: #0c0c0e; --panel: #141418; --accent: #818cf8; --border: #27272a; --text: #f4f4f5; }
+        body.light { --bg: #ffffff; --panel: #f4f4f5; --accent: #4f46e5; --border: #e4e4e7; --text: #09090b; }
+        
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); }
+        
+        /* Navigation Area */
+        header { background: var(--panel); border-bottom: 1px solid var(--border); padding: 10px 20px; display: flex; align-items: center; gap: 15px; position: sticky; top: 0; z-index: 100; }
+        select, input { background: var(--bg); color: var(--text); border: 1px solid var(--border); padding: 8px; border-radius: 6px; outline: none; }
+        
+        /* Main Layout */
+        .container { display: flex; flex-direction: column; min-height: calc(100vh - 60px); }
+        .editors { display: grid; grid-template-columns: 1fr 1fr; flex: 1; }
+        
+        .box { display: flex; flex-direction: column; border-right: 1px solid var(--border); }
+        .label { padding: 5px 15px; font-size: 11px; font-weight: 800; opacity: 0.5; background: var(--panel); }
+        
+        textarea { flex: 1; width: 100%; border: none; background: transparent; color: var(--text); padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 14px; resize: none; outline: none; min-height: 300px; }
+        
+        .output-box { position: relative; background: var(--bg); }
+        pre { margin: 0; padding: 20px; white-space: pre-wrap; word-break: break-all; }
+        
+        .btn-group { padding: 10px 20px; background: var(--panel); border-top: 1px solid var(--border); display: flex; gap: 10px; }
+        button { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+        button:active { opacity: 0.8; }
+
+        .ad-slot { padding: 20px; text-align: center; background: var(--panel); border-top: 1px solid var(--border); }
+
+        @media (max-width: 768px) {
+            .editors { grid-template-columns: 1fr; }
+            .box { border-right: none; border-bottom: 1px solid var(--border); }
+        }
+    </style>
 </head>
 <body class="dark">
 
-<div class="app-shell">
-    <nav class="nav-rail">
-        <div class="nav-group">
-            <button class="rail-btn active" data-cat="data" title="Data Magic">📦</button>
-            <button class="rail-btn" data-cat="security" title="Security">🔐</button>
-            <button class="rail-btn" data-cat="frontend" title="Frontend">🎨</button>
-            <button class="rail-btn" data-cat="utils" title="Utilities">🛠️</button>
+<header>
+    <select id="toolSelect">
+        <option value="json">JSON Format</option>
+        <option value="sql">SQL Format</option>
+        <option value="sha256">SHA-256</option>
+        <option value="base64">Base64 Decode</option>
+    </select>
+    <button onclick="document.body.classList.toggle('light')">🌓</button>
+    <span id="status" style="font-size: 12px; margin-left: auto; opacity: 0.5;"></span>
+</header>
+
+<div class="container">
+    <div class="editors">
+        <div class="box">
+            <div class="label">INPUT</div>
+            <textarea id="input" placeholder="Paste here..."></textarea>
         </div>
-        <div class="rail-footer">
-            <button id="langSwitcher" class="control-btn">EN</button>
-            <button id="themeSwitcher" class="control-btn">🌙</button>
+        <div class="box output-box">
+            <div class="label">OUTPUT</div>
+            <pre><code id="output" class="language-json"></code></pre>
         </div>
-    </nav>
+    </div>
 
-    <div class="main-content">
-        <aside class="tool-sidebar">
-            <div class="search-box">
-                <input type="text" id="toolSearch" placeholder="Search (Ctrl + K)...">
-            </div>
-            <div id="toolList" class="tool-list custom-scroll"></div>
-        </aside>
+    <div class="btn-group">
+        <button onclick="process()">RUN (Ctrl + Enter)</button>
+        <button style="background: var(--panel); border: 1px solid var(--border);" onclick="copy()">Copy</button>
+    </div>
 
-        <main class="workspace">
-            <header class="workspace-header">
-                <div class="title-area">
-                    <h1 id="activeToolName">---</h1>
-                    <p id="activeToolDesc">---</p>
-                </div>
-                <div class="action-bar-container">
-                    <div class="action-bar" id="toolActions"></div>
-                    <button id="layoutToggle" class="control-btn" title="Toggle Layout">🌓</button>
-                </div>
-            </header>
-
-            <div class="mobile-tabs">
-                <div class="mobile-tab active" data-target="input">INPUT</div>
-                <div class="mobile-tab" data-target="output">OUTPUT</div>
-            </div>
-
-            <section class="editor-grid" id="editorGrid">
-                <div class="editor-container" id="inputSection">
-                    <div class="editor-label">INPUT</div>
-                    <textarea id="mainInput" spellcheck="false" placeholder="Paste data here..."></textarea>
-                </div>
-                <div class="editor-container" id="outputSection">
-                    <div class="editor-label">OUTPUT</div>
-                    <div class="output-viewer">
-                        <div id="imageContainer" class="preview-box"></div>
-                        <pre><code id="mainOutput" class="custom-scroll"></code></pre>
-                        <button id="copyBtn" class="fab-copy">Copy</button>
-                    </div>
-                </div>
-            </section>
-
-            <div class="ad-footer-container">
-                <ins class="adsbygoogle"
-                     style="display:block"
-                     data-ad-client="ca-pub-9619368699008291"
-                     data-ad-slot="6699940875"
-                     data-ad-format="auto"
-                     data-full-width-responsive="true"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            </div>
-        </main>
+    <div class="ad-slot">
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9619368699008291" data-ad-slot="6699940875" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 </div>
 
-<script src="script.js"></script>
+<script>
+    function process() {
+        const type = document.getElementById('toolSelect').value;
+        const val = document.getElementById('input').value;
+        const out = document.getElementById('output');
+        
+        try {
+            if (type === 'json') out.textContent = JSON.stringify(JSON.parse(val), null, 4);
+            if (type === 'sql') out.textContent = sqlFormatter.format(val);
+            if (type === 'sha256') out.textContent = CryptoJS.SHA256(val).toString();
+            if (type === 'base64') out.textContent = atob(val);
+            
+            hljs.highlightElement(out);
+            localStorage.setItem('last_input', val);
+        } catch (e) {
+            out.textContent = "Error: " + e.message;
+        }
+    }
+
+    function copy() {
+        navigator.clipboard.writeText(document.getElementById('output').textContent);
+        document.getElementById('status').textContent = "Copied!";
+        setTimeout(() => document.getElementById('status').textContent = "", 2000);
+    }
+
+    // Recover last input
+    window.onload = () => {
+        document.getElementById('input').value = localStorage.getItem('last_input') || "";
+    };
+
+    // Hotkey
+    window.onkeydown = (e) => {
+        if (e.ctrlKey && e.key === 'Enter') process();
+    };
+</script>
+
 </body>
 </html>
