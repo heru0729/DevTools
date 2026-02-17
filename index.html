@@ -3,122 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevTools Lite | Free JSON Formatter, API Tester, Base64, UUID, JWT, Diff Tool</title>
-
-    <meta name="description" content="Free online JSON formatter, API tester, Base64 encoder, UUID generator, JWT decoder, Diff tool.">
-    <meta name="keywords" content="JSON formatter, API tester, Base64, UUID, JWT, Diff tool, developer tools">
-    <meta name="author" content="Heru">
-    <meta property="og:title" content="DevTools Lite - Online JSON & API Tool">
-    <meta property="og:url" content="https://devtools.f5.si/">
-
+    <title>DevTools Pro | All-in-One Developer Toolkit</title>
     <link rel="stylesheet" href="style.css">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-JEW06PPQN4"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-JEW06PPQN4');
-    </script>
-
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9619368699008291" crossorigin="anonymous"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-JEW06PPQN4');</script>
 </head>
 <body>
 
 <main class="container">
-    <h1 id="mainTitle">DevTools Lite</h1>
-
-    <div class="top-controls">
-        <button id="themeToggle">Theme</button>
+    <div class="header-flex">
+        <h1>DevTools Pro</h1>
+        <button id="themeToggle">Light</button>
     </div>
 
     <div class="tabs">
-        <button class="tab active" data-tab="json">JSON</button>
+        <button class="tab active" data-tab="json">JSON/XML</button>
+        <button class="tab" data-tab="crypto">Crypto/Hash</button>
+        <button class="tab" data-tab="convert">Convert/URL</button>
+        <button class="tab" data-tab="time">Time/Unit</button>
+        <button class="tab" data-tab="gen">Generator</button>
+        <button class="tab" data-tab="api">API/JWT</button>
         <button class="tab" data-tab="diff">Diff</button>
-        <button class="tab" data-tab="base64">Base64</button>
-        <button class="tab" data-tab="uuid">UUID</button>
-        <button class="tab" data-tab="api">API</button>
-        <button class="tab" data-tab="jwt">JWT</button>
     </div>
 
     <section class="tab-content active" id="json">
-        <textarea id="jsonInput" placeholder="Enter JSON here"></textarea>
+        <textarea id="jsonInput" placeholder="Enter JSON or XML..."></textarea>
         <div class="btn-group">
-            <button id="formatBtn">Format</button>
-            <button id="minifyBtn">Minify</button>
-            <button id="copyJsonBtn">Copy Result</button>
+            <button onclick="formatJSON()">JSON Format</button>
+            <button onclick="minifyJSON()">JSON Minify</button>
+            <button onclick="escapeHTML()">HTML Escape</button>
+            <button onclick="unescapeHTML()">HTML Unescape</button>
         </div>
-        <div class="output-wrapper">
-            <pre id="jsonOutput"></pre>
-        </div>
+        <pre id="jsonOutput"></pre>
     </section>
 
-    <section class="tab-content" id="diff">
-        <textarea id="jsonA" placeholder="JSON A"></textarea>
-        <textarea id="jsonB" placeholder="JSON B"></textarea>
-        <button id="diffBtn">Compare</button>
-        <div class="output-wrapper">
-            <pre id="diffOutput"></pre>
-        </div>
-    </section>
-
-    <section class="tab-content" id="base64">
-        <textarea id="base64Input" placeholder="Enter text (Japanese supported)"></textarea>
+    <section class="tab-content" id="crypto">
+        <textarea id="cryptoInput" placeholder="Enter text to hash..."></textarea>
         <div class="btn-group">
-            <button id="encodeBtn">Encode</button>
-            <button id="decodeBtn">Decode</button>
-            <button id="copyBase64Btn">Copy</button>
+            <button onclick="calcHash('MD5')">MD5</button>
+            <button onclick="calcHash('SHA256')">SHA256</button>
+            <button onclick="calcHash('SHA512')">SHA512</button>
+            <button onclick="base64Encode()">Base64 Encode</button>
+            <button onclick="base64Decode()">Base64 Decode</button>
         </div>
-        <div class="output-wrapper">
-            <pre id="base64Output"></pre>
-        </div>
+        <pre id="cryptoOutput"></pre>
     </section>
 
-    <section class="tab-content" id="uuid">
-        <button id="uuidBtn">Generate UUID v4</button>
-        <button id="copyUuidBtn">Copy</button>
-        <div class="output-wrapper">
-            <pre id="uuidOutput"></pre>
+    <section class="tab-content" id="convert">
+        <textarea id="convertInput" placeholder="Enter URL or text..."></textarea>
+        <div class="btn-group">
+            <button onclick="urlEncode()">URL Encode</button>
+            <button onclick="urlDecode()">URL Decode</button>
+            <button onclick="parseQuery()">Parse Query Params</button>
+            <button onclick="caseUpper()">UPPERCASE</button>
+            <button onclick="caseLower()">lowercase</button>
         </div>
+        <pre id="convertOutput"></pre>
+    </section>
+
+    <section class="tab-content" id="time">
+        <input type="text" id="timeInput" placeholder="Unix Timestamp (e.g. 1739832000) or Date String">
+        <div class="btn-group">
+            <button onclick="unixToDate()">Timestamp → Date</button>
+            <button onclick="dateToUnix()">Date → Timestamp</button>
+            <button onclick="curUnix()">Current Unix</button>
+        </div>
+        <pre id="timeOutput"></pre>
+    </section>
+
+    <section class="tab-content" id="gen">
+        <div class="btn-group">
+            <button onclick="genUUID()">Generate UUID v4</button>
+            <button onclick="genLorem()">Lorem Ipsum</button>
+            <button onclick="genPassword()">Strong Password</button>
+        </div>
+        <pre id="genOutput"></pre>
     </section>
 
     <section class="tab-content" id="api">
         <input type="text" id="apiUrl" placeholder="https://api.example.com/data">
-        <select id="apiMethod">
-            <option value="GET">GET</option>
-            <option value="POST">POST</option>
-        </select>
-        <textarea id="apiBody" placeholder="Request Body (JSON for POST)"></textarea>
-        <button id="sendBtn">Send Request</button>
-        <div id="loading" class="loading">Sending...</div>
-        <div class="output-wrapper">
-            <pre id="apiOutput"></pre>
+        <div class="btn-group">
+            <button id="sendBtn">Send API Request</button>
+            <button onclick="decodeJWT()">Decode JWT</button>
         </div>
+        <pre id="apiOutput"></pre>
     </section>
 
-    <section class="tab-content" id="jwt">
-        <textarea id="jwtInput" placeholder="Paste JWT here"></textarea>
-        <button id="decodeJwtBtn">Decode JWT</button>
-        <div id="jwtStatus"></div>
-        <div class="jwt-sections">
-            <div>Header: <pre id="jwtHeader"></pre></div>
-            <div>Payload: <pre id="jwtPayload"></pre></div>
-            <div>Signature: <pre id="jwtSignature"></pre></div>
+    <section class="tab-content" id="diff">
+        <div class="diff-container">
+            <textarea id="diffA" placeholder="Original text..."></textarea>
+            <textarea id="diffB" placeholder="Changed text..."></textarea>
         </div>
+        <button onclick="compareText()">Compare (Diff)</button>
+        <pre id="diffOutput"></pre>
     </section>
 
-    <div class="ad-bottom">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-9619368699008291"
-             data-ad-slot="YOUR_AD_SLOT"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
 </main>
-
 <script src="script.js"></script>
 </body>
 </html>
-
