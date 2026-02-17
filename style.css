@@ -7,57 +7,58 @@ body.light {
     --border: #e4e4e7; --text: #09090b; --text-dim: #71717a; --accent: #4f46e5;
 }
 
-* { box-sizing: border-box; transition: 0.1s ease; }
+* { box-sizing: border-box; }
 body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
 
 .app-shell { display: flex; height: 100vh; width: 100vw; }
 
-/* 🚦 Category Rail */
-.nav-rail { width: 72px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 20px 0; flex-shrink: 0; }
-.nav-group { display: flex; flex-direction: column; gap: 15px; flex: 1; }
-.rail-btn { width: 48px; height: 48px; border-radius: 12px; border: none; background: transparent; font-size: 20px; cursor: pointer; color: var(--text-dim); }
+/* 1. Rail */
+.nav-rail { width: 70px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 20px 0; flex-shrink: 0; }
+.rail-btn { width: 44px; height: 44px; border-radius: 10px; border: none; background: transparent; font-size: 20px; cursor: pointer; color: var(--text-dim); margin-bottom: 15px; }
 .rail-btn.active { background: var(--accent); color: white; }
-.control-btn { width: 44px; height: 44px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; color: var(--text); cursor: pointer; }
+.rail-spacer { flex: 1; }
+.control-btn { width: 40px; height: 40px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; color: var(--text); cursor: pointer; }
 
-.main-body { flex: 1; display: flex; overflow: hidden; }
-
-/* 📂 Tool Sidebar */
-.tool-sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-.search-area { padding: 15px; }
-.search-area input { width: 100%; background: var(--bg); border: 1px solid var(--border); padding: 10px; border-radius: 8px; color: var(--text); outline: none; }
+/* 2. Sidebar */
+.tool-sidebar { width: 240px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+.sidebar-label { padding: 25px 20px 10px; font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 0.1em; }
 .tool-list { flex: 1; overflow-y: auto; padding: 10px; }
 .tool-item { width: 100%; padding: 12px 15px; border: none; background: transparent; color: var(--text-dim); text-align: left; cursor: pointer; border-radius: 8px; font-weight: 600; font-size: 13px; margin-bottom: 2px; }
 .tool-item.active { background: var(--panel); color: var(--accent); }
 
-/* 🖥️ Workspace */
-.workspace { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-.workspace-header { padding: 20px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-.title-area h1 { margin: 0; font-size: 20px; }
-.title-area p { margin: 2px 0 0; font-size: 12px; color: var(--text-dim); }
+/* 3. Workspace */
+.workspace { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.workspace-header { padding: 20px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.title-info h1 { margin: 0; font-size: 20px; font-weight: 800; }
+.title-info p { margin: 2px 0 0; font-size: 12px; color: var(--text-dim); }
 
 .editor-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; background: var(--border); gap: 1px; min-height: 0; }
 .editor-pane { background: var(--bg); display: flex; flex-direction: column; position: relative; }
-.pane-label { padding: 8px 20px; font-size: 10px; font-weight: 800; opacity: 0.5; border-bottom: 1px solid var(--border); }
+.pane-header { padding: 8px 20px; font-size: 10px; font-weight: 800; opacity: 0.5; border-bottom: 1px solid var(--border); }
 
 textarea { flex: 1; width: 100%; background: transparent; border: none; color: var(--text); padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 14px; resize: none; outline: none; }
 .output-wrapper { flex: 1; position: relative; overflow: auto; }
 pre { margin: 0; padding: 20px; }
-.fab-copy { position: absolute; top: 10px; right: 20px; background: var(--panel); color: var(--text); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; }
+.copy-fab { position: absolute; top: 10px; right: 20px; background: var(--panel); color: var(--text); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; font-size: 10px; font-weight: 800; cursor: pointer; z-index: 10; }
 
 .primary-btn { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; }
-.ad-footer { height: 100px; background: var(--sidebar); border-top: 1px solid var(--border); display: flex; justify-content: center; align-items: center; }
+.ad-footer { height: 100px; background: var(--sidebar); border-top: 1px solid var(--border); display: flex; justify-content: center; }
 
-/* 📱 Mobile - ここが重要 */
+/* 📱 スマホ版 (縦スクロールを完全に許可し、機能も全て出す) */
 @media (max-width: 768px) {
-    .app-shell { flex-direction: column; }
-    .nav-rail { width: 100%; height: 60px; flex-direction: row; border-right: none; border-bottom: 1px solid var(--border); padding: 0 15px; }
-    .nav-group { flex-direction: row; }
-    .main-body { flex-direction: column; overflow-y: auto; } /* 縦スクロール有効化 */
+    body { overflow-y: auto; height: auto; }
+    .app-shell { flex-direction: column; height: auto; }
+    .nav-rail { width: 100%; height: 60px; flex-direction: row; border-right: none; border-bottom: 1px solid var(--border); padding: 0 10px; position: sticky; top: 0; z-index: 100; }
+    .rail-btn { margin-bottom: 0; margin-right: 10px; }
+    .rail-spacer { display: none; }
+    .main-body { flex-direction: column; }
     .tool-sidebar { width: 100%; height: auto; border-right: none; }
-    .tool-list { display: flex; flex-direction: row; overflow-x: auto; padding: 5px; }
-    .tool-item { width: auto; white-space: nowrap; }
-    .editor-grid { display: block; height: auto; } /* 横並び解除 */
-    .editor-pane { min-height: 350px; border-bottom: 1px solid var(--border); }
+    .tool-list { display: flex; flex-direction: row; overflow-x: auto; white-space: nowrap; padding: 8px; }
+    .tool-item { width: auto; padding: 8px 15px; margin-bottom: 0; }
+    .workspace { height: auto; }
+    .editor-grid { display: block; }
+    .editor-pane { min-height: 300px; }
+    .ad-footer { height: auto; padding: 15px; }
 }
 
 .custom-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
