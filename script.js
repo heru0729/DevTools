@@ -1,69 +1,56 @@
 const I18N = {
     en: {
-        search: "Search Tools...",
-        data: "DATA MAGIC",
-        security: "SECURITY",
-        frontend: "FRONTEND",
-        utils: "UTILITIES",
-        copy: "Copy Result",
-        copied: "Copied! ✅",
-        input: "INPUT",
-        output: "OUTPUT",
+        cat: { data: "DATA MAGIC", security: "SECURITY", frontend: "FRONTEND", utils: "UTILITIES" },
+        labels: { input: "INPUT", output: "OUTPUT", copy: "Copy", copied: "Copied!" },
         tools: {
-            'json-fmt': { name: 'JSON Formatter', desc: 'Prettify and validate JSON data.' },
-            'jwt-dec': { name: 'JWT Decoder', desc: 'Parse and inspect JWT tokens.' },
-            'hash-gen': { name: 'Hash Generator', desc: 'Create SHA256 or MD5 hashes.' },
-            'qr-gen': { name: 'QR Code', desc: 'Generate QR codes from text.' }
+            'json-fmt': { name: 'JSON Formatter', desc: 'Prettify and validate JSON code.' },
+            'jwt-dec': { name: 'JWT Decoder', desc: 'Inspect JWT tokens and payloads.' },
+            'hash-gen': { name: 'Hash Generator', desc: 'Secure SHA256/MD5 hashing.' },
+            'qr-gen': { name: 'QR Code', desc: 'Generate high-quality QR codes.' }
         }
     },
     ja: {
-        search: "ツールを検索...",
-        data: "データ整形",
-        security: "セキュリティ",
-        frontend: "フロントエンド",
-        utils: "ユーティリティ",
-        copy: "結果をコピー",
-        copied: "コピー完了! ✅",
-        input: "入力",
-        output: "出力",
+        cat: { data: "データ整形", security: "セキュリティ", frontend: "デザイン補助", utils: "ツール" },
+        labels: { input: "入力データ", output: "出力結果", copy: "コピー", copied: "完了!" },
         tools: {
-            'json-fmt': { name: 'JSON整形', desc: 'JSONデータを綺麗に整形・検証します。' },
-            'jwt-dec': { name: 'JWTデコーダー', desc: 'JWTトークンを解析して中身を表示します。' },
-            'hash-gen': { name: 'ハッシュ生成', desc: 'SHA256やMD5ハッシュを作成します。' },
-            'qr-gen': { name: 'QRコード生成', desc: 'テキストからQRコードを作成します。' }
+            'json-fmt': { name: 'JSON整形', desc: 'JSONを美しく整形・検証します。' },
+            'jwt-dec': { name: 'JWTデコーダー', desc: 'JWTトークンの中身を解析します。' },
+            'hash-gen': { name: 'ハッシュ生成', desc: 'SHA256/MD5ハッシュを作成。' },
+            'qr-gen': { name: 'QRコード', desc: 'テキストからQRコードを作成。' }
         }
     }
 };
 
-let currentLang = 'en';
-let currentCat = 'data';
-let currentToolId = 'json-fmt';
+let state = {
+    lang: 'en',
+    cat: 'data',
+    toolId: 'json-fmt'
+};
 
 const tools = [
-    { id: 'json-fmt', cat: 'data', tags: 'json,format' },
-    { id: 'jwt-dec', cat: 'security', tags: 'jwt,auth' },
-    { id: 'hash-gen', cat: 'security', tags: 'hash,sha256' },
-    { id: 'qr-gen', cat: 'frontend', tags: 'qr,code' }
+    { id: 'json-fmt', cat: 'data' },
+    { id: 'jwt-dec', cat: 'security' },
+    { id: 'hash-gen', cat: 'security' },
+    { id: 'qr-gen', cat: 'frontend' }
 ];
 
-// --- Initialization ---
 function init() {
-    renderUI();
+    render();
     
-    // Event Listeners
-    document.querySelectorAll('.icon-btn').forEach(btn => {
+    // カテゴリボタンのイベント
+    document.querySelectorAll('.rail-btn').forEach(btn => {
         btn.onclick = () => {
-            currentCat = btn.dataset.cat;
-            document.querySelectorAll('.icon-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderUI();
+            state.cat = btn.dataset.cat;
+            // 選択されたカテゴリの最初のツールを自動選択
+            state.toolId = tools.find(t => t.cat === state.cat).id;
+            render();
         };
     });
 
     document.getElementById('langSwitcher').onclick = () => {
-        currentLang = currentLang === 'en' ? 'ja' : 'en';
-        document.getElementById('langSwitcher').textContent = currentLang.toUpperCase();
-        renderUI();
+        state.lang = state.lang === 'en' ? 'ja' : 'en';
+        document.getElementById('langSwitcher').textContent = state.lang.toUpperCase();
+        render();
     };
 
     window.addEventListener('keydown', (e) => {
@@ -72,63 +59,74 @@ function init() {
     });
 }
 
-function renderUI() {
-    const lang = I18N[currentLang];
-    document.getElementById('catLabel').textContent = lang[currentCat];
-    document.getElementById('toolSearch').placeholder = lang.search;
-    document.getElementById('copyBtn').textContent = lang.copy;
-    document.querySelectorAll('.pane-header')[0].textContent = lang.input;
-    document.querySelectorAll('.pane-header')[1].textContent = lang.output;
+function render() {
+    const lang = I18N[state.lang];
+    
+    // 更新: サイドバータイトル
+    document.getElementById('catLabel').textContent = lang.cat[state.cat];
+    document.getElementById('labelInput').textContent = lang.labels.input;
+    document.getElementById('labelOutput').textContent = lang.labels.output;
+    document.getElementById('copyBtn').textContent = lang.labels.copy;
 
+    // 更新: ツールリスト
     const list = document.getElementById('toolList');
     list.innerHTML = "";
-    tools.filter(t => t.cat === currentCat).forEach(t => {
+    tools.filter(t => t.cat === state.cat).forEach(t => {
         const btn = document.createElement('button');
-        btn.className = `tool-item ${t.id === currentToolId ? 'active' : ''}`;
+        btn.className = `tool-item ${t.id === state.toolId ? 'active' : ''}`;
         btn.textContent = lang.tools[t.id].name;
-        btn.onclick = () => { currentToolId = t.id; renderUI(); };
+        btn.onclick = () => { state.toolId = t.id; render(); };
         list.appendChild(btn);
     });
 
-    const activeTool = lang.tools[currentToolId];
+    // 更新: メイン表示
+    const activeTool = lang.tools[state.toolId];
     document.getElementById('activeToolName').textContent = activeTool.name;
     document.getElementById('activeToolDesc').textContent = activeTool.desc;
-    
+
+    // 更新: ナビゲーションレールの「active」状態
+    document.querySelectorAll('.rail-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.cat === state.cat);
+    });
+
     renderActions();
 }
 
 function renderActions() {
-    const actions = document.getElementById('toolActions');
-    actions.innerHTML = "";
-    if (currentToolId === 'json-fmt') {
-        createAction('Format', () => runLogic(v => JSON.stringify(JSON.parse(v), null, 4)));
-    } else if (currentToolId === 'hash-gen') {
-        createAction('SHA256', () => runLogic(v => CryptoJS.SHA256(v).toString()));
-    } else if (currentToolId === 'qr-gen') {
-        createAction('Generate', () => {
+    const container = document.getElementById('toolActions');
+    container.innerHTML = "";
+    
+    const actions = {
+        'json-fmt': [{ label: 'Format', fn: () => run(v => JSON.stringify(JSON.parse(v), null, 4)) }],
+        'hash-gen': [{ label: 'SHA256', fn: () => run(v => CryptoJS.SHA256(v).toString()) }],
+        'qr-gen': [{ label: 'Generate', fn: () => {
             const qr = qrcode(0, 'M'); qr.addData(document.getElementById('mainInput').value); qr.make();
             document.getElementById('imageContainer').innerHTML = qr.createImgTag(5);
-        });
-    }
+        }}]
+    };
+
+    (actions[state.toolId] || []).forEach(a => {
+        const b = document.createElement('button');
+        b.className = "primary";
+        b.textContent = a.label;
+        b.onclick = a.fn;
+        container.appendChild(b);
+    });
 }
 
-function createAction(label, fn) {
-    const b = document.createElement('button'); b.className = "primary"; b.textContent = label; b.onclick = fn;
-    document.getElementById('toolActions').appendChild(b);
-}
-
-function runLogic(fn) {
+function run(logicFn) {
     try {
-        const out = fn(document.getElementById('mainInput').value);
-        document.getElementById('mainOutput').textContent = out;
+        const val = document.getElementById('mainInput').value;
+        const result = logicFn(val);
+        document.getElementById('mainOutput').textContent = result;
         hljs.highlightElement(document.getElementById('mainOutput'));
     } catch (e) { document.getElementById('mainOutput').textContent = "Error: " + e.message; }
 }
 
 document.getElementById('copyBtn').onclick = (e) => {
     navigator.clipboard.writeText(document.getElementById('mainOutput').textContent);
-    e.target.textContent = I18N[currentLang].copied;
-    setTimeout(() => e.target.textContent = I18N[currentLang].copy, 2000);
+    e.target.textContent = I18N[state.lang].labels.copied;
+    setTimeout(() => e.target.textContent = I18N[state.lang].labels.copy, 2000);
 };
 
 init();
