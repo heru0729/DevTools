@@ -5,43 +5,62 @@ const I18N = {
         tools: {
             'json-fmt': { name: 'JSON Format', desc: 'Prettify JSON data.' },
             'sql-fmt': { name: 'SQL Format', desc: 'Prettify SQL queries.' },
-            'jwt-dec': { name: 'JWT Decode', desc: 'Decode JWT tokens.' },
-            'hash-sha': { name: 'SHA-256', desc: 'Generate Hash.' },
+            'yaml-json': { name: 'YAML ↔ JSON', desc: 'Convert YAML & JSON.' },
+            'xml-fmt': { name: 'XML Format', desc: 'Beautify XML/HTML.' },
+            'jwt-dec': { name: 'JWT Decode', desc: 'Analyze JWT tokens.' },
+            'hash-sha': { name: 'SHA-256', desc: 'Secure hashing.' },
+            'hash-md5': { name: 'MD5 Gen', desc: 'MD5 hashing.' },
+            'b64-tool': { name: 'Base64', desc: 'Encode/Decode Base64.' },
             'qr-gen': { name: 'QR Code', desc: 'Create QR images.' },
-            'unix-tm': { name: 'Unix Time', desc: 'Epoch conversion.' }
+            'px-rem': { name: 'PX ↔ REM', desc: 'CSS Unit converter.' },
+            'color-conv': { name: 'Color Conv', desc: 'Hex/RGB conversion.' },
+            'unix-tm': { name: 'Unix Time', desc: 'Epoch conversion.' },
+            'uuid-v4': { name: 'UUID Gen', desc: 'Generate unique IDs.' },
+            'lorem-ip': { name: 'Lorem Ipsum', desc: 'Placeholder text.' },
+            'diff-chk': { name: 'Diff Check', desc: 'Compare two texts.' }
         }
     },
     ja: {
-        cat: { data: "データ", security: "認証", frontend: "UIデザイン", utils: "ツール" },
-        labels: { input: "入力", output: "出力", copy: "コピー", copied: "完了!" },
+        cat: { data: "データ", security: "認証", frontend: "UI/UX", utils: "ツール" },
+        labels: { input: "入力データ", output: "出力結果", copy: "コピー", copied: "完了!" },
         tools: {
             'json-fmt': { name: 'JSON整形', desc: 'JSONを綺麗にします' },
             'sql-fmt': { name: 'SQL整形', desc: 'SQLを整形します' },
+            'yaml-json': { name: 'YAML ↔ JSON', desc: 'YAMLとJSONを変換' },
+            'xml-fmt': { name: 'XML整形', desc: 'XMLを綺麗にします' },
             'jwt-dec': { name: 'JWT解析', desc: 'JWTのデコード' },
             'hash-sha': { name: 'SHA-256', desc: 'ハッシュ作成' },
+            'hash-md5': { name: 'MD5生成', desc: 'MD5ハッシュ作成' },
+            'b64-tool': { name: 'Base64', desc: 'Base64変換' },
             'qr-gen': { name: 'QR作成', desc: 'QRコード作成' },
-            'unix-tm': { name: 'Unix変換', desc: '時刻の変換' }
+            'px-rem': { name: 'PX ↔ REM', desc: 'ピクセル変換' },
+            'color-conv': { name: '色変換', desc: '色コード変換' },
+            'unix-tm': { name: 'Unix変換', desc: '時刻の変換' },
+            'uuid-v4': { name: 'UUID生成', desc: 'UUID v4作成' },
+            'lorem-ip': { name: 'ダミー文', desc: 'テストテキスト生成' },
+            'diff-chk': { name: '差分比較', desc: 'テキスト比較' }
         }
     }
 };
 
 let appState = { lang: 'en', cat: 'data', toolId: 'json-fmt' };
-const toolList = [
-    { id: 'json-fmt', cat: 'data' }, { id: 'sql-fmt', cat: 'data' },
-    { id: 'jwt-dec', cat: 'security' }, { id: 'hash-sha', cat: 'security' },
-    { id: 'qr-gen', cat: 'frontend' }, { id: 'unix-tm', cat: 'utils' }
+const toolMap = [
+    { id: 'json-fmt', cat: 'data' }, { id: 'sql-fmt', cat: 'data' }, { id: 'yaml-json', cat: 'data' }, { id: 'xml-fmt', cat: 'data' },
+    { id: 'jwt-dec', cat: 'security' }, { id: 'hash-sha', cat: 'security' }, { id: 'hash-md5', cat: 'security' }, { id: 'b64-tool', cat: 'security' },
+    { id: 'qr-gen', cat: 'frontend' }, { id: 'px-rem', cat: 'frontend' }, { id: 'color-conv', cat: 'frontend' },
+    { id: 'unix-tm', cat: 'utils' }, { id: 'uuid-v4', cat: 'utils' }, { id: 'lorem-ip', cat: 'utils' }, { id: 'diff-chk', cat: 'utils' }
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
-    bindUI();
+    bindEvents();
     render();
 });
 
-function bindUI() {
+function bindEvents() {
     document.querySelectorAll('.rail-btn').forEach(btn => {
         btn.onclick = () => {
             appState.cat = btn.dataset.cat;
-            appState.toolId = toolList.find(t => t.cat === appState.cat).id;
+            appState.toolId = toolMap.find(t => t.cat === appState.cat).id;
             render();
         };
     });
@@ -54,12 +73,19 @@ function bindUI() {
     document.getElementById('themeSwitcher').onclick = (e) => {
         const isLight = document.body.classList.toggle('light');
         e.target.textContent = isLight ? '☀️' : '🌙';
-        
-        // Highlight.jsのテーマ切り替え（任意）
         const themeLink = document.getElementById('hljs-theme');
         themeLink.href = isLight 
             ? "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"
             : "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css";
+    };
+
+    document.getElementById('copyBtn').onclick = (e) => {
+        const txt = document.getElementById('mainOutput').textContent;
+        if (!txt) return;
+        navigator.clipboard.writeText(txt);
+        const original = e.target.textContent;
+        e.target.textContent = I18N[appState.lang].labels.copied;
+        setTimeout(() => e.target.textContent = original, 2000);
     };
 }
 
@@ -74,7 +100,7 @@ function render() {
 
     const list = document.getElementById('toolList');
     list.innerHTML = "";
-    toolList.filter(t => t.cat === appState.cat).forEach(t => {
+    toolMap.filter(t => t.cat === appState.cat).forEach(t => {
         const btn = document.createElement('button');
         btn.className = `tool-item ${t.id === appState.toolId ? 'active' : ''}`;
         btn.textContent = lang.tools[t.id].name;
@@ -97,17 +123,27 @@ function renderActions() {
         bar.appendChild(b);
     };
     
+    const input = () => document.getElementById('mainInput').value;
     const out = (v) => { 
         document.getElementById('imageContainer').innerHTML = ""; 
         document.getElementById('mainOutput').textContent = v; 
         if(v) hljs.highlightElement(document.getElementById('mainOutput'));
     };
 
-    if (appState.toolId === 'json-fmt') addBtn('Format', () => out(JSON.stringify(JSON.parse(document.getElementById('mainInput').value), null, 4)));
-    if (appState.toolId === 'hash-sha') addBtn('Hash', () => out(CryptoJS.SHA256(document.getElementById('mainInput').value).toString()));
-    if (appState.toolId === 'qr-gen') addBtn('Generate', () => {
-        const qr = qrcode(0, 'M'); qr.addData(document.getElementById('mainInput').value); qr.make();
-        document.getElementById('imageContainer').innerHTML = qr.createImgTag(5);
-        document.getElementById('mainOutput').textContent = "";
-    });
+    try {
+        switch(appState.toolId) {
+            case 'json-fmt': addBtn('Format', () => out(JSON.stringify(JSON.parse(input()), null, 4))); break;
+            case 'sql-fmt': addBtn('Format SQL', () => out(sqlFormatter.format(input()))); break;
+            case 'jwt-dec': addBtn('Decode', () => out(JSON.stringify(JSON.parse(atob(input().split('.')[1])), null, 4))); break;
+            case 'hash-sha': addBtn('Hash', () => out(CryptoJS.SHA256(input()).toString())); break;
+            case 'qr-gen': addBtn('Generate', () => {
+                const qr = qrcode(0, 'M'); qr.addData(input()); qr.make();
+                document.getElementById('imageContainer').innerHTML = qr.createImgTag(5);
+                document.getElementById('mainOutput').textContent = "";
+            }); break;
+            case 'uuid-v4': addBtn('Generate', () => out(crypto.randomUUID())); break;
+            case 'unix-tm': addBtn('Convert', () => out(new Date(parseInt(input()) * 1000).toLocaleString())); break;
+            case 'lorem-ip': addBtn('Generate', () => out("Lorem ipsum dolor sit amet...")); break;
+        }
+    } catch(e) { out("Invalid Input"); }
 }
