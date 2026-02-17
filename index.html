@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DevTools Pro</title>
+    <title>DevTools Pro - 500 Edition</title>
     
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9619368699008291" crossorigin="anonymous"></script>
-
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css" id="hljs-theme">
     
@@ -23,10 +22,10 @@
 <div class="app-shell">
     <nav class="nav-rail">
         <div class="nav-group">
-            <button class="rail-btn active" data-cat="data">📦</button>
-            <button class="rail-btn" data-cat="security">🔐</button>
-            <button class="rail-btn" data-cat="frontend">🎨</button>
-            <button class="rail-btn" data-cat="utils">🛠️</button>
+            <button class="rail-btn active" data-cat="data" title="Data Magic">📦</button>
+            <button class="rail-btn" data-cat="security" title="Security">🔐</button>
+            <button class="rail-btn" data-cat="frontend" title="Frontend">🎨</button>
+            <button class="rail-btn" data-cat="utils" title="Utilities">🛠️</button>
         </div>
         <div class="rail-footer">
             <button id="langSwitcher" class="control-btn">EN</button>
@@ -36,6 +35,9 @@
 
     <div class="main-content">
         <aside class="tool-sidebar">
+            <div class="search-box">
+                <input type="text" id="toolSearch" placeholder="Search (Ctrl + K)...">
+            </div>
             <div id="toolList" class="tool-list custom-scroll"></div>
         </aside>
 
@@ -45,17 +47,25 @@
                     <h1 id="activeToolName">---</h1>
                     <p id="activeToolDesc">---</p>
                 </div>
-                <div class="action-bar" id="toolActions"></div>
+                <div class="action-bar-container">
+                    <div class="action-bar" id="toolActions"></div>
+                    <button id="layoutToggle" class="control-btn" title="Toggle Layout">🌓</button>
+                </div>
             </header>
 
-            <section class="editor-grid">
-                <div class="editor-container">
-                    <div class="editor-label" id="labelInput">INPUT</div>
-                    <textarea id="mainInput" spellcheck="false" placeholder="Paste source here..."></textarea>
+            <div class="mobile-tabs">
+                <div class="mobile-tab active" data-target="input">INPUT</div>
+                <div class="mobile-tab" data-target="output">OUTPUT</div>
+            </div>
+
+            <section class="editor-grid" id="editorGrid">
+                <div class="editor-container" id="inputSection">
+                    <div class="editor-label">INPUT</div>
+                    <textarea id="mainInput" spellcheck="false" placeholder="Paste data here..."></textarea>
                 </div>
-                <div class="editor-container">
-                    <div class="editor-label" id="labelOutput">OUTPUT</div>
-                    <div class="output-viewer" id="outputPanel">
+                <div class="editor-container" id="outputSection">
+                    <div class="editor-label">OUTPUT</div>
+                    <div class="output-viewer">
                         <div id="imageContainer" class="preview-box"></div>
                         <pre><code id="mainOutput" class="custom-scroll"></code></pre>
                         <button id="copyBtn" class="fab-copy">Copy</button>
@@ -70,9 +80,7 @@
                      data-ad-slot="6699940875"
                      data-ad-format="auto"
                      data-full-width-responsive="true"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
         </main>
     </div>
