@@ -1,27 +1,82 @@
-:root { --bg: #111; --text: #eee; --accent: #0f0; --border: #333; --btn: #333; }
-body.light { --bg: #f5f5f5; --text: #111; --accent: #007bff; --border: #ccc; --btn: #e0e0e0; }
-
-body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', monospace; margin: 0; padding: 20px; transition: 0.3s; }
-.container { max-width: 1100px; margin: auto; }
-.header-flex { display: flex; justify-content: space-between; align-items: center; }
-
-textarea, input, select, pre { 
-    width: 100%; margin-bottom: 10px; padding: 12px; 
-    background: #000; color: var(--accent); border: 1px solid var(--border); 
-    box-sizing: border-box; font-family: monospace;
+:root {
+    --side-bg: #1e1e2e;
+    --main-bg: #11111b;
+    --text-color: #cdd6f4;
+    --accent: #89b4fa;
+    --border: #313244;
+    --btn-hover: #45475a;
 }
-body.light textarea, body.light input, body.light pre { background: #fff; color: #333; }
 
-.tabs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 20px; }
-.tab { padding: 10px 15px; background: var(--btn); color: var(--text); border: none; cursor: pointer; transition: 0.2s; }
-.tab.active { background: var(--accent); color: #000; font-weight: bold; }
+body.light {
+    --side-bg: #e6e9ef;
+    --main-bg: #eff1f5;
+    --text-color: #4c4f69;
+    --accent: #1e66f5;
+    --border: #bcc0cc;
+    --btn-hover: #dce0e8;
+}
 
-.btn-group { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
-button { padding: 8px 14px; background: var(--btn); color: var(--text); border: none; cursor: pointer; }
-button:hover { opacity: 0.8; background: #444; }
+body {
+    margin: 0; font-family: 'Inter', system-ui, sans-serif;
+    background: var(--main-bg); color: var(--text-color);
+    height: 100vh; overflow: hidden;
+}
 
-.tab-content { display: none; }
-.tab-content.active { display: block; }
+.app-wrapper { display: flex; height: 100%; }
 
-.diff-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-pre { white-space: pre-wrap; word-wrap: break-word; min-height: 100px; border-left: 4px solid var(--accent); }
+/* Sidebar */
+.sidebar {
+    width: 260px; background: var(--side-bg);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; padding: 20px;
+}
+
+.tabs-nav { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.tab-btn {
+    text-align: left; padding: 12px; background: transparent;
+    border: none; color: var(--text-color); cursor: pointer;
+    border-radius: 6px; transition: 0.2s;
+}
+.tab-btn.active { background: var(--accent); color: #000; font-weight: bold; }
+.tab-btn:hover:not(.active) { background: var(--btn-hover); }
+
+/* Main Content */
+.content-area { flex: 1; padding: 30px; overflow-y: auto; }
+.tab-panel { display: none; animation: fadeIn 0.3s; }
+.tab-panel.active { display: block; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+textarea {
+    width: 100%; height: 200px; background: #000;
+    color: var(--accent); border: 1px solid var(--border);
+    padding: 15px; border-radius: 8px; font-family: 'Fira Code', monospace;
+    resize: vertical; margin-bottom: 15px;
+}
+
+.controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+button {
+    padding: 8px 16px; border-radius: 4px; border: 1px solid var(--border);
+    background: var(--side-bg); color: var(--text-color); cursor: pointer;
+}
+button:hover { background: var(--accent); color: #000; }
+
+pre {
+    background: #000; padding: 15px; border-radius: 8px;
+    border-left: 4px solid var(--accent); overflow-x: auto;
+    position: relative; min-height: 50px;
+}
+
+/* Utils */
+.diff-split { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.jwt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+table { width: 100%; border-collapse: collapse; }
+td, th { border: 1px solid var(--border); padding: 10px; }
+
+.copy-float { position: absolute; top: 10px; right: 10px; font-size: 11px; }
+
+@media (max-width: 900px) {
+    .app-wrapper { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; padding: 10px; }
+    .tabs-nav { flex-direction: row; overflow-x: auto; }
+}
