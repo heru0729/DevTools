@@ -7,7 +7,7 @@
     
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9619368699008291" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css" id="hljs-theme">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql-formatter/15.3.1/sql-formatter.min.js"></script>
@@ -20,17 +20,18 @@
 
 <div class="app-shell">
     <nav class="nav-rail">
-        <button class="rail-btn active" data-cat="data">📦</button>
-        <button class="rail-btn" data-cat="security">🔐</button>
-        <button class="rail-btn" data-cat="frontend">🎨</button>
-        <button class="rail-btn" data-cat="utils">🛠️</button>
-        <div class="rail-spacer"></div>
+        <div class="rail-group">
+            <button class="rail-btn active" data-cat="data">📦</button>
+            <button class="rail-btn" data-cat="security">🔐</button>
+            <button class="rail-btn" data-cat="frontend">🎨</button>
+            <button class="rail-btn" data-cat="utils">🛠️</button>
+        </div>
         <button id="themeSwitcher" class="control-btn">🌙</button>
     </nav>
 
     <aside class="tool-sidebar">
         <div class="sidebar-label">TOOLS</div>
-        <div id="toolList" class="tool-list"></div>
+        <div id="toolList" class="tool-list custom-scroll"></div>
     </aside>
 
     <main class="workspace">
@@ -45,13 +46,13 @@
         <div class="editor-grid">
             <div class="editor-pane">
                 <div class="pane-header">INPUT</div>
-                <textarea id="mainInput" placeholder="Paste source here..."></textarea>
+                <textarea id="mainInput" placeholder="ここに貼り付け..."></textarea>
             </div>
             <div class="editor-pane">
                 <div class="pane-header">OUTPUT</div>
-                <div class="output-wrapper">
+                <div class="output-wrapper custom-scroll">
                     <div id="imageOutput" class="img-box"></div>
-                    <pre><code id="mainOutput" class="custom-scroll"></code></pre>
+                    <pre><code id="mainOutput" class="hljs"></code></pre>
                     <button id="copyBtn" class="copy-fab">COPY</button>
                 </div>
             </div>
