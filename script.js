@@ -1,47 +1,96 @@
-const TOOLS = [
-    { id: 'json-fmt', cat: 'data', name: 'JSON Prettify', desc: 'JSONを見やすくフォーマットします' },
-    { id: 'json-min', cat: 'data', name: 'JSON Minify', desc: 'JSONを1行に圧縮します' },
-    { id: 'yaml-json', cat: 'data', name: 'YAML ↔ JSON', desc: 'YAMLとJSONを相互変換します' },
-    { id: 'sql-fmt', cat: 'data', name: 'SQL Format', desc: 'SQLをプロ仕様に整形します' },
-    { id: 'b64-e', cat: 'security', name: 'Base64 Encode', desc: 'テキストをBase64に変換' },
-    { id: 'b64-d', cat: 'security', name: 'Base64 Decode', desc: 'Base64をデコード' },
-    { id: 'sha256', cat: 'security', name: 'SHA-256', desc: 'ハッシュ値を計算' },
-    { id: 'jwt-dec', cat: 'security', name: 'JWT Decode', desc: 'JWTの中身を解析' },
-    { id: 'qr-gen', cat: 'frontend', name: 'QR Code', desc: '文字列からQRコードを生成' },
-    { id: 'html-esc', cat: 'frontend', name: 'HTML Escape', desc: 'HTML特殊文字をエスケープ' },
-    { id: 'uuid-gen', cat: 'utils', name: 'UUID v4', desc: '一意のUUIDを生成します' },
-    { id: 'epoch', cat: 'utils', name: 'Unix Epoch', desc: 'Unix時間と日時を変換' }
-];
+const I18N = {
+    en: {
+        run: "RUN", copy: "COPY", input: "INPUT", output: "OUTPUT", tools: "TOOLS",
+        tools_data: [
+            { id: 'json-fmt', name: 'JSON Prettify', desc: 'Prettify and validate JSON data' },
+            { id: 'sql-fmt', name: 'SQL Format', desc: 'Format and beautify SQL queries' }
+        ],
+        tools_sec: [
+            { id: 'b64-e', name: 'Base64 Encode', desc: 'Encode text to Base64' },
+            { id: 'sha256', name: 'SHA-256 Hash', desc: 'Generate secure hash' }
+        ],
+        tools_util: [
+            { id: 'qr-gen', name: 'QR Code Gen', desc: 'Generate QR image' },
+            { id: 'uuid-gen', name: 'UUID v4', desc: 'Generate unique ID' }
+        ]
+    },
+    ja: {
+        run: "実行", copy: "コピー", input: "入力", output: "出力", tools: "ツール一覧",
+        tools_data: [
+            { id: 'json-fmt', name: 'JSON整形', desc: 'JSONを見やすく整形・検証します' },
+            { id: 'sql-fmt', name: 'SQL整形', desc: 'SQLクエリを綺麗に整形します' }
+        ],
+        tools_sec: [
+            { id: 'b64-e', name: 'Base64変換', desc: 'テキストをBase64にエンコードします' },
+            { id: 'sha256', name: 'SHA-256', desc: 'ハッシュ値を計算します' }
+        ],
+        tools_util: [
+            { id: 'qr-gen', name: 'QR作成', desc: 'テキストからQRコードを生成します' },
+            { id: 'uuid-gen', name: 'UUID生成', desc: '一意のUUID v4を生成します' }
+        ]
+    }
+};
 
+let currentLang = localStorage.getItem('pro_lang') || 'en';
 let state = { cat: 'data', tool: 'json-fmt' };
 
 window.onload = () => {
     document.querySelectorAll('.rail-btn').forEach(btn => {
         btn.onclick = () => {
             state.cat = btn.dataset.cat;
-            state.tool = TOOLS.find(t => t.cat === state.cat).id;
+            const tools = getToolsByCat(state.cat);
+            state.tool = tools[0].id;
             render();
         };
     });
+    
+    document.getElementById('langToggle').onclick = () => {
+        currentLang = currentLang === 'en' ? 'ja' : 'en';
+        localStorage.setItem('pro_lang', currentLang);
+        render();
+    };
+
     document.getElementById('themeToggle').onclick = () => document.body.classList.toggle('light');
+    
     render();
 };
 
+function getToolsByCat(cat) {
+    const lang = I18N[currentLang];
+    if (cat === 'data') return lang.tools_data;
+    if (cat === 'security') return lang.tools_sec;
+    return lang.tools_util;
+}
+
 function render() {
+    const lang = I18N[currentLang];
+    
+    // UI Labels
+    document.getElementById('i18n-run').innerText = lang.run;
+    document.getElementById('i18n-copy').innerText = lang.copy;
+    document.getElementById('i18n-input').innerText = lang.input;
+    document.getElementById('i18n-output').innerText = lang.output;
+    document.getElementById('i18n-tools').innerText = lang.tools;
+    document.getElementById('langToggle').innerText = currentLang.toUpperCase();
+
+    // Rail
     document.querySelectorAll('.rail-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === state.cat));
+
+    // Sidebar
     const list = document.getElementById('toolList');
     list.innerHTML = "";
-    TOOLS.filter(t => t.cat === state.cat).forEach(t => {
+    const tools = getToolsByCat(state.cat);
+    tools.forEach(t => {
         const btn = document.createElement('button');
         btn.className = `tool-item ${state.tool === t.id ? 'active' : ''}`;
         btn.innerText = t.name;
         btn.onclick = () => { state.tool = t.id; render(); };
         list.appendChild(btn);
     });
-    const active = TOOLS.find(t => t.id === state.tool);
+
+    const active = tools.find(t => t.id === state.tool) || tools[0];
     document.getElementById('toolName').innerText = active.name;
     document.getElementById('toolDesc').innerText = active.desc;
-    document.getElementById('input').value = localStorage.getItem('last_' + state.tool) || "";
 }
 
 function execute() {
@@ -51,25 +100,19 @@ function execute() {
     
     outText.innerText = "";
     outImg.style.display = "none";
-    localStorage.setItem('last_' + state.tool, input);
 
     try {
         let res = "";
         if (state.tool === 'json-fmt') res = JSON.stringify(JSON.parse(input), null, 4);
-        if (state.tool === 'json-min') res = JSON.stringify(JSON.parse(input));
-        if (state.tool === 'yaml-json') res = JSON.stringify(jsyaml.load(input), null, 4);
         if (state.tool === 'sql-fmt') res = sqlFormatter.format(input);
         if (state.tool === 'b64-e') res = btoa(unescape(encodeURIComponent(input)));
-        if (state.tool === 'b64-d') res = decodeURIComponent(escape(atob(input)));
         if (state.tool === 'sha256') res = CryptoJS.SHA256(input).toString();
-        if (state.tool === 'jwt-dec') res = JSON.stringify(JSON.parse(atob(input.split('.')[1])), null, 4);
         if (state.tool === 'uuid-gen') res = crypto.randomUUID();
         if (state.tool === 'qr-gen') {
             const qr = qrcode(0, 'M'); qr.addData(input); qr.make();
             outImg.innerHTML = qr.createImgTag(8);
             outImg.style.display = "block";
         }
-
         outText.innerText = res;
         if(res) hljs.highlightElement(outText);
     } catch (e) { outText.innerText = "Error: " + e.message; }
@@ -78,4 +121,5 @@ function execute() {
 function copyResult() {
     navigator.clipboard.writeText(document.getElementById('outputText').innerText);
 }
+
 window.onkeydown = (e) => { if (e.ctrlKey && e.key === 'Enter') execute(); };
