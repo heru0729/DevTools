@@ -6,25 +6,16 @@ if (langToggle) {
     langToggle.addEventListener('click', () => {
         currentLang = (currentLang === 'en') ? 'ja' : 'en';
         
-        // Update all elements with class "lang"
         document.querySelectorAll('.lang').forEach(el => {
             const text = el.getAttribute(`data-${currentLang}`);
-            if (text) {
-                // Keep the emoji if it exists in the original HTML but not in data attribute
-                const hasEmoji = el.textContent.match(/^[\uD800-\uDBFF][\uDC00-\uDFFF]|^[^\x00-\x7F]/);
-                el.textContent = text;
-            }
+            if (text) el.textContent = text;
         });
 
-        // Update Textarea placeholders
         document.querySelectorAll('textarea').forEach(el => {
             el.placeholder = currentLang === 'en' ? "Paste data here..." : "ここにデータを入力...";
         });
 
-        // Update the Toggle Button text itself
         langToggle.textContent = currentLang === 'en' ? "🇯🇵 日本語へ" : "🇺🇸 To English";
-        
-        // Update Theme Button Text Sync
         updateThemeButtonText();
     });
 }
@@ -47,25 +38,36 @@ function updateThemeButtonText() {
     }
 }
 
+// --- Copy Function with Visual Feedback ---
+function copyText(id, event) {
+    const text = document.getElementById(id).textContent;
+    const btn = event.target;
+    const originalText = btn.textContent;
+
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = currentLang === 'en' ? "Copied! ✅" : "完了 ✅";
+        btn.style.backgroundColor = "#22c55e";
+        btn.style.color = "#fff";
+        
+        setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.backgroundColor = "";
+            btn.style.color = "";
+        }, 1500);
+    });
+}
+
 // --- Tab Switching ---
 document.querySelectorAll('.nav-item').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.nav-item, .panel').forEach(el => el.classList.remove('active'));
         btn.classList.add('active');
-        const target = document.getElementById(btn.dataset.tab);
-        if (target) target.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
     });
 });
 
-// --- Core Functions ---
+// --- Feature Functions ---
 function highlight(el) { if (typeof hljs !== 'undefined') hljs.highlightElement(el); }
-
-function copyText(id) {
-    const txt = document.getElementById(id).textContent;
-    navigator.clipboard.writeText(txt).then(() => {
-        alert(currentLang === 'en' ? "Copied!" : "コピーしました！");
-    });
-}
 
 function runJSON(mode) {
     const input = document.getElementById('input1').value;
@@ -74,7 +76,7 @@ function runJSON(mode) {
         const obj = JSON.parse(input);
         output.textContent = (mode === 'format') ? JSON.stringify(obj, null, 4) : JSON.stringify(obj);
         highlight(output);
-    } catch (e) { output.textContent = "Error: Invalid JSON format"; }
+    } catch (e) { output.textContent = "Error: Invalid JSON"; }
 }
 
 function runSQL() {
@@ -87,7 +89,7 @@ function runYaml() {
     try {
         const obj = JSON.parse(input);
         document.getElementById('output1').textContent = jsyaml.dump(obj);
-    } catch { document.getElementById('output1').textContent = "Error: Please input valid JSON"; }
+    } catch { document.getElementById('output1').textContent = "Error"; }
 }
 
 function runCsv() {
@@ -110,7 +112,7 @@ function runBase64(mode) {
     const input = document.getElementById('input2').value;
     try {
         document.getElementById('output2').textContent = mode === 'enc' ? btoa(unescape(encodeURIComponent(input))) : decodeURIComponent(escape(atob(input)));
-    } catch { document.getElementById('output2').textContent = "Base64 Error"; }
+    } catch { document.getElementById('output2').textContent = "Error"; }
 }
 
 function runJWT() {
@@ -118,7 +120,7 @@ function runJWT() {
         const parts = document.getElementById('input2').value.split('.');
         const payload = JSON.parse(atob(parts[1]));
         document.getElementById('output2').textContent = JSON.stringify(payload, null, 4);
-    } catch { document.getElementById('output2').textContent = "Invalid JWT"; }
+    } catch { document.getElementById('output2').textContent = "Error"; }
 }
 
 function runTypeGen() {
@@ -127,7 +129,7 @@ function runTypeGen() {
         let ts = "interface Root {\n";
         for (let key in obj) ts += `  ${key}: ${typeof obj[key]};\n`;
         document.getElementById('output3').textContent = ts + "}";
-    } catch { document.getElementById('output3').textContent = "Invalid JSON"; }
+    } catch { document.getElementById('output3').textContent = "Error"; }
 }
 
 function runUrl(mode) {
