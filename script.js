@@ -1,100 +1,174 @@
-// --- 共通ユーティリティ ---
-const $ = id => document.getElementById(id);
-const setOut = (id, val) => { $(id + 'Output').textContent = val; $(id + 'Output').classList.remove('error'); };
-
-// タブ切り替え
-document.querySelectorAll('.tab').forEach(t => {
-    t.addEventListener('click', () => {
-        document.querySelectorAll('.tab, .tab-content').forEach(el => el.classList.remove('active'));
-        t.classList.add('active');
-        $(t.dataset.tab).classList.add('active');
+// --- 初期設定 & タブ管理 ---
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn, .tab-panel').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
     });
 });
 
-// テーマ切り替え
-$('themeToggle').addEventListener('click', () => {
+// テーマ切替
+document.getElementById('themeToggle').addEventListener('click', function() {
     document.body.classList.toggle('light');
-    $('themeToggle').textContent = document.body.classList.contains('light') ? "Dark" : "Light";
+    this.textContent = document.body.classList.contains('light') ? "Theme: Light" : "Theme: Dark";
 });
 
-// --- JSON/HTML機能 ---
-function formatJSON() {
-    try { setOut('json', JSON.stringify(JSON.parse($('jsonInput').value), null, 4)); }
-    catch(e) { setOut('json', "Invalid JSON"); }
-}
-function minifyJSON() {
-    try { setOut('json', JSON.stringify(JSON.parse($('jsonInput').value))); }
-    catch(e) { setOut('json', "Invalid JSON"); }
-}
-function escapeHTML() {
-    const p = document.createElement('p'); p.textContent = $('jsonInput').value;
-    setOut('json', p.innerHTML);
-}
-function unescapeHTML() {
-    const doc = new DOMParser().parseFromString($('jsonInput').value, "text/html");
-    setOut('json', doc.documentElement.textContent);
+// 汎用コピー関数
+function copyResult(id) {
+    const text = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(text);
+    alert('Copied to clipboard!');
 }
 
-// --- Crypto/Hash機能 ---
-function calcHash(algo) {
-    const input = $('cryptoInput').value;
-    setOut('crypto', CryptoJS[algo](input).toString());
-}
-function base64Encode() { setOut('crypto', btoa(unescape(encodeURIComponent($('cryptoInput').value)))); }
-function base64Decode() { 
-    try { setOut('crypto', decodeURIComponent(escape(atob($('cryptoInput').value)))); }
-    catch(e) { setOut('crypto', "Invalid Base64"); }
-}
-
-// --- Convert/URL機能 ---
-function urlEncode() { setOut('convert', encodeURIComponent($('convertInput').value)); }
-function urlDecode() { setOut('convert', decodeURIComponent($('convertInput').value)); }
-function caseUpper() { setOut('convert', $('convertInput').value.toUpperCase()); }
-function caseLower() { setOut('convert', $('convertInput').value.toLowerCase()); }
-function parseQuery() {
-    const url = $('convertInput').value.split('?')[1] || $('convertInput').value;
-    const params = new URLSearchParams(url);
-    let res = "";
-    for(const [k, v] of params) res += `${k}: ${v}\n`;
-    setOut('convert', res || "No params found");
-}
-
-// --- Time機能 ---
-function unixToDate() { setOut('time', new Date(parseInt($('timeInput').value) * 1000).toLocaleString()); }
-function dateToUnix() { setOut('time', Math.floor(new Date($('timeInput').value).getTime() / 1000)); }
-function curUnix() { setOut('time', Math.floor(Date.now() / 1000)); }
-
-// --- Generator機能 ---
-function genUUID() { setOut('gen', crypto.randomUUID()); }
-function genLorem() { setOut('gen', "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."); }
-function genPassword() {
-    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
-    let pass = "";
-    for(let i=0; i<16; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
-    setOut('gen', pass);
-}
-
-// --- API/JWT機能 ---
-$('sendBtn').addEventListener('click', async () => {
-    const out = $('apiOutput');
-    out.textContent = "Loading...";
+// --- JSON / XML / YAML / CSV ロジック ---
+function processJSON(mode) {
+    const input = document.getElementById('mainInput').value;
+    const output = document.getElementById('mainOutput');
     try {
-        const res = await fetch($('apiUrl').value);
-        const data = await res.text();
-        out.textContent = data;
-    } catch(e) { out.textContent = "Error: " + e.message; }
-});
-function decodeJWT() {
+        const parsed = JSON.parse(input);
+        output.textContent = mode === 'format' ? JSON.stringify(parsed, null, 4) : JSON.stringify(parsed);
+        hljs.highlightElement(output);
+    } catch (e) { output.textContent = "Error: Invalid JSON"; }
+}
+
+function jsonToYaml() {
+    const input = document.getElementById('mainInput').value;
+    const output = document.getElementById('mainOutput');
     try {
-        const parts = $('apiUrl').value.split('.'); // API枠を兼用
+        const obj = JSON.parse(input);
+        output.textContent = jsyaml.dump(obj);
+    } catch (e) {
+        try {
+            const obj = jsyaml.load(input);
+            output.textContent = JSON.stringify(obj, null, 4);
+        } catch(e2) { output.textContent = "Conversion Error"; }
+    }
+}
+
+function csvToJson() {
+    const input = document.getElementById('mainInput').value;
+    const lines = input.split('\n');
+    const headers = lines[0].split(',');
+    const result = lines.slice(1).map(line => {
+        const data = line.split(',');
+        return headers.reduce((obj, header, i) => {
+            obj[header.trim()] = data[i]?.trim();
+            return obj;
+        }, {});
+    });
+    document.getElementById('mainOutput').textContent = JSON.stringify(result, null, 4);
+}
+
+// --- SQL & Text ---
+function formatSQL() {
+    const sql = document.getElementById('textInput').value;
+    document.getElementById('textOutput').textContent = sqlFormatter.format(sql);
+}
+
+function textStats() {
+    const val = document.getElementById('textInput').value;
+    document.getElementById('textOutput').textContent = 
+        `Characters: ${val.length}\nWords: ${val.trim().split(/\s+/).length}\nLines: ${val.split('\n').length}`;
+}
+
+// --- Crypto ---
+function hashIt(algo) {
+    const txt = document.getElementById('cryptoInput').value;
+    document.getElementById('cryptoOutput').textContent = CryptoJS[algo](txt).toString();
+}
+
+function handleBase64(mode) {
+    const txt = document.getElementById('cryptoInput').value;
+    try {
+        if(mode === 'enc') {
+            document.getElementById('cryptoOutput').textContent = btoa(unescape(encodeURIComponent(txt)));
+        } else {
+            document.getElementById('cryptoOutput').textContent = decodeURIComponent(escape(atob(txt)));
+        }
+    } catch(e) { document.getElementById('cryptoOutput').textContent = "Base64 Error"; }
+}
+
+function imageToBase64() {
+    const file = document.getElementById('imageFile').files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => { document.getElementById('cryptoOutput').textContent = reader.result; };
+    if(file) reader.readAsDataURL(file);
+}
+
+// --- Type Generation ---
+function genTypeScript() {
+    try {
+        const obj = JSON.parse(document.getElementById('typeInput').value);
+        let res = "interface RootObject {\n";
+        for(let key in obj) {
+            res += `  ${key}: ${typeof obj[key]};\n`;
+        }
+        res += "}";
+        document.getElementById('typeOutput').textContent = res;
+    } catch(e) { document.getElementById('typeOutput').textContent = "Invalid JSON"; }
+}
+
+// --- Security / JWT ---
+function debugJWT() {
+    const token = document.getElementById('jwtInput').value;
+    try {
+        const parts = token.split('.');
+        const header = JSON.parse(atob(parts[0]));
         const payload = JSON.parse(atob(parts[1]));
-        setOut('api', JSON.stringify(payload, null, 4));
-    } catch(e) { setOut('api', "Invalid JWT in URL field"); }
+        document.getElementById('jwtHeader').textContent = JSON.stringify(header, null, 2);
+        document.getElementById('jwtPayload').textContent = JSON.stringify(payload, null, 2);
+        
+        // Expiration check
+        if(payload.exp) {
+            const date = new Date(payload.exp * 1000);
+            document.getElementById('jwtPayload').textContent += `\n\n// Expires at: ${date.toLocaleString()}`;
+        }
+    } catch(e) { alert("Invalid JWT Token"); }
 }
 
-// --- Diff機能 ---
-function compareText() {
-    const a = $('diffA').value;
-    const b = $('diffB').value;
-    setOut('diff', a === b ? "Match ✅" : "Different ❌");
+// --- Cron ---
+function parseCron() {
+    const cron = document.getElementById('cronInput').value.split(' ');
+    if(cron.length < 5) { document.getElementById('cronOutput').textContent = "Invalid Cron (need 5 parts)"; return; }
+    document.getElementById('cronOutput').textContent = `Minute: ${cron[0]}\nHour: ${cron[1]}\nDay: ${cron[2]}\nMonth: ${cron[3]}\nWeekday: ${cron[4]}`;
+}
+
+// --- Client Info ---
+function getClientInfo() {
+    const data = {
+        "User Agent": navigator.userAgent,
+        "Language": navigator.language,
+        "Screen": `${window.screen.width}x${window.screen.height}`,
+        "Online Status": navigator.onLine ? "Online" : "Offline",
+        "Platform": navigator.platform,
+        "Cookies Enabled": navigator.cookieEnabled
+    };
+    let html = "";
+    for(let k in data) html += `<tr><th>${k}</th><td>${data[k]}</td></tr>`;
+    document.getElementById('clientTable').innerHTML = html;
+}
+
+// --- Generator ---
+function generate(type) {
+    const out = document.getElementById('genOutput');
+    if(type === 'uuid') out.textContent = crypto.randomUUID();
+    if(type === 'lorem') out.textContent = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.";
+    if(type === 'pass') {
+        const set = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789!@#$%^&*";
+        let p = "";
+        for(let i=0; i<20; i++) p += set.charAt(Math.floor(Math.random() * set.length));
+        out.textContent = p;
+    }
+}
+
+// --- Diff ---
+function runDiff() {
+    const l = document.getElementById('diff1').value.split('\n');
+    const r = document.getElementById('diff2').value.split('\n');
+    let res = "";
+    const max = Math.max(l.length, r.length);
+    for(let i=0; i<max; i++) {
+        if(l[i] !== r[i]) res += `Line ${i+1}: ❌\n  A: ${l[i] || ""}\n  B: ${r[i] || ""}\n`;
+    }
+    document.getElementById('diffOutput').textContent = res || "Everything matches!";
 }
