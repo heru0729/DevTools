@@ -1,4 +1,7 @@
-body, button, textarea, input, select, pre {
+/* ---------- style.css ---------- */
+
+/* 全要素選択可能 */
+* {
     user-select: text !important;
 }
 
@@ -72,6 +75,7 @@ button {
     border:none;
     cursor:pointer;
     margin-right:5px;
+    user-select:auto !important;
 }
 
 button:hover { background:#555; }
@@ -97,6 +101,7 @@ pre {
     font-size:12px;
     padding:4px 6px;
     cursor:pointer;
+    user-select:auto !important;
 }
 
 pre.error {
