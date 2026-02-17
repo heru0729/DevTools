@@ -10,6 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql-formatter/15.3.1/sql-formatter.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="dark">
@@ -34,7 +35,7 @@
     <main class="workspace">
         <header class="workspace-header">
             <div class="header-title">
-                <h1 id="toolName">---</h1>
+                <h1 id="toolName">JSON Format</h1>
                 <p id="toolDesc">---</p>
             </div>
             <button class="btn-run" id="lbl-run" onclick="execute()">RUN</button>
@@ -43,7 +44,7 @@
         <div class="editor-grid">
             <div class="pane">
                 <div class="pane-header" id="lbl-input">INPUT</div>
-                <textarea id="input" spellcheck="false" placeholder="Paste here..."></textarea>
+                <textarea id="input" spellcheck="false" placeholder="Paste data here..."></textarea>
             </div>
             <div class="pane">
                 <div class="pane-header">
