@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DevTools Pro</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -18,24 +18,14 @@
 </head>
 <body class="dark">
 
-<div id="commandPalette" class="modal">
-    <div class="modal-content">
-        <div class="search-input-wrapper">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="toolSearch" placeholder="Search tools (Ctrl+K)..." autofocus>
-        </div>
-        <div id="searchResult" class="custom-scroll"></div>
-    </div>
-</div>
-
 <div class="app-shell">
     <nav class="nav-rail">
         <div class="brand">PRO</div>
         <div class="nav-group">
-            <button class="rail-btn active" data-cat="data" title="Data & Format">📦</button>
-            <button class="rail-btn" data-cat="security" title="Security & Auth">🔐</button>
-            <button class="rail-btn" data-cat="frontend" title="Frontend & UI">🎨</button>
-            <button class="rail-btn" data-cat="utils" title="Utilities">🛠️</button>
+            <button class="rail-btn active" data-cat="data">📦</button>
+            <button class="rail-btn" data-cat="security">🔐</button>
+            <button class="rail-btn" data-cat="frontend">🎨</button>
+            <button class="rail-btn" data-cat="utils">🛠️</button>
         </div>
         <div class="rail-footer">
             <button id="langSwitcher" class="control-btn">EN</button>
@@ -43,15 +33,9 @@
         </div>
     </nav>
 
-    <aside class="tool-sidebar">
+    <aside class="tool-sidebar" id="toolSidebar">
         <div class="sidebar-header" id="catLabel">DATA MAGIC</div>
-        <div id="toolList" class="tool-list custom-scroll">
-            </div>
-        
-        <div class="ad-card">
-            <div class="ad-tag">SPONSORED</div>
-            <div class="ad-box">Boost Your Workflow with DevTools Pro</div>
-        </div>
+        <div id="toolList" class="tool-list custom-scroll"></div>
     </aside>
 
     <main class="workspace">
@@ -78,10 +62,10 @@
                 </div>
             </div>
         </section>
-
-        <div class="footer-ad-bar">
-            <div class="ad-tag">PRO</div>
-            <div class="ad-banner">Advanced Features: JSON Diff, SQL Optimizer, and JWT Debugger are now available.</div>
+        
+        <div class="ad-footer">
+            <div class="ad-tag">AD</div>
+            <div class="ad-banner">Get Premium Features: JSON Diff, Regex Debugger, and more.</div>
         </div>
     </main>
 </div>
