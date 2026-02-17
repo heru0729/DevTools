@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DevTools Pro - Professional Edition</title>
+    <title>DevTools Pro</title>
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9619368699008291" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
     
@@ -13,7 +12,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql-formatter/15.3.1/sql-formatter.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -21,16 +19,18 @@
 
 <div class="app-shell">
     <nav class="nav-rail">
-        <button class="rail-btn active" data-cat="data">📦</button>
-        <button class="rail-btn" data-cat="security">🔐</button>
-        <button class="rail-btn" data-cat="frontend">🎨</button>
-        <button class="rail-btn" data-cat="utils">🛠️</button>
+        <div class="rail-group">
+            <button class="rail-btn active" data-cat="data">📦</button>
+            <button class="rail-btn" data-cat="security">🔐</button>
+            <button class="rail-btn" data-cat="utils">🛠️</button>
+        </div>
         <div class="rail-spacer"></div>
-        <button id="themeToggle" class="btn-theme">🌙</button>
+        <button id="langToggle" class="control-btn lang-btn">EN</button>
+        <button id="themeToggle" class="control-btn">🌙</button>
     </nav>
 
     <aside class="tool-sidebar">
-        <div class="sidebar-title">ALL TOOLS</div>
+        <div class="sidebar-title" id="i18n-tools">TOOLS</div>
         <div id="toolList" class="tool-list custom-scroll"></div>
     </aside>
 
@@ -41,30 +41,25 @@
                 <p id="toolDesc">---</p>
             </div>
             <div class="header-actions">
-                <button class="btn-run" onclick="execute()">RUN (Ctrl+Enter)</button>
+                <button class="btn-run" id="i18n-run" onclick="execute()">RUN</button>
             </div>
         </header>
 
         <div class="editor-grid">
             <div class="pane">
-                <div class="pane-header">INPUT</div>
-                <textarea id="input" spellcheck="false" placeholder="ここに貼り付けてください..."></textarea>
+                <div class="pane-header" id="i18n-input">INPUT</div>
+                <textarea id="input" spellcheck="false" placeholder="Paste data here..."></textarea>
             </div>
-            <div class="pane output-pane">
+            <div class="pane">
                 <div class="pane-header">
-                    <span>OUTPUT</span>
-                    <button class="btn-mini-copy" onclick="copyResult()">Copy Result</button>
+                    <span id="i18n-output">OUTPUT</span>
+                    <button class="btn-mini-copy" id="i18n-copy" onclick="copyResult()">COPY</button>
                 </div>
                 <div class="output-viewer custom-scroll">
                     <div id="imageResult" class="image-center"></div>
                     <pre><code id="outputText" class="hljs"></code></pre>
                 </div>
             </div>
-        </div>
-
-        <div class="ad-footer">
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9619368699008291" data-ad-slot="6699940875" data-ad-format="auto" data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
     </main>
 </div>
