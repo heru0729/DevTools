@@ -1,380 +1,60 @@
-/* =========================================
-   DevTools Pro - Global Settings
-   ========================================= */
 :root {
-    --bg: #0c0c0e;
-    --sidebar: #141418;
-    --panel: #1c1c22;
-    --accent: #818cf8;
-    --accent-glow: rgba(129, 140, 248, 0.2);
-    --border: #27272a;
-    --text: #f4f4f5;
-    --text-dim: #71717a;
-    --font-main: 'Plus Jakarta Sans', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
-    --nav-height: 0px; /* PCでは0、スマホで可変 */
+    --bg: #0c0c0e; --sidebar: #141418; --panel: #1c1c22;
+    --accent: #818cf8; --border: #27272a; --text: #f4f4f5; --text-dim: #71717a;
 }
 
 body.light {
-    --bg: #ffffff;
-    --sidebar: #f8f8fa;
-    --panel: #ffffff;
-    --border: #e4e4e7;
-    --text: #09090b;
-    --text-dim: #71717a;
-    --accent: #4f46e5;
+    --bg: #ffffff; --sidebar: #f2f2f5; --panel: #f2f2f5;
+    --border: #e4e4e7; --text: #09090b; --text-dim: #71717a; --accent: #4f46e5;
 }
 
-* {
-    box-sizing: border-box;
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
-    -webkit-tap-highlight-color: transparent;
-}
+* { box-sizing: border-box; transition: 0.2s ease; }
+body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
 
-body {
-    margin: 0;
-    padding: 0;
-    font-family: var(--font-main);
-    background: var(--bg);
-    color: var(--text);
-    height: 100vh;
-    width: 100vw;
-    overflow: hidden; /* 全体を固定して内部だけスクロール */
-}
+.app-shell { display: flex; height: 100vh; }
 
-/* =========================================
-   App Layout (Shell)
-   ========================================= */
-.app-shell {
-    display: flex;
-    height: 100vh;
-    width: 100vw;
-}
+/* Desktop Navigation */
+.nav-rail { width: 72px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 20px 0; }
+.nav-group { display: flex; flex-direction: column; gap: 15px; flex: 1; }
+.rail-btn { width: 48px; height: 48px; border-radius: 12px; border: none; background: transparent; font-size: 20px; cursor: pointer; color: var(--text-dim); }
+.rail-btn.active { background: var(--accent); color: white; }
+.control-btn { width: 44px; height: 44px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; color: var(--text); cursor: pointer; font-size: 11px; font-weight: 800; margin-bottom: 10px;}
 
-/* 🚦 Navigation Rail (Left side on PC) */
-.nav-rail {
-    width: 76px;
-    background: var(--sidebar);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 24px 0;
-    z-index: 1000;
-}
+.main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
-.brand {
-    font-weight: 900;
-    color: var(--accent);
-    font-size: 12px;
-    margin-bottom: 40px;
-    border: 2px solid var(--accent);
-    padding: 4px;
-    border-radius: 8px;
-}
+/* Tool List */
+.tool-sidebar { height: 60px; background: var(--sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; }
+.tool-list { display: flex; padding: 0 20px; gap: 10px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+.tool-list::-webkit-scrollbar { display: none; }
+.tool-item { padding: 8px 16px; border: 1px solid transparent; background: transparent; color: var(--text-dim); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.tool-item.active { background: var(--bg); color: var(--accent); border-color: var(--border); }
 
-.nav-group {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    flex: 1;
-}
+/* Workspace */
+.workspace { flex: 1; display: flex; flex-direction: column; }
+.workspace-header { padding: 20px 30px; border-bottom: 1px solid var(--border); }
+.title-area h1 { margin: 0; font-size: 20px; }
+.title-area p { margin: 2px 0 0; font-size: 12px; color: var(--text-dim); }
+.action-bar { display: flex; gap: 8px; margin-top: 10px; }
+button.primary { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; }
 
-.rail-btn {
-    width: 48px;
-    height: 48px;
-    border: none;
-    background: transparent;
-    font-size: 20px;
-    cursor: pointer;
-    border-radius: 14px;
-    color: var(--text-dim);
-}
+.editor-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; background: var(--border); gap: 1px; }
+.editor-container { background: var(--bg); display: flex; flex-direction: column; }
+.editor-label { padding: 8px 20px; font-size: 10px; font-weight: 800; color: var(--text-dim); border-bottom: 1px solid var(--border); }
 
-.rail-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-.rail-btn.active {
-    background: var(--accent);
-    color: white;
-    box-shadow: 0 0 20px var(--accent-glow);
-}
+textarea { flex: 1; background: transparent; border: none; color: var(--text); padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; resize: none; outline: none; }
 
-.rail-footer {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
+/* 出力欄 - テーマ同期 */
+.output-viewer { flex: 1; position: relative; background: var(--bg); overflow: hidden; }
+pre { margin: 0; padding: 20px; color: var(--text); }
+.fab-copy { position: absolute; top: 15px; right: 15px; background: var(--panel); color: var(--text); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; }
 
-.control-btn {
-    width: 44px;
-    height: 44px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-weight: 800;
-    font-size: 11px;
-    cursor: pointer;
-    border-radius: 12px;
-}
-
-/* 📂 Tool Sidebar */
-.tool-sidebar {
-    width: 260px;
-    background: var(--sidebar);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.sidebar-header {
-    padding: 32px 24px 16px;
-    font-size: 11px;
-    font-weight: 800;
-    color: var(--text-dim);
-    letter-spacing: 0.15em;
-}
-
-.tool-list {
-    flex: 1;
-    padding: 0 12px;
-    overflow-y: auto;
-}
-
-.tool-item {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid transparent;
-    background: transparent;
-    color: var(--text-dim);
-    text-align: left;
-    cursor: pointer;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 6px;
-}
-
-.tool-item.active {
-    background: var(--panel);
-    color: var(--accent);
-    border-color: var(--border);
-}
-
-/* =========================================
-   Workspace & Editors
-   ========================================= */
-.workspace {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 0; /* Flexの子要素がはみ出さないように */
-}
-
-.workspace-header {
-    padding: 30px 48px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.title-area h1 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.03em; }
-.title-area p { margin: 4px 0 0; color: var(--text-dim); font-size: 14px; }
-
-.action-bar { display: flex; gap: 10px; }
-button.primary {
-    background: var(--accent);
-    color: white;
-    border: none;
-    padding: 10px 22px;
-    border-radius: 10px;
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-}
-
-.editor-grid {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    background: var(--border);
-    gap: 1px;
-    border-top: 1px solid var(--border);
-    min-height: 0; /* スクロール可能にするために必要 */
-}
-
-.editor-container {
-    background: var(--bg);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    min-height: 0;
-}
-
-.editor-label {
-    padding: 10px 24px;
-    font-size: 10px;
-    font-weight: 800;
-    color: var(--text-dim);
-    border-bottom: 1px solid var(--border);
-    background: rgba(0,0,0,0.05);
-}
-
-textarea {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: var(--text);
-    padding: 24px;
-    font-family: var(--font-mono);
-    font-size: 13px;
-    line-height: 1.7;
-    resize: none;
-    outline: none;
-}
-
-.output-viewer {
-    flex: 1;
-    position: relative;
-    background: #08080a;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-pre {
-    margin: 0;
-    flex: 1;
-    padding: 24px;
-    overflow: auto;
-}
-
-.fab-copy {
-    position: absolute;
-    top: 16px;
-    right: 20px;
-    background: #222228;
-    color: #fff;
-    border: 1px solid var(--border);
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-    z-index: 10;
-}
-
-/* =========================================
-   AdSense Containers
-   ========================================= */
-.ad-container {
-    background: rgba(0, 0, 0, 0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-}
-
-.sidebar-ad {
-    margin: 15px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    min-height: 250px;
-}
-
-.footer-ad {
-    height: 90px;
-    background: var(--sidebar);
-    border-top: 1px solid var(--border);
-}
-
-/* =========================================
-   Mobile Responsive (Breakpoint: 768px)
-   ========================================= */
+/* Mobile */
 @media (max-width: 768px) {
-    .app-shell {
-        flex-direction: column;
-    }
-
-    /* ボトムナビに変更 */
-    .nav-rail {
-        width: 100%;
-        height: 65px;
-        flex-direction: row;
-        border-right: none;
-        border-top: 1px solid var(--border);
-        padding: 0 15px;
-        order: 3; /* 一番下に配置 */
-    }
-
-    .brand { display: none; }
-
-    .nav-group {
-        flex-direction: row;
-        justify-content: space-around;
-        width: 100%;
-        gap: 0;
-    }
-
-    .rail-btn { width: 50px; height: 50px; }
-    
-    .rail-footer {
-        flex-direction: row;
-        gap: 8px;
-        margin-left: 10px;
-    }
-
-    /* サイドバーをトップの横スクロールに変更 */
-    .tool-sidebar {
-        width: 100%;
-        height: auto;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-    }
-
-    .sidebar-header { display: none; }
-
-    .tool-list {
-        display: flex;
-        flex-direction: row;
-        padding: 8px;
-        gap: 8px;
-        overflow-x: auto;
-        white-space: nowrap;
-        scrollbar-width: none; /* Firefox */
-    }
-    .tool-list::-webkit-scrollbar { display: none; } /* Chrome/Safari */
-
-    .tool-item {
-        width: auto;
-        padding: 8px 16px;
-        margin-bottom: 0;
-        font-size: 12px;
-    }
-
-    /* メインエリア */
-    .workspace-header {
-        padding: 15px 20px;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .title-area h1 { font-size: 20px; }
-    .action-bar { margin-top: 10px; width: 100%; overflow-x: auto; padding-bottom: 5px; }
-
-    /* エディタを縦並びに */
-    .editor-grid {
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr;
-    }
-
-    .footer-ad {
-        height: auto;
-        min-height: 50px;
-    }
-    
-    .sidebar-ad { display: none; }
+    .app-shell { flex-direction: column; }
+    .nav-rail { width: 100%; height: 60px; flex-direction: row; border-right: none; border-bottom: 1px solid var(--border); order: 0; padding: 0 15px; }
+    .nav-group { flex-direction: row; justify-content: flex-start; gap: 10px; }
+    .rail-footer { flex-direction: row; margin: 0; gap: 8px; }
+    .tool-sidebar { order: 1; }
+    .workspace { order: 2; }
+    .editor-grid { grid-template-columns: 1fr; }
 }
-
-/* Scrollbar Customization */
-.custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
-.custom-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
