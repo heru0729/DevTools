@@ -1,10 +1,13 @@
+body, button, textarea, input, select, pre {
+    user-select: text !important;
+}
+
 body {
     background:#111;
     color:#eee;
     font-family: monospace;
     margin:0;
     padding:20px;
-    user-select:text;
 }
 
 body.light {
@@ -44,7 +47,6 @@ body.light pre {
     border:none;
     color:white;
     cursor:pointer;
-    user-select:none;
     white-space:nowrap;
 }
 
@@ -70,7 +72,6 @@ button {
     border:none;
     cursor:pointer;
     margin-right:5px;
-    user-select:text;
 }
 
 button:hover { background:#555; }
@@ -96,7 +97,6 @@ pre {
     font-size:12px;
     padding:4px 6px;
     cursor:pointer;
-    user-select:text;
 }
 
 pre.error {
@@ -138,3 +138,4 @@ pre.error {
     .top-controls { flex-direction:row; flex-wrap:wrap; gap:5px; }
     .jwt-sections { flex-direction:column; }
     button { width:auto; }
+}
