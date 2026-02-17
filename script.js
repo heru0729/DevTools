@@ -1,123 +1,134 @@
-// --- 500選のコア機能データベース ---
-const tools = [
-    { id: 'json-fmt', cat: 'data', name: 'JSON Formatter', desc: 'JSONの整形・圧縮', tags: 'json, format, minify' },
-    { id: 'sql-fmt', cat: 'data', name: 'SQL Formatter', desc: 'SQLクエリの整形', tags: 'sql, db, format' },
-    { id: 'yaml-json', cat: 'data', name: 'YAML ↔ JSON', desc: 'YAMLとJSONの相互変換', tags: 'yaml, json, convert' },
-    { id: 'jwt-dec', cat: 'security', name: 'JWT Decoder', desc: 'JWTトークンの解析', tags: 'jwt, auth, token' },
-    { id: 'hash-gen', cat: 'security', name: 'Hash Generator', desc: 'SHA256, MD5ハッシュ生成', tags: 'sha256, md5, hash' },
-    { id: 'b64-dec', cat: 'security', name: 'Base64 Tool', desc: 'Base64のエンコード・デコード', tags: 'base64, enc, dec' },
-    { id: 'qr-gen', cat: 'frontend', name: 'QR Code', desc: 'テキストからQRコードを生成', tags: 'qr, code, image' },
-    { id: 'px-rem', cat: 'frontend', name: 'PX ↔ REM', desc: 'フォントサイズ変換', tags: 'css, px, rem' },
-    { id: 'unix-tm', cat: 'utils', name: 'Unix Timestamp', desc: '時間のスタンプ変換', tags: 'time, unix, stamp' },
-    { id: 'uuid-gen', cat: 'utils', name: 'UUID Generator', desc: 'UUID v4, v7の生成', tags: 'uuid, id, gen' }
-];
-
-let currentTool = tools[0];
-
-// --- 初期化 ---
-window.onload = () => {
-    switchCategory('data');
-    renderTool();
-    
-    // Ctrl + K 検索呼び出し
-    window.addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.key === 'k') {
-            e.preventDefault();
-            document.getElementById('commandPalette').classList.add('active');
-            document.getElementById('toolSearch').focus();
+const I18N = {
+    en: {
+        search: "Search Tools...",
+        data: "DATA MAGIC",
+        security: "SECURITY",
+        frontend: "FRONTEND",
+        utils: "UTILITIES",
+        copy: "Copy Result",
+        copied: "Copied! ✅",
+        input: "INPUT",
+        output: "OUTPUT",
+        tools: {
+            'json-fmt': { name: 'JSON Formatter', desc: 'Prettify and validate JSON data.' },
+            'jwt-dec': { name: 'JWT Decoder', desc: 'Parse and inspect JWT tokens.' },
+            'hash-gen': { name: 'Hash Generator', desc: 'Create SHA256 or MD5 hashes.' },
+            'qr-gen': { name: 'QR Code', desc: 'Generate QR codes from text.' }
         }
-        if (e.key === 'Escape') document.getElementById('commandPalette').classList.remove('active');
-    });
+    },
+    ja: {
+        search: "ツールを検索...",
+        data: "データ整形",
+        security: "セキュリティ",
+        frontend: "フロントエンド",
+        utils: "ユーティリティ",
+        copy: "結果をコピー",
+        copied: "コピー完了! ✅",
+        input: "入力",
+        output: "出力",
+        tools: {
+            'json-fmt': { name: 'JSON整形', desc: 'JSONデータを綺麗に整形・検証します。' },
+            'jwt-dec': { name: 'JWTデコーダー', desc: 'JWTトークンを解析して中身を表示します。' },
+            'hash-gen': { name: 'ハッシュ生成', desc: 'SHA256やMD5ハッシュを作成します。' },
+            'qr-gen': { name: 'QRコード生成', desc: 'テキストからQRコードを作成します。' }
+        }
+    }
 };
 
-// --- カテゴリ切り替え ---
-function switchCategory(cat) {
-    document.querySelectorAll('.icon-btn').forEach(b => b.classList.remove('active'));
-    event?.target?.classList?.add('active');
+let currentLang = 'en';
+let currentCat = 'data';
+let currentToolId = 'json-fmt';
+
+const tools = [
+    { id: 'json-fmt', cat: 'data', tags: 'json,format' },
+    { id: 'jwt-dec', cat: 'security', tags: 'jwt,auth' },
+    { id: 'hash-gen', cat: 'security', tags: 'hash,sha256' },
+    { id: 'qr-gen', cat: 'frontend', tags: 'qr,code' }
+];
+
+// --- Initialization ---
+function init() {
+    renderUI();
     
-    document.getElementById('currentCatTitle').textContent = cat.toUpperCase();
-    const list = document.getElementById('toolList');
-    list.innerHTML = "";
-    
-    tools.filter(t => t.cat === cat).forEach(t => {
-        const btn = document.createElement('button');
-        btn.className = `tool-item ${t.id === currentTool.id ? 'active' : ''}`;
-        btn.textContent = t.name;
+    // Event Listeners
+    document.querySelectorAll('.icon-btn').forEach(btn => {
         btn.onclick = () => {
-            currentTool = t;
-            renderTool();
-            switchCategory(cat); // 再描画
+            currentCat = btn.dataset.cat;
+            document.querySelectorAll('.icon-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderUI();
         };
-        list.appendChild(btn);
+    });
+
+    document.getElementById('langSwitcher').onclick = () => {
+        currentLang = currentLang === 'en' ? 'ja' : 'en';
+        document.getElementById('langSwitcher').textContent = currentLang.toUpperCase();
+        renderUI();
+    };
+
+    window.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'k') { e.preventDefault(); document.getElementById('commandPalette').classList.toggle('active'); document.getElementById('toolSearch').focus(); }
+        if (e.key === 'Escape') document.getElementById('commandPalette').classList.remove('active');
     });
 }
 
-// --- ツール描画 & アクション生成 ---
-function renderTool() {
-    document.getElementById('activeToolName').textContent = currentTool.name;
-    document.getElementById('activeToolDesc').textContent = currentTool.desc;
-    const actionArea = document.getElementById('toolActions');
-    actionArea.innerHTML = "";
+function renderUI() {
+    const lang = I18N[currentLang];
+    document.getElementById('catLabel').textContent = lang[currentCat];
+    document.getElementById('toolSearch').placeholder = lang.search;
+    document.getElementById('copyBtn').textContent = lang.copy;
+    document.querySelectorAll('.pane-header')[0].textContent = lang.input;
+    document.querySelectorAll('.pane-header')[1].textContent = lang.output;
 
-    // ツールごとの専用ボタンを生成
-    if (currentTool.id === 'json-fmt') {
-        createAction('Prettify', () => processData(val => JSON.stringify(JSON.parse(val), null, 4)));
-        createAction('Minify', () => processData(val => JSON.stringify(JSON.parse(val))));
-    } else if (currentTool.id === 'hash-gen') {
-        createAction('SHA256', () => processData(val => CryptoJS.SHA256(val).toString()));
-        createAction('MD5', () => processData(val => CryptoJS.MD5(val).toString()));
-    } else if (currentTool.id === 'qr-gen') {
+    const list = document.getElementById('toolList');
+    list.innerHTML = "";
+    tools.filter(t => t.cat === currentCat).forEach(t => {
+        const btn = document.createElement('button');
+        btn.className = `tool-item ${t.id === currentToolId ? 'active' : ''}`;
+        btn.textContent = lang.tools[t.id].name;
+        btn.onclick = () => { currentToolId = t.id; renderUI(); };
+        list.appendChild(btn);
+    });
+
+    const activeTool = lang.tools[currentToolId];
+    document.getElementById('activeToolName').textContent = activeTool.name;
+    document.getElementById('activeToolDesc').textContent = activeTool.desc;
+    
+    renderActions();
+}
+
+function renderActions() {
+    const actions = document.getElementById('toolActions');
+    actions.innerHTML = "";
+    if (currentToolId === 'json-fmt') {
+        createAction('Format', () => runLogic(v => JSON.stringify(JSON.parse(v), null, 4)));
+    } else if (currentToolId === 'hash-gen') {
+        createAction('SHA256', () => runLogic(v => CryptoJS.SHA256(v).toString()));
+    } else if (currentToolId === 'qr-gen') {
         createAction('Generate', () => {
-            const val = document.getElementById('mainInput').value;
-            const qr = qrcode(0, 'M'); qr.addData(val); qr.make();
+            const qr = qrcode(0, 'M'); qr.addData(document.getElementById('mainInput').value); qr.make();
             document.getElementById('imageContainer').innerHTML = qr.createImgTag(5);
-            document.getElementById('mainOutput').textContent = "QR Code Generated Above";
         });
     }
-    // 他の機能も同様にelse ifで追加可能...
 }
 
 function createAction(label, fn) {
-    const b = document.createElement('button');
-    b.className = "primary";
-    b.textContent = label;
-    b.onclick = fn;
+    const b = document.createElement('button'); b.className = "primary"; b.textContent = label; b.onclick = fn;
     document.getElementById('toolActions').appendChild(b);
 }
 
-// --- 共通データ処理 ---
-function processData(callback) {
-    const input = document.getElementById('mainInput').value;
-    const output = document.getElementById('mainOutput');
-    document.getElementById('imageContainer').innerHTML = ""; // 画像クリア
+function runLogic(fn) {
     try {
-        output.textContent = callback(input);
-        hljs.highlightElement(output);
-    } catch (e) {
-        output.textContent = "Error: " + e.message;
-    }
+        const out = fn(document.getElementById('mainInput').value);
+        document.getElementById('mainOutput').textContent = out;
+        hljs.highlightElement(document.getElementById('mainOutput'));
+    } catch (e) { document.getElementById('mainOutput').textContent = "Error: " + e.message; }
 }
 
-// --- 検索エンジン ---
-document.getElementById('toolSearch').oninput = (e) => {
-    const val = e.target.value.toLowerCase();
-    const res = document.getElementById('searchResult');
-    res.innerHTML = "";
-    tools.filter(t => t.name.toLowerCase().includes(val) || t.tags.includes(val)).forEach(t => {
-        const d = document.createElement('div');
-        d.className = "search-item";
-        d.innerHTML = `<span>${t.name}</span><small>${t.cat}</small>`;
-        d.onclick = () => { currentTool = t; renderTool(); document.getElementById('commandPalette').classList.remove('active'); };
-        res.appendChild(d);
-    });
+document.getElementById('copyBtn').onclick = (e) => {
+    navigator.clipboard.writeText(document.getElementById('mainOutput').textContent);
+    e.target.textContent = I18N[currentLang].copied;
+    setTimeout(() => e.target.textContent = I18N[currentLang].copy, 2000);
 };
 
-function copyResult(e) {
-    const txt = document.getElementById('mainOutput').textContent;
-    navigator.clipboard.writeText(txt);
-    const btn = e.target;
-    btn.textContent = "Copied! ✅";
-    setTimeout(() => btn.textContent = "Copy Result", 2000);
-}
-
-function toggleTheme() { document.body.classList.toggle('light'); }
+init();
