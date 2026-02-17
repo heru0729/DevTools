@@ -1,132 +1,89 @@
-const I18N = {
-    en: {
-        cat: { data: "DATA MAGIC", security: "SECURITY", frontend: "FRONTEND", utils: "UTILITIES" },
-        labels: { input: "INPUT", output: "OUTPUT", copy: "Copy", copied: "Copied!" },
-        tools: {
-            'json-fmt': { name: 'JSON Formatter', desc: 'Prettify and validate JSON code.' },
-            'jwt-dec': { name: 'JWT Decoder', desc: 'Inspect JWT tokens and payloads.' },
-            'hash-gen': { name: 'Hash Generator', desc: 'Secure SHA256/MD5 hashing.' },
-            'qr-gen': { name: 'QR Code', desc: 'Generate high-quality QR codes.' }
-        }
-    },
-    ja: {
-        cat: { data: "データ整形", security: "セキュリティ", frontend: "デザイン補助", utils: "ツール" },
-        labels: { input: "入力データ", output: "出力結果", copy: "コピー", copied: "完了!" },
-        tools: {
-            'json-fmt': { name: 'JSON整形', desc: 'JSONを美しく整形・検証します。' },
-            'jwt-dec': { name: 'JWTデコーダー', desc: 'JWTトークンの中身を解析します。' },
-            'hash-gen': { name: 'ハッシュ生成', desc: 'SHA256/MD5ハッシュを作成。' },
-            'qr-gen': { name: 'QRコード', desc: 'テキストからQRコードを作成。' }
-        }
-    }
-};
-
-let state = {
-    lang: 'en',
-    cat: 'data',
-    toolId: 'json-fmt'
-};
-
-const tools = [
-    { id: 'json-fmt', cat: 'data' },
-    { id: 'jwt-dec', cat: 'security' },
-    { id: 'hash-gen', cat: 'security' },
-    { id: 'qr-gen', cat: 'frontend' }
-];
-
-function init() {
-    render();
-    
-    // カテゴリボタンのイベント
-    document.querySelectorAll('.rail-btn').forEach(btn => {
-        btn.onclick = () => {
-            state.cat = btn.dataset.cat;
-            // 選択されたカテゴリの最初のツールを自動選択
-            state.toolId = tools.find(t => t.cat === state.cat).id;
-            render();
-        };
-    });
-
-    document.getElementById('langSwitcher').onclick = () => {
-        state.lang = state.lang === 'en' ? 'ja' : 'en';
-        document.getElementById('langSwitcher').textContent = state.lang.toUpperCase();
-        render();
-    };
-
-    window.addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.key === 'k') { e.preventDefault(); document.getElementById('commandPalette').classList.toggle('active'); document.getElementById('toolSearch').focus(); }
-        if (e.key === 'Escape') document.getElementById('commandPalette').classList.remove('active');
-    });
+:root {
+    --bg: #0c0c0e; --sidebar: #141418; --panel: #1c1c22;
+    --accent: #818cf8; --accent-glow: rgba(129, 140, 248, 0.2);
+    --border: #27272a; --text: #f4f4f5; --text-dim: #71717a;
+    --font-main: 'Plus Jakarta Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
 }
 
-function render() {
-    const lang = I18N[state.lang];
-    
-    // 更新: サイドバータイトル
-    document.getElementById('catLabel').textContent = lang.cat[state.cat];
-    document.getElementById('labelInput').textContent = lang.labels.input;
-    document.getElementById('labelOutput').textContent = lang.labels.output;
-    document.getElementById('copyBtn').textContent = lang.labels.copy;
-
-    // 更新: ツールリスト
-    const list = document.getElementById('toolList');
-    list.innerHTML = "";
-    tools.filter(t => t.cat === state.cat).forEach(t => {
-        const btn = document.createElement('button');
-        btn.className = `tool-item ${t.id === state.toolId ? 'active' : ''}`;
-        btn.textContent = lang.tools[t.id].name;
-        btn.onclick = () => { state.toolId = t.id; render(); };
-        list.appendChild(btn);
-    });
-
-    // 更新: メイン表示
-    const activeTool = lang.tools[state.toolId];
-    document.getElementById('activeToolName').textContent = activeTool.name;
-    document.getElementById('activeToolDesc').textContent = activeTool.desc;
-
-    // 更新: ナビゲーションレールの「active」状態
-    document.querySelectorAll('.rail-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.cat === state.cat);
-    });
-
-    renderActions();
+body.light {
+    --bg: #ffffff; --sidebar: #f8f8fa; --panel: #ffffff;
+    --border: #e4e4e7; --text: #09090b; --text-dim: #71717a; --accent: #4f46e5;
 }
 
-function renderActions() {
-    const container = document.getElementById('toolActions');
-    container.innerHTML = "";
-    
-    const actions = {
-        'json-fmt': [{ label: 'Format', fn: () => run(v => JSON.stringify(JSON.parse(v), null, 4)) }],
-        'hash-gen': [{ label: 'SHA256', fn: () => run(v => CryptoJS.SHA256(v).toString()) }],
-        'qr-gen': [{ label: 'Generate', fn: () => {
-            const qr = qrcode(0, 'M'); qr.addData(document.getElementById('mainInput').value); qr.make();
-            document.getElementById('imageContainer').innerHTML = qr.createImgTag(5);
-        }}]
-    };
+* { box-sizing: border-box; transition: 0.15s ease; }
+body { margin: 0; font-family: var(--font-main); background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
 
-    (actions[state.toolId] || []).forEach(a => {
-        const b = document.createElement('button');
-        b.className = "primary";
-        b.textContent = a.label;
-        b.onclick = a.fn;
-        container.appendChild(b);
-    });
+.app-shell { display: flex; height: 100vh; }
+
+/* 🚦 Nav Rail & Controls */
+.nav-rail { width: 76px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 24px 0; }
+.brand { font-weight: 900; color: var(--accent); font-size: 12px; margin-bottom: 40px; border: 2px solid var(--accent); padding: 4px; border-radius: 8px; }
+.nav-group { display: flex; flex-direction: column; gap: 20px; flex: 1; }
+
+.rail-btn { width: 48px; height: 48px; border: 1px solid transparent; background: transparent; font-size: 20px; cursor: pointer; border-radius: 14px; color: var(--text-dim); }
+.rail-btn:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+.rail-btn.active { background: var(--accent); color: white; box-shadow: 0 0 20px var(--accent-glow); border-color: rgba(255,255,255,0.2); }
+
+.control-btn {
+    width: 44px; height: 44px; background: var(--panel); border: 1px solid var(--border);
+    color: var(--text); font-weight: 800; font-size: 11px; cursor: pointer;
+    border-radius: 12px; margin-top: 12px; display: flex; align-items: center; justify-content: center;
 }
+.control-btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
 
-function run(logicFn) {
-    try {
-        const val = document.getElementById('mainInput').value;
-        const result = logicFn(val);
-        document.getElementById('mainOutput').textContent = result;
-        hljs.highlightElement(document.getElementById('mainOutput'));
-    } catch (e) { document.getElementById('mainOutput').textContent = "Error: " + e.message; }
+/* 📂 Sidebar Tools */
+.tool-sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+.sidebar-header { padding: 32px 24px 16px; font-size: 11px; font-weight: 800; color: var(--text-dim); letter-spacing: 0.15em; }
+.tool-list { flex: 1; padding: 0 12px; overflow-y: auto; }
+.tool-item {
+    width: 100%; padding: 12px 16px; border: 1px solid transparent; background: transparent;
+    color: var(--text-dim); text-align: left; cursor: pointer; border-radius: 10px;
+    font-size: 13px; font-weight: 600; margin-bottom: 6px;
 }
+.tool-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+.tool-item.active { background: var(--panel); color: var(--accent); border-color: var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
 
-document.getElementById('copyBtn').onclick = (e) => {
-    navigator.clipboard.writeText(document.getElementById('mainOutput').textContent);
-    e.target.textContent = I18N[state.lang].labels.copied;
-    setTimeout(() => e.target.textContent = I18N[state.lang].labels.copy, 2000);
-};
+/* 🖥️ Workspace & Editors */
+.workspace { flex: 1; display: flex; flex-direction: column; }
+.workspace-header { padding: 30px 48px; display: flex; justify-content: space-between; align-items: center; }
+.title-area h1 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.03em; }
+.title-area p { margin: 4px 0 0; color: var(--text-dim); font-size: 14px; }
 
-init();
+.editor-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; background: var(--border); gap: 1px; border-top: 1px solid var(--border); }
+.editor-container { background: var(--bg); display: flex; flex-direction: column; position: relative; }
+.editor-label { padding: 10px 24px; font-size: 10px; font-weight: 800; color: var(--text-dim); border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.05); }
+
+textarea {
+    flex: 1; background: transparent; border: none; color: var(--text); padding: 24px;
+    font-family: var(--font-mono); font-size: 13px; line-height: 1.7; resize: none; outline: none;
+}
+.output-viewer { flex: 1; position: relative; background: #08080a; display: flex; flex-direction: column; }
+pre { margin: 0; flex: 1; padding: 24px; overflow: auto; }
+
+/* 🔘 Interactive Elements */
+.action-bar { display: flex; gap: 10px; }
+button.primary {
+    background: var(--accent); color: white; border: none; padding: 10px 22px;
+    border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer;
+    box-shadow: 0 4px 15px var(--accent-glow);
+}
+button.primary:hover { transform: translateY(-1px); filter: brightness(1.1); }
+
+.fab-copy {
+    position: absolute; top: 16px; right: 20px; background: #222228; color: #fff;
+    border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px;
+    font-size: 11px; font-weight: 700; cursor: pointer; z-index: 10;
+}
+.fab-copy:hover { border-color: var(--accent); color: var(--accent); }
+
+/* 📢 Ad Boxes */
+.ad-card { margin: 24px; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; }
+.ad-tag { font-size: 9px; color: var(--accent); font-weight: 800; margin-bottom: 8px; }
+.ad-box { height: 80px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 11px; color: var(--text-dim); text-align: center; line-height: 1.4; }
+
+.footer-ad-bar { height: 50px; background: var(--sidebar); border-top: 1px solid var(--border); display: flex; align-items: center; padding: 0 40px; gap: 20px; }
+.ad-banner { font-size: 11px; color: var(--text-dim); flex: 1; }
+
+.custom-scroll::-webkit-scrollbar { width: 5px; }
+.custom-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
