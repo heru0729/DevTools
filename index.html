@@ -3,151 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevTools Ultra Pro | The Ultimate Engineering Toolkit</title>
+    <title>DevTools Ultra | Gentle & Powerful</title>
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql-formatter/15.3.1/sql-formatter.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 
     <link rel="stylesheet" href="style.css">
-    
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JEW06PPQN4"></script>
-    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-JEW06PPQN4');</script>
 </head>
-<body>
-
-<div class="app-wrapper">
+<body class="dark"> <div class="app-layout">
     <aside class="sidebar">
-        <h2>DevTools Ultra</h2>
-        <nav class="tabs-nav">
-            <button class="tab-btn active" data-tab="json-xml">JSON / XML / YAML</button>
-            <button class="tab-btn" data-tab="sql-text">SQL / Text / Regex</button>
-            <button class="tab-btn" data-tab="crypto-hash">Crypto / Base64</button>
-            <button class="tab-btn" data-tab="convert-type">Convert / Types</button>
-            <button class="tab-btn" data-tab="time-unit">Time / Network</button>
-            <button class="tab-btn" data-tab="generator">Generators</button>
-            <button class="tab-btn" data-tab="security-jwt">JWT / Security</button>
-            <button class="tab-btn" data-tab="diff-tool">Advanced Diff</button>
-            <button class="tab-btn" data-tab="client-info">Client / Browser</button>
+        <div class="logo">
+            <span class="logo-icon">🛠️</span>
+            <span class="logo-text">DevTools <span>Ultra</span></span>
+        </div>
+        <nav class="nav-menu">
+            <button class="nav-item active" data-tab="json-xml">📦 データ整形</button>
+            <button class="nav-item" data-tab="sql-text">📝 テキスト・SQL</button>
+            <button class="nav-item" data-tab="crypto-hash">🔐 暗号・エンコード</button>
+            <button class="nav-item" data-tab="convert-type">🔄 変換・型生成</button>
+            <button class="nav-item" data-tab="time-unit">⏰ 時間・ネットワーク</button>
+            <button class="nav-item" data-tab="generator">🎲 生成ツール</button>
+            <button class="nav-item" data-tab="security-jwt">🎫 JWT・認証</button>
+            <button class="nav-item" data-tab="diff-tool">⚖️ 比較(Diff)</button>
+            <button class="nav-item" data-tab="client-info">💻 ブラウザ情報</button>
         </nav>
         <div class="sidebar-footer">
-            <button id="themeToggle">Theme: Dark</button>
+            <button id="themeToggle" class="theme-btn">🌙 ダークモード</button>
         </div>
     </aside>
 
-    <main class="content-area">
-        <section class="tab-panel active" id="json-xml">
-            <div class="editor-header">
-                <h3>Structured Data Formatter</h3>
-                <div class="controls">
-                    <button onclick="processJSON('format')">JSON Format</button>
-                    <button onclick="processJSON('minify')">JSON Minify</button>
-                    <button onclick="jsonToYaml()">JSON ↔ YAML</button>
-                    <button onclick="csvToJson()">CSV ↔ JSON</button>
+    <main class="main-content">
+        <section class="panel active" id="json-xml">
+            <header class="panel-header">
+                <h2>データ整形 <small>JSON / XML / YAML / CSV</small></h2>
+                <div class="action-group">
+                    <button class="primary" onclick="processJSON('format')">きれいに整列</button>
+                    <button onclick="processJSON('minify')">1行に圧縮</button>
+                    <button onclick="jsonToYaml()">YAMLへ変換</button>
+                    <button onclick="csvToJson()">CSVをJSONへ</button>
+                </div>
+            </header>
+            <div class="editor-grid">
+                <textarea id="mainInput" class="custom-scroll" placeholder="ここにデータを貼り付けてください..."></textarea>
+                <div class="output-container">
+                    <pre><code id="mainOutput" class="language-json"></code></pre>
+                    <button class="copy-btn" onclick="copyResult('mainOutput')">コピー</button>
                 </div>
             </div>
-            <textarea id="mainInput" placeholder="Paste JSON, XML, YAML or CSV here..."></textarea>
-            <div id="resultContainer" class="result-wrapper">
-                <pre><code id="mainOutput" class="language-json"></code></pre>
-                <button class="copy-float" onclick="copyResult('mainOutput')">Copy</button>
-            </div>
         </section>
 
-        <section class="tab-panel" id="sql-text">
-            <h3>SQL & Text Lab</h3>
-            <textarea id="textInput" placeholder="Enter SQL or raw text..."></textarea>
-            <div class="controls">
-                <button onclick="formatSQL()">Format SQL</button>
-                <button onclick="textStats()">Text Stats</button>
-                <button onclick="caseTransform('up')">UPPER</button>
-                <button onclick="caseTransform('low')">lower</button>
-                <button onclick="regexTest()">Regex Match</button>
-            </div>
-            <input type="text" id="regexPattern" placeholder="Regex pattern (e.g. [0-9]+)">
-            <pre id="textOutput"></pre>
-        </section>
-
-        <section class="tab-panel" id="crypto-hash">
-            <h3>Cryptography & Encoding</h3>
-            <textarea id="cryptoInput" placeholder="Text to hash or encode..."></textarea>
-            <div class="controls">
-                <button onclick="hashIt('MD5')">MD5</button>
-                <button onclick="hashIt('SHA256')">SHA256</button>
-                <button onclick="hashIt('SHA512')">SHA512</button>
-                <button onclick="handleBase64('enc')">B64 Encode</button>
-                <button onclick="handleBase64('dec')">B64 Decode</button>
-            </div>
-            <div class="file-upload">
-                <label>Image to Base64: </label>
-                <input type="file" id="imageFile" onchange="imageToBase64()">
-            </div>
-            <pre id="cryptoOutput"></pre>
-        </section>
-
-        <section class="tab-panel" id="convert-type">
-            <h3>Type Generation & Conversion</h3>
-            <textarea id="typeInput" placeholder="Paste JSON to generate types..."></textarea>
-            <div class="controls">
-                <button onclick="genTypeScript()">to TypeScript Interface</button>
-                <button onclick="genGoStruct()">to Go Struct</button>
-                <button onclick="urlAction('enc')">URL Encode</button>
-                <button onclick="urlAction('dec')">URL Decode</button>
-            </div>
-            <pre id="typeOutput"></pre>
-        </section>
-
-        <section class="tab-panel" id="time-unit">
-            <h3>Time & Network</h3>
-            <div class="input-row">
-                <input type="text" id="timeValue" placeholder="Unix Timestamp or Date String">
-                <button onclick="convertTime()">Convert</button>
-                <button onclick="nowTime()">Now</button>
-            </div>
-            <pre id="timeOutput"></pre>
-            <hr>
-            <h3>Crontab Parser</h3>
-            <input type="text" id="cronInput" placeholder="* * * * *">
-            <button onclick="parseCron()">Explain Cron</button>
-            <pre id="cronOutput"></pre>
-        </section>
-
-        <section class="tab-panel" id="generator">
-            <h3>Data Generators</h3>
-            <div class="controls">
-                <button onclick="generate('uuid')">UUID v4</button>
-                <button onclick="generate('pass')">Strong Password</button>
-                <button onclick="generate('lorem')">Lorem Ipsum</button>
-            </div>
-            <pre id="genOutput"></pre>
-        </section>
-
-        <section class="tab-panel" id="security-jwt">
-            <h3>JWT Debugger</h3>
-            <textarea id="jwtInput" placeholder="Paste JWT token here..."></textarea>
-            <button onclick="debugJWT()">Analyze JWT</button>
-            <div id="jwtResult" class="jwt-grid">
-                <div>Header: <pre id="jwtHeader"></pre></div>
-                <div>Payload: <pre id="jwtPayload"></pre></div>
-            </div>
-        </section>
-
-        <section class="tab-panel" id="diff-tool">
-            <h3>Advanced Diff</h3>
-            <div class="diff-split">
-                <textarea id="diff1" placeholder="Original..."></textarea>
-                <textarea id="diff2" placeholder="Modified..."></textarea>
-            </div>
-            <button onclick="runDiff()">Compare Line by Line</button>
-            <pre id="diffOutput"></pre>
-        </section>
-
-        <section class="tab-panel" id="client-info">
-            <h3>Your Browser / Environment</h3>
-            <button onclick="getClientInfo()">Refresh Info</button>
-            <table id="clientTable"></table>
-        </section>
-    </main>
+        </main>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
