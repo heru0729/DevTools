@@ -1,89 +1,161 @@
-:root {
-    --bg: #0c0c0e; --sidebar: #141418; --panel: #1c1c22;
-    --accent: #818cf8; --accent-glow: rgba(129, 140, 248, 0.2);
-    --border: #27272a; --text: #f4f4f5; --text-dim: #71717a;
-    --font-main: 'Plus Jakarta Sans', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+const I18N = {
+    en: {
+        cat: { data: "DATA MAGIC", security: "SECURITY", frontend: "FRONTEND", utils: "UTILITIES" },
+        labels: { input: "SOURCE INPUT", output: "COMPILED OUTPUT", copy: "Copy Result", copied: "Copied! ✅" },
+        tools: {
+            'json-fmt': { name: 'JSON Formatter', desc: 'Prettify and validate JSON code structures.' },
+            'sql-fmt': { name: 'SQL Formatter', desc: 'Format SQL queries for better readability.' },
+            'yaml-json': { name: 'YAML to JSON', desc: 'Convert YAML strings into JSON objects.' },
+            'jwt-dec': { name: 'JWT Decoder', desc: 'Analyze JWT tokens, headers, and payloads.' },
+            'hash-sha': { name: 'SHA-256 Hash', desc: 'Generate secure SHA-256 text hashes.' },
+            'hash-md5': { name: 'MD5 Generator', desc: 'Generate MD5 message-digest hashes.' },
+            'b64-tool': { name: 'Base64 Tool', desc: 'Encode or decode Base64 strings safely.' },
+            'qr-gen': { name: 'QR Code Gen', desc: 'Create QR codes for URLs and text.' },
+            'px-rem': { name: 'PX to REM', desc: 'Convert pixels to REM based on 16px.' },
+            'unix-tm': { name: 'Unix Stamp', desc: 'Convert Unix timestamps to readable dates.' },
+            'uuid-v4': { name: 'UUID Generator', desc: 'Generate random UUID v4 strings.' },
+            'lorem-ip': { name: 'Lorem Ipsum', desc: 'Generate placeholder dummy text.' }
+        }
+    },
+    ja: {
+        cat: { data: "データ整形", security: "セキュリティ", frontend: "フロントエンド", utils: "ユーティリティ" },
+        labels: { input: "入力データ", output: "出力結果", copy: "結果をコピー", copied: "コピー完了! ✅" },
+        tools: {
+            'json-fmt': { name: 'JSON整形', desc: 'JSONコードを綺麗に整形・検証します。' },
+            'sql-fmt': { name: 'SQL整形', desc: 'SQLクエリを読みやすく整形します。' },
+            'yaml-json': { name: 'YAML ↔ JSON', desc: 'YAMLとJSONを相互変換します。' },
+            'jwt-dec': { name: 'JWT解析', desc: 'JWTトークンのヘッダーと中身を解析します。' },
+            'hash-sha': { name: 'SHA-256生成', desc: 'セキュアなSHA-256ハッシュを作成。' },
+            'hash-md5': { name: 'MD5生成', desc: 'MD5ハッシュを一瞬で生成します。' },
+            'b64-tool': { name: 'Base64変換', desc: 'Base64のエンコード・デコードを行います。' },
+            'qr-gen': { name: 'QRコード作成', desc: 'URLやテキストからQRコードを作成。' },
+            'px-rem': { name: 'PX ↔ REM変換', desc: 'ピクセルとREM単位を変換します。' },
+            'unix-tm': { name: 'Unix時刻変換', desc: 'Unixスタンプを日時に変換します。' },
+            'uuid-v4': { name: 'UUID生成', desc: 'ランダムなUUID v4を生成します。' },
+            'lorem-ip': { name: 'ダミーテキスト', desc: 'テスト用のLorem Ipsum文を生成。' }
+        }
+    }
+};
+
+let appState = {
+    lang: 'en',
+    cat: 'data',
+    toolId: 'json-fmt'
+};
+
+const toolMap = [
+    { id: 'json-fmt', cat: 'data' }, { id: 'sql-fmt', cat: 'data' }, { id: 'yaml-json', cat: 'data' },
+    { id: 'jwt-dec', cat: 'security' }, { id: 'hash-sha', cat: 'security' }, { id: 'hash-md5', cat: 'security' }, { id: 'b64-tool', cat: 'security' },
+    { id: 'qr-gen', cat: 'frontend' }, { id: 'px-rem', cat: 'frontend' },
+    { id: 'unix-tm', cat: 'utils' }, { id: 'uuid-v4', cat: 'utils' }, { id: 'lorem-ip', cat: 'utils' }
+];
+
+function init() {
+    render();
+    bindEvents();
 }
 
-body.light {
-    --bg: #ffffff; --sidebar: #f8f8fa; --panel: #ffffff;
-    --border: #e4e4e7; --text: #09090b; --text-dim: #71717a; --accent: #4f46e5;
+function bindEvents() {
+    // カテゴリボタン
+    document.querySelectorAll('.rail-btn').forEach(btn => {
+        btn.onclick = () => {
+            appState.cat = btn.dataset.cat;
+            appState.toolId = toolMap.find(t => t.cat === appState.cat).id;
+            render();
+        };
+    });
+
+    // 言語スイッチ
+    document.getElementById('langSwitcher').onclick = () => {
+        appState.lang = appState.lang === 'en' ? 'ja' : 'en';
+        render();
+    };
+
+    // テーマスイッチ
+    document.getElementById('themeSwitcher').onclick = (e) => {
+        document.body.classList.toggle('light');
+        e.target.textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
+    };
+
+    // コピー
+    document.getElementById('copyBtn').onclick = (e) => {
+        const txt = document.getElementById('mainOutput').textContent;
+        if (!txt) return;
+        navigator.clipboard.writeText(txt);
+        const original = e.target.textContent;
+        e.target.textContent = I18N[appState.lang].labels.copied;
+        setTimeout(() => e.target.textContent = original, 2000);
+    };
 }
 
-* { box-sizing: border-box; transition: 0.15s ease; }
-body { margin: 0; font-family: var(--font-main); background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
+function render() {
+    const lang = I18N[appState.lang];
+    
+    // UIテキスト更新
+    document.getElementById('catLabel').textContent = lang.cat[appState.cat];
+    document.getElementById('labelInput').textContent = lang.labels.input;
+    document.getElementById('labelOutput').textContent = lang.labels.output;
+    document.getElementById('langSwitcher').textContent = appState.lang.toUpperCase();
 
-.app-shell { display: flex; height: 100vh; }
+    // ナビボタン状態
+    document.querySelectorAll('.rail-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.cat === appState.cat);
+    });
 
-/* 🚦 Nav Rail & Controls */
-.nav-rail { width: 76px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 24px 0; }
-.brand { font-weight: 900; color: var(--accent); font-size: 12px; margin-bottom: 40px; border: 2px solid var(--accent); padding: 4px; border-radius: 8px; }
-.nav-group { display: flex; flex-direction: column; gap: 20px; flex: 1; }
+    // ツールリスト生成
+    const list = document.getElementById('toolList');
+    list.innerHTML = "";
+    toolMap.filter(t => t.cat === appState.cat).forEach(t => {
+        const btn = document.createElement('button');
+        btn.className = `tool-item ${t.id === appState.toolId ? 'active' : ''}`;
+        btn.textContent = lang.tools[t.id].name;
+        btn.onclick = () => { appState.toolId = t.id; render(); };
+        list.appendChild(btn);
+    });
 
-.rail-btn { width: 48px; height: 48px; border: 1px solid transparent; background: transparent; font-size: 20px; cursor: pointer; border-radius: 14px; color: var(--text-dim); }
-.rail-btn:hover { background: rgba(255,255,255,0.05); color: var(--text); }
-.rail-btn.active { background: var(--accent); color: white; box-shadow: 0 0 20px var(--accent-glow); border-color: rgba(255,255,255,0.2); }
+    // アクティブツールの詳細
+    const active = lang.tools[appState.toolId];
+    document.getElementById('activeToolName').textContent = active.name;
+    document.getElementById('activeToolDesc').textContent = active.desc;
 
-.control-btn {
-    width: 44px; height: 44px; background: var(--panel); border: 1px solid var(--border);
-    color: var(--text); font-weight: 800; font-size: 11px; cursor: pointer;
-    border-radius: 12px; margin-top: 12px; display: flex; align-items: center; justify-content: center;
+    renderActions();
 }
-.control-btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
 
-/* 📂 Sidebar Tools */
-.tool-sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-.sidebar-header { padding: 32px 24px 16px; font-size: 11px; font-weight: 800; color: var(--text-dim); letter-spacing: 0.15em; }
-.tool-list { flex: 1; padding: 0 12px; overflow-y: auto; }
-.tool-item {
-    width: 100%; padding: 12px 16px; border: 1px solid transparent; background: transparent;
-    color: var(--text-dim); text-align: left; cursor: pointer; border-radius: 10px;
-    font-size: 13px; font-weight: 600; margin-bottom: 6px;
+function renderActions() {
+    const bar = document.getElementById('toolActions');
+    bar.innerHTML = "";
+    const btn = (lbl, fn) => {
+        const b = document.createElement('button'); b.className = "primary"; b.textContent = lbl; b.onclick = fn;
+        bar.appendChild(b);
+    };
+
+    const input = () => document.getElementById('mainInput').value;
+    const output = (v) => { 
+        document.getElementById('imageContainer').innerHTML = ""; 
+        document.getElementById('mainOutput').textContent = v; 
+        hljs.highlightElement(document.getElementById('mainOutput'));
+    };
+
+    // ロジック分岐
+    switch(appState.toolId) {
+        case 'json-fmt': btn('Beautify', () => output(JSON.stringify(JSON.parse(input()), null, 4))); break;
+        case 'sql-fmt': btn('Format SQL', () => output(sqlFormatter.format(input()))); break;
+        case 'jwt-dec': btn('Decode JWT', () => output(JSON.stringify(JSON.parse(atob(input().split('.')[1])), null, 4))); break;
+        case 'hash-sha': btn('Generate', () => output(CryptoJS.SHA256(input()).toString())); break;
+        case 'b64-tool': 
+            btn('Encode', () => output(btoa(input()))); 
+            btn('Decode', () => output(atob(input()))); 
+            break;
+        case 'qr-gen': btn('Create QR', () => {
+            const qr = qrcode(0, 'M'); qr.addData(input()); qr.make();
+            document.getElementById('imageContainer').innerHTML = qr.createImgTag(6);
+            document.getElementById('mainOutput').textContent = "";
+        }); break;
+        case 'uuid-v4': btn('Generate New', () => output(crypto.randomUUID())); break;
+        case 'unix-tm': btn('Convert', () => output(new Date(parseInt(input()) * 1000).toLocaleString())); break;
+        case 'px-rem': btn('to REM', () => output((parseFloat(input()) / 16) + "rem")); break;
+        case 'lorem-ip': btn('Generate', () => output("Lorem ipsum dolor sit amet, consectetur adipiscing elit...")); break;
+    }
 }
-.tool-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
-.tool-item.active { background: var(--panel); color: var(--accent); border-color: var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
 
-/* 🖥️ Workspace & Editors */
-.workspace { flex: 1; display: flex; flex-direction: column; }
-.workspace-header { padding: 30px 48px; display: flex; justify-content: space-between; align-items: center; }
-.title-area h1 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.03em; }
-.title-area p { margin: 4px 0 0; color: var(--text-dim); font-size: 14px; }
-
-.editor-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; background: var(--border); gap: 1px; border-top: 1px solid var(--border); }
-.editor-container { background: var(--bg); display: flex; flex-direction: column; position: relative; }
-.editor-label { padding: 10px 24px; font-size: 10px; font-weight: 800; color: var(--text-dim); border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.05); }
-
-textarea {
-    flex: 1; background: transparent; border: none; color: var(--text); padding: 24px;
-    font-family: var(--font-mono); font-size: 13px; line-height: 1.7; resize: none; outline: none;
-}
-.output-viewer { flex: 1; position: relative; background: #08080a; display: flex; flex-direction: column; }
-pre { margin: 0; flex: 1; padding: 24px; overflow: auto; }
-
-/* 🔘 Interactive Elements */
-.action-bar { display: flex; gap: 10px; }
-button.primary {
-    background: var(--accent); color: white; border: none; padding: 10px 22px;
-    border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer;
-    box-shadow: 0 4px 15px var(--accent-glow);
-}
-button.primary:hover { transform: translateY(-1px); filter: brightness(1.1); }
-
-.fab-copy {
-    position: absolute; top: 16px; right: 20px; background: #222228; color: #fff;
-    border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px;
-    font-size: 11px; font-weight: 700; cursor: pointer; z-index: 10;
-}
-.fab-copy:hover { border-color: var(--accent); color: var(--accent); }
-
-/* 📢 Ad Boxes */
-.ad-card { margin: 24px; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; }
-.ad-tag { font-size: 9px; color: var(--accent); font-weight: 800; margin-bottom: 8px; }
-.ad-box { height: 80px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 11px; color: var(--text-dim); text-align: center; line-height: 1.4; }
-
-.footer-ad-bar { height: 50px; background: var(--sidebar); border-top: 1px solid var(--border); display: flex; align-items: center; padding: 0 40px; gap: 20px; }
-.ad-banner { font-size: 11px; color: var(--text-dim); flex: 1; }
-
-.custom-scroll::-webkit-scrollbar { width: 5px; }
-.custom-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+init();
