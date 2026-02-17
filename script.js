@@ -1,16 +1,17 @@
-// --- 初期設定 & タブ管理 ---
-document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn, .tab-panel').forEach(el => el.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.tab).classList.add('active');
+// --- 基本のUI操作 ---
+document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item, .panel').forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+        document.getElementById(item.dataset.tab).classList.add('active');
     });
 });
 
 // テーマ切替
-document.getElementById('themeToggle').addEventListener('click', function() {
-    document.body.classList.toggle('light');
-    this.textContent = document.body.classList.contains('light') ? "Theme: Light" : "Theme: Dark";
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.addEventListener('click', () => {
+    const isLight = document.body.classList.toggle('light');
+    themeToggle.textContent = isLight ? "☀️ ライトモード" : "🌙 ダークモード";
 });
 
 // 汎用コピー関数
@@ -172,3 +173,4 @@ function runDiff() {
     }
     document.getElementById('diffOutput').textContent = res || "Everything matches!";
 }
+
