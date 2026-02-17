@@ -28,22 +28,22 @@ body {
 .app-layout { display: flex; height: 100%; }
 
 .sidebar {
-    width: 260px; background: var(--bg-side);
+    width: 280px; background: var(--bg-side);
     border-right: 1px solid var(--border);
     padding: 24px; display: flex; flex-direction: column;
 }
 
 .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
-.logo-text { font-weight: 600; font-size: 18px; }
-.logo-text span { color: var(--primary); }
+.logo-text { font-weight: 600; font-size: 22px; letter-spacing: -0.5px; }
+.logo-text span { color: var(--primary); font-weight: 800; }
 
 .nav-menu { flex: 1; display: flex; flex-direction: column; gap: 5px; }
 .nav-item {
     padding: 12px; border: none; background: transparent;
     color: var(--text-dim); text-align: left; cursor: pointer;
-    border-radius: var(--radius); transition: 0.2s;
+    border-radius: var(--radius); transition: 0.2s; font-size: 14px;
 }
-.nav-item:hover { background: var(--border); }
+.nav-item:hover { background: var(--border); color: var(--text); }
 .nav-item.active { background: var(--primary); color: white; }
 
 .main-content { flex: 1; padding: 40px; overflow-y: auto; }
@@ -52,26 +52,28 @@ body {
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-.panel-header h2 { margin: 0; }
+.panel-header h2 { margin: 0; font-size: 24px; }
+.panel-header small { display: block; margin-top: 4px; color: var(--text-dim); }
 .action-group { display: flex; gap: 8px; margin: 20px 0; flex-wrap: wrap; }
 
 button {
     padding: 10px 16px; border-radius: var(--radius); border: 1px solid var(--border);
     background: var(--card); color: var(--text); cursor: pointer; transition: 0.2s;
 }
-button:hover { border-color: var(--primary); }
+button:hover { border-color: var(--primary); transform: translateY(-1px); }
 button.primary { background: var(--primary); border: none; color: white; }
 
-.editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 textarea {
     width: 100%; height: 500px; border-radius: var(--radius);
     background: var(--card); color: var(--text); border: 1px solid var(--border);
-    padding: 15px; font-family: 'Fira Code', monospace; resize: none;
+    padding: 15px; font-family: 'Fira Code', monospace; resize: none; outline: none;
 }
 pre {
     margin: 0; height: 500px; border-radius: var(--radius);
     background: #000; padding: 15px; overflow: auto; position: relative;
 }
-.copy-btn { position: absolute; top: 10px; right: 10px; font-size: 12px; }
+.copy-btn { position: absolute; top: 12px; right: 12px; font-size: 11px; padding: 4px 8px; opacity: 0.8; }
 
-.theme-btn { width: 100%; margin-top: 20px; }
+.sidebar-footer { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
+.footer-btn { width: 100%; font-size: 13px; padding: 8px; }
