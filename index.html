@@ -1,34 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevTools Ultra | Gentle & Powerful</title>
+    <title>DevTools Ultra Pro</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Fira+Code&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql-formatter/15.3.1/sql-formatter.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="dark"> <div class="app-layout">
+<body class="dark">
+
+<div class="app-layout">
     <aside class="sidebar">
         <div class="logo">
             <span class="logo-icon">🛠️</span>
             <span class="logo-text">DevTools <span>Ultra</span></span>
         </div>
         <nav class="nav-menu">
-            <button class="nav-item active" data-tab="json-xml">📦 データ整形</button>
-            <button class="nav-item" data-tab="sql-text">📝 テキスト・SQL</button>
-            <button class="nav-item" data-tab="crypto-hash">🔐 暗号・エンコード</button>
-            <button class="nav-item" data-tab="convert-type">🔄 変換・型生成</button>
-            <button class="nav-item" data-tab="time-unit">⏰ 時間・ネットワーク</button>
-            <button class="nav-item" data-tab="generator">🎲 生成ツール</button>
-            <button class="nav-item" data-tab="security-jwt">🎫 JWT・認証</button>
-            <button class="nav-item" data-tab="diff-tool">⚖️ 比較(Diff)</button>
-            <button class="nav-item" data-tab="client-info">💻 ブラウザ情報</button>
+            <button class="nav-item active" data-tab="json-section">📦 データ整形</button>
+            <button class="nav-item" data-tab="crypto-section">🔐 暗号・エンコード</button>
+            <button class="nav-item" data-tab="convert-section">🔄 変換・型生成</button>
+            <button class="nav-item" data-tab="gen-section">🎲 生成・情報</button>
         </nav>
         <div class="sidebar-footer">
             <button id="themeToggle" class="theme-btn">🌙 ダークモード</button>
@@ -36,29 +35,78 @@
     </aside>
 
     <main class="main-content">
-        <section class="panel active" id="json-xml">
+        <section class="panel active" id="json-section">
             <header class="panel-header">
-                <h2>データ整形 <small>JSON / XML / YAML / CSV</small></h2>
+                <h2>データ整形 <small>JSON / YAML / SQL / CSV</small></h2>
                 <div class="action-group">
-                    <button class="primary" onclick="processJSON('format')">きれいに整列</button>
-                    <button onclick="processJSON('minify')">1行に圧縮</button>
-                    <button onclick="jsonToYaml()">YAMLへ変換</button>
-                    <button onclick="csvToJson()">CSVをJSONへ</button>
+                    <button class="primary" onclick="runJSON('format')">JSON整形</button>
+                    <button onclick="runJSON('minify')">JSON圧縮</button>
+                    <button onclick="runSQL()">SQL整形</button>
+                    <button onclick="runYaml()">YAML変換</button>
+                    <button onclick="runCsv()">CSV→JSON</button>
                 </div>
             </header>
             <div class="editor-grid">
-                <textarea id="mainInput" class="custom-scroll" placeholder="ここにデータを貼り付けてください..."></textarea>
+                <textarea id="input1" class="custom-scroll" placeholder="ここにデータを入力..."></textarea>
                 <div class="output-container">
-                    <pre><code id="mainOutput" class="language-json"></code></pre>
-                    <button class="copy-btn" onclick="copyResult('mainOutput')">コピー</button>
+                    <pre><code id="output1" class="language-json"></code></pre>
+                    <button class="copy-btn" onclick="copyText('output1')">コピー</button>
                 </div>
             </div>
         </section>
 
-        </main>
+        <section class="panel" id="crypto-section">
+            <header class="panel-header">
+                <h2>セキュリティ <small>Hash / Base64 / JWT</small></h2>
+                <div class="action-group">
+                    <button class="primary" onclick="runHash('SHA256')">SHA256</button>
+                    <button onclick="runHash('MD5')">MD5</button>
+                    <button onclick="runBase64('enc')">B64エンコード</button>
+                    <button onclick="runBase64('dec')">B64デコード</button>
+                    <button onclick="runJWT()">JWT解析</button>
+                </div>
+            </header>
+            <div class="editor-grid">
+                <textarea id="input2" placeholder="テキストまたはJWTを入力..."></textarea>
+                <div class="output-container">
+                    <pre id="output2"></pre>
+                    <button class="copy-btn" onclick="copyText('output2')">コピー</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel" id="convert-section">
+            <header class="panel-header">
+                <h2>変換 <small>URL / TypeScript / Case</small></h2>
+                <div class="action-group">
+                    <button class="primary" onclick="runTypeGen()">TS型生成</button>
+                    <button onclick="runUrl('enc')">URLエンコード</button>
+                    <button onclick="runUrl('dec')">URLデコード</button>
+                    <button onclick="runCase('up')">大文字</button>
+                </div>
+            </header>
+            <div class="editor-grid">
+                <textarea id="input3" placeholder="JSONやURLを入力..."></textarea>
+                <div class="output-container">
+                    <pre id="output3"></pre>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel" id="gen-section">
+            <header class="panel-header">
+                <h2>その他 <small>UUID / Browser Info</small></h2>
+                <div class="action-group">
+                    <button class="primary" onclick="runGen('uuid')">UUID生成</button>
+                    <button onclick="runGen('pw')">パスワード生成</button>
+                    <button onclick="runClient()">ブラウザ情報表示</button>
+                </div>
+            </header>
+            <pre id="output4" style="height: 500px;"></pre>
+        </section>
+    </main>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
