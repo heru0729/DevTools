@@ -1,105 +1,130 @@
-// --- タブ切り替え ---
-const tabs = document.querySelectorAll(".tab");
-const contents = document.querySelectorAll(".tab-content");
+// ------------------------------
+// 初期化・保存機能
+// ------------------------------
+document.addEventListener("DOMContentLoaded", () => {
+    // 保存されたJSONがあれば読み込む
+    const savedJson = localStorage.getItem("jsonInput");
+    if (savedJson) document.getElementById("jsonInput").value = savedJson;
+});
 
-tabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-        tabs.forEach(t => t.classList.remove("active"));
-        contents.forEach(c => c.classList.remove("active"));
-        tab.classList.add("active");
-        document.getElementById(tab.dataset.tab).classList.add("active");
+// ------------------------------
+// タブ切り替え
+// ------------------------------
+const tabs = document.querySelectorAll(".tab");
+const tabContents = document.querySelectorAll(".tab-content");
+
+tabs.forEach(btn => {
+    btn.addEventListener("click", () => {
+        tabs.forEach(b => b.classList.remove("active"));
+        tabContents.forEach(c => c.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.tab).classList.add("active");
     });
 });
 
-// --- テーマ切り替え ---
-document.getElementById("themeToggle").addEventListener("click", () => {
+// ------------------------------
+// テーマ切り替え
+// ------------------------------
+const themeToggle = document.getElementById("themeToggle");
+themeToggle.addEventListener("click", () => {
     document.body.classList.toggle("light");
+    themeToggle.textContent = document.body.classList.contains("light") ? "Dark" : "Light";
 });
 
-// --- JSON ---
-const jsonIn = document.getElementById("jsonInput");
-const jsonOut = document.getElementById("jsonOutput");
+// ------------------------------
+// JSON機能 (保存機能付き)
+// ------------------------------
+const jsonInput = document.getElementById("jsonInput");
+const jsonOutput = document.getElementById("jsonOutput");
 
 document.getElementById("formatBtn").addEventListener("click", () => {
+    jsonOutput.classList.remove("error");
     try {
-        jsonOut.textContent = JSON.stringify(JSON.parse(jsonIn.value), null, 4);
-        jsonOut.classList.remove("error");
+        const obj = JSON.parse(jsonInput.value);
+        jsonOutput.textContent = JSON.stringify(obj, null, 4);
+        localStorage.setItem("jsonInput", jsonInput.value); // 保存
     } catch (e) {
-        jsonOut.textContent = "Invalid JSON";
-        jsonOut.classList.add("error");
+        jsonOutput.textContent = "Invalid JSON: " + e.message;
+        jsonOutput.classList.add("error");
     }
 });
 
 document.getElementById("minifyBtn").addEventListener("click", () => {
     try {
-        jsonOut.textContent = JSON.stringify(JSON.parse(jsonIn.value));
-        jsonOut.classList.remove("error");
+        const obj = JSON.parse(jsonInput.value);
+        jsonOutput.textContent = JSON.stringify(obj);
     } catch {
-        jsonOut.textContent = "Invalid JSON";
-        jsonOut.classList.add("error");
+        jsonOutput.textContent = "Invalid JSON";
+        jsonOutput.classList.add("error");
     }
 });
 
 document.getElementById("copyJsonBtn").addEventListener("click", () => {
-    navigator.clipboard.writeText(jsonOut.textContent);
+    navigator.clipboard.writeText(jsonOutput.textContent);
 });
 
-// --- Diff ---
+// ------------------------------
+// DIFF機能
+// ------------------------------
 document.getElementById("diffBtn").addEventListener("click", () => {
+    const diffOut = document.getElementById("diffOutput");
     try {
         const a = JSON.stringify(JSON.parse(document.getElementById("jsonA").value), null, 2);
         const b = JSON.stringify(JSON.parse(document.getElementById("jsonB").value), null, 2);
-        document.getElementById("diffOutput").textContent = (a === b) ? "No differences" : "Differences found";
+        diffOut.textContent = (a === b) ? "No differences" : "Differences found\n\n--- A ---\n" + a + "\n\n--- B ---\n" + b;
     } catch {
-        document.getElementById("diffOutput").textContent = "Error in JSON A or B";
+        diffOut.textContent = "Invalid JSON";
     }
 });
 
-// --- Base64 ---
+// ------------------------------
+// BASE64機能 (日本語対応 UTF-8)
+// ------------------------------
+function encodeUTF8(str) { return btoa(unescape(encodeURIComponent(str))); }
+function decodeUTF8(str) { return decodeURIComponent(escape(atob(str))); }
+
 document.getElementById("encodeBtn").addEventListener("click", () => {
-    const val = document.getElementById("base64Input").value;
-    document.getElementById("base64Output").textContent = btoa(encodeURIComponent(val));
+    const input = document.getElementById("base64Input").value;
+    document.getElementById("base64Output").textContent = encodeUTF8(input);
 });
 
 document.getElementById("decodeBtn").addEventListener("click", () => {
     try {
-        const val = document.getElementById("base64Input").value;
-        document.getElementById("base64Output").textContent = decodeURIComponent(atob(val));
+        const input = document.getElementById("base64Input").value;
+        document.getElementById("base64Output").textContent = decodeUTF8(input);
     } catch {
-        document.getElementById("base64Output").textContent = "Invalid Base64";
+        document.getElementById("base64Output").textContent = "Error: Invalid Base64";
     }
 });
 
-// --- UUID ---
+// ------------------------------
+// UUID / API / JWT (以下略、整理版と同様のロジックを統合)
+// ------------------------------
 document.getElementById("uuidBtn").addEventListener("click", () => {
     document.getElementById("uuidOutput").textContent = crypto.randomUUID();
 });
 
-// --- API ---
 document.getElementById("sendBtn").addEventListener("click", async () => {
-    const url = document.getElementById("apiUrl").value;
-    const method = document.getElementById("apiMethod").value;
     const out = document.getElementById("apiOutput");
     const loader = document.getElementById("loading");
-
     loader.style.display = "block";
     try {
-        const res = await fetch(url, { method });
-        const data = await res.json();
-        out.textContent = JSON.stringify(data, null, 4);
+        const res = await fetch(document.getElementById("apiUrl").value, {
+            method: document.getElementById("apiMethod").value
+        });
+        const text = await res.text();
+        out.textContent = text;
     } catch (e) {
-        out.textContent = "Fetch Error: " + e.message;
+        out.textContent = "Network Error";
     }
     loader.style.display = "none";
 });
 
-// --- JWT ---
 document.getElementById("decodeJwtBtn").addEventListener("click", () => {
     try {
-        const token = document.getElementById("jwtInput").value;
-        const parts = token.split('.');
-        document.getElementById("jwtHeader").textContent = atob(parts[0]);
-        document.getElementById("jwtPayload").textContent = atob(parts[1]);
+        const parts = document.getElementById("jwtInput").value.split('.');
+        document.getElementById("jwtHeader").textContent = JSON.stringify(JSON.parse(atob(parts[0])), null, 4);
+        document.getElementById("jwtPayload").textContent = JSON.stringify(JSON.parse(atob(parts[1])), null, 4);
         document.getElementById("jwtSignature").textContent = parts[2];
     } catch {
         document.getElementById("jwtStatus").textContent = "Invalid JWT";
