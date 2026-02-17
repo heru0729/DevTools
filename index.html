@@ -7,6 +7,7 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql-formatter/15.3.1/sql-formatter.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
@@ -21,7 +22,7 @@
     <div class="modal-content">
         <div class="search-input-wrapper">
             <span class="search-icon">🔍</span>
-            <input type="text" id="toolSearch" placeholder="Search tools or commands..." autofocus>
+            <input type="text" id="toolSearch" placeholder="Search tools (Ctrl+K)..." autofocus>
         </div>
         <div id="searchResult" class="custom-scroll"></div>
     </div>
@@ -31,32 +32,33 @@
     <nav class="nav-rail">
         <div class="brand">PRO</div>
         <div class="nav-group">
-            <button class="rail-btn active" data-cat="data" title="Formatter">📦</button>
-            <button class="rail-btn" data-cat="security" title="Security">🔐</button>
-            <button class="rail-btn" data-cat="frontend" title="Frontend">🎨</button>
+            <button class="rail-btn active" data-cat="data" title="Data & Format">📦</button>
+            <button class="rail-btn" data-cat="security" title="Security & Auth">🔐</button>
+            <button class="rail-btn" data-cat="frontend" title="Frontend & UI">🎨</button>
             <button class="rail-btn" data-cat="utils" title="Utilities">🛠️</button>
         </div>
         <div class="rail-footer">
-            <button id="langSwitcher" class="ghost-btn">EN</button>
-            <button id="themeSwitcher" class="ghost-btn">🌗</button>
+            <button id="langSwitcher" class="control-btn">EN</button>
+            <button id="themeSwitcher" class="control-btn">🌙</button>
         </div>
     </nav>
 
     <aside class="tool-sidebar">
         <div class="sidebar-header" id="catLabel">DATA MAGIC</div>
-        <div id="toolList" class="tool-list custom-scroll"></div>
+        <div id="toolList" class="tool-list custom-scroll">
+            </div>
         
         <div class="ad-card">
             <div class="ad-tag">SPONSORED</div>
-            <div class="ad-box">Your Tool Ad</div>
+            <div class="ad-box">Boost Your Workflow with DevTools Pro</div>
         </div>
     </aside>
 
     <main class="workspace">
         <header class="workspace-header">
             <div class="title-area">
-                <h1 id="activeToolName">JSON Formatter</h1>
-                <p id="activeToolDesc">Validate and beautify JSON code.</p>
+                <h1 id="activeToolName">---</h1>
+                <p id="activeToolDesc">---</p>
             </div>
             <div class="action-bar" id="toolActions"></div>
         </header>
@@ -64,7 +66,7 @@
         <section class="editor-grid">
             <div class="editor-container">
                 <div class="editor-label" id="labelInput">INPUT</div>
-                <textarea id="mainInput" placeholder="Paste source here..."></textarea>
+                <textarea id="mainInput" spellcheck="false" placeholder="Paste source here..."></textarea>
             </div>
             
             <div class="editor-container">
@@ -78,8 +80,8 @@
         </section>
 
         <div class="footer-ad-bar">
-            <div class="ad-tag">AD</div>
-            <div class="ad-banner">Premium Developers Tools - Try Pro Subscription Today</div>
+            <div class="ad-tag">PRO</div>
+            <div class="ad-banner">Advanced Features: JSON Diff, SQL Optimizer, and JWT Debugger are now available.</div>
         </div>
     </main>
 </div>
