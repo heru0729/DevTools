@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevTools Ultra Pro</title>
+    <title>DevTools Pro | All-in-One Developer Toolkit</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Fira+Code&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
@@ -21,72 +21,82 @@
     <aside class="sidebar">
         <div class="logo">
             <span class="logo-icon">🛠️</span>
-            <span class="logo-text">DevTools <span>Ultra</span></span>
+            <span class="logo-text">DevTools <span>Pro</span></span>
         </div>
         <nav class="nav-menu">
-            <button class="nav-item active" data-tab="json-section">📦 データ整形</button>
-            <button class="nav-item" data-tab="crypto-section">🔐 暗号・エンコード</button>
-            <button class="nav-item" data-tab="convert-section">🔄 変換・型生成</button>
-            <button class="nav-item" data-tab="gen-section">🎲 生成・情報</button>
+            <button class="nav-item active" data-tab="json-section">
+                <span class="lang" data-en="📦 Data Formatter" data-ja="📦 データ整形">📦 Data Formatter</span>
+            </button>
+            <button class="nav-item" data-tab="crypto-section">
+                <span class="lang" data-en="🔐 Crypto & Encode" data-ja="🔐 暗号・エンコード">🔐 Crypto & Encode</span>
+            </button>
+            <button class="nav-item" data-tab="convert-section">
+                <span class="lang" data-en="🔄 Convert & Types" data-ja="🔄 変換・型生成">🔄 変換・型生成</span>
+            </button>
+            <button class="nav-item" data-tab="gen-section">
+                <span class="lang" data-en="🎲 Generators" data-ja="🎲 生成・情報">🎲 Generators</span>
+            </button>
         </nav>
         <div class="sidebar-footer">
-            <button id="themeToggle" class="theme-btn">🌙 ダークモード</button>
+            <button id="langToggle" class="footer-btn">🇯🇵 日本語へ</button>
+            <button id="themeToggle" class="footer-btn">🌙 Dark Mode</button>
         </div>
     </aside>
 
     <main class="main-content">
         <section class="panel active" id="json-section">
             <header class="panel-header">
-                <h2>データ整形 <small>JSON / YAML / SQL / CSV</small></h2>
+                <h2 class="lang" data-en="Data Formatter" data-ja="データ整形">Data Formatter</h2>
+                <small class="lang" data-en="DevTools Pro Formatter" data-ja="DevTools Pro フォーマッタ">DevTools Pro Formatter</small>
                 <div class="action-group">
-                    <button class="primary" onclick="runJSON('format')">JSON整形</button>
-                    <button onclick="runJSON('minify')">JSON圧縮</button>
-                    <button onclick="runSQL()">SQL整形</button>
-                    <button onclick="runYaml()">YAML変換</button>
-                    <button onclick="runCsv()">CSV→JSON</button>
+                    <button class="primary lang" onclick="runJSON('format')" data-en="JSON Format" data-ja="JSON整形">JSON Format</button>
+                    <button class="lang" onclick="runJSON('minify')" data-en="JSON Minify" data-ja="JSON圧縮">JSON Minify</button>
+                    <button class="lang" onclick="runSQL()" data-en="SQL Format" data-ja="SQL整形">SQL Format</button>
+                    <button class="lang" onclick="runYaml()" data-en="YAML Convert" data-ja="YAML変換">YAML Convert</button>
+                    <button class="lang" onclick="runCsv()" data-en="CSV to JSON" data-ja="CSV→JSON">CSV to JSON</button>
                 </div>
             </header>
             <div class="editor-grid">
-                <textarea id="input1" class="custom-scroll" placeholder="ここにデータを入力..."></textarea>
+                <textarea id="input1" class="custom-scroll" placeholder="Paste data here..."></textarea>
                 <div class="output-container">
                     <pre><code id="output1" class="language-json"></code></pre>
-                    <button class="copy-btn" onclick="copyText('output1')">コピー</button>
+                    <button class="copy-btn lang" onclick="copyText('output1')" data-en="Copy" data-ja="コピー">Copy</button>
                 </div>
             </div>
         </section>
 
         <section class="panel" id="crypto-section">
             <header class="panel-header">
-                <h2>セキュリティ <small>Hash / Base64 / JWT</small></h2>
+                <h2 class="lang" data-en="Security" data-ja="セキュリティ">Security</h2>
                 <div class="action-group">
                     <button class="primary" onclick="runHash('SHA256')">SHA256</button>
                     <button onclick="runHash('MD5')">MD5</button>
-                    <button onclick="runBase64('enc')">B64エンコード</button>
-                    <button onclick="runBase64('dec')">B64デコード</button>
-                    <button onclick="runJWT()">JWT解析</button>
+                    <button class="lang" onclick="runBase64('enc')" data-en="B64 Encode" data-ja="B64エンコード">B64 Encode</button>
+                    <button class="lang" onclick="runBase64('dec')" data-en="B64 Decode" data-ja="B64デコード">B64 Decode</button>
+                    <button class="lang" onclick="runJWT()" data-en="JWT Decode" data-ja="JWT解析">JWT Decode</button>
                 </div>
             </header>
             <div class="editor-grid">
-                <textarea id="input2" placeholder="テキストまたはJWTを入力..."></textarea>
+                <textarea id="input2" placeholder="Text or JWT here..."></textarea>
                 <div class="output-container">
                     <pre id="output2"></pre>
-                    <button class="copy-btn" onclick="copyText('output2')">コピー</button>
+                    <button class="copy-btn lang" onclick="copyText('output2')" data-en="Copy" data-ja="コピー">Copy</button>
                 </div>
             </div>
         </section>
 
         <section class="panel" id="convert-section">
             <header class="panel-header">
-                <h2>変換 <small>URL / TypeScript / Case</small></h2>
+                <h2 class="lang" data-en="Convert" data-ja="変換">Convert</h2>
                 <div class="action-group">
-                    <button class="primary" onclick="runTypeGen()">TS型生成</button>
-                    <button onclick="runUrl('enc')">URLエンコード</button>
-                    <button onclick="runUrl('dec')">URLデコード</button>
-                    <button onclick="runCase('up')">大文字</button>
+                    <button class="primary lang" onclick="runTypeGen()" data-en="TS Type Gen" data-ja="TS型生成">TS Type Gen</button>
+                    <button class="lang" onclick="runUrl('enc')" data-en="URL Encode" data-ja="URLエンコード">URL Encode</button>
+                    <button class="lang" onclick="runUrl('dec')" data-en="URL Decode" data-ja="URLデコード">URL Decode</button>
+                    <button class="lang" onclick="runCase('up')" data-en="UPPERCASE" data-ja="大文字">UPPERCASE</button>
                 </div>
             </header>
             <div class="editor-grid">
-                <textarea id="input3" placeholder="JSONやURLを入力..."></textarea>
+                <textarea id="input3" placeholder="JSON or URL here..."></textarea>
                 <div class="output-container">
                     <pre id="output3"></pre>
                 </div>
@@ -95,11 +105,11 @@
 
         <section class="panel" id="gen-section">
             <header class="panel-header">
-                <h2>その他 <small>UUID / Browser Info</small></h2>
+                <h2 class="lang" data-en="Others" data-ja="その他">Others</h2>
                 <div class="action-group">
-                    <button class="primary" onclick="runGen('uuid')">UUID生成</button>
-                    <button onclick="runGen('pw')">パスワード生成</button>
-                    <button onclick="runClient()">ブラウザ情報表示</button>
+                    <button class="primary lang" onclick="runGen('uuid')" data-en="UUID Gen" data-ja="UUID生成">UUID Gen</button>
+                    <button class="lang" onclick="runGen('pw')" data-en="Password Gen" data-ja="パスワード生成">Password Gen</button>
+                    <button class="lang" onclick="runClient()" data-en="Client Info" data-ja="ブラウザ情報">Client Info</button>
                 </div>
             </header>
             <pre id="output4" style="height: 500px;"></pre>
