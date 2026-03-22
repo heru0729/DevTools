@@ -468,9 +468,6 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
       <div id="caesarBrute" style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text-dim);max-height:140px;overflow-y:auto;white-space:pre;"></div>
     </div>
   </div>
-
-  <!-- 専用UI: モールス信号 -->
-  <div id="ui-morse" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:16px;gap:10px;">
     <!-- モード行 -->
     <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
       <button class="btn-mini morse-mode-btn active" data-mode="encode" onclick="setMorseMode('encode')">Text → Code</button>
@@ -653,38 +650,6 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
     <div id="regexMatches" style="flex-shrink:0;max-height:160px;overflow-y:auto;padding:8px 14px;border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;"></div>
   </div>
 
-  <!-- 専用UI: フィボナッチ -->
-  <div id="ui-fib" class="conv-ui" style="display:none;gap:12px;">
-    <div>
-      <div class="calc-result-label">Count N: <span id="fibNLabel">10</span></div>
-      <input type="range" id="fibSlider" min="1" max="50" value="10" oninput="fibLive()" style="width:100%;margin-top:6px;accent-color:var(--accent);">
-    </div>
-    <div id="fibCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;max-height:300px;overflow-y:auto;"></div>
-  </div>
-
-  <!-- 専用UI: 角度変換 -->
-  <div id="ui-angle" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:12px;">
-    <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap;">
-      <div style="flex:1;min-width:150px;">
-        <div class="calc-result-label">Value</div>
-        <input id="angleInput" class="calc-input" placeholder="90" type="number" oninput="angleLive()" style="font-size:22px;text-align:center;">
-      </div>
-      <div>
-        <div class="calc-result-label">Unit</div>
-        <select class="conv-sel" id="angleUnit" onchange="angleLive()">
-          <option value="deg">度 (°)</option>
-          <option value="rad">ラジアン (rad)</option>
-          <option value="grad">グラジアン (grad)</option>
-          <option value="turn">回転 (turn)</option>
-        </select>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;" id="angleCards"></div>
-    <div style="background:var(--panel);border-radius:10px;padding:14px;text-align:center;">
-      <canvas id="angleCanvas" width="200" height="200" style="max-width:100%;"></canvas>
-    </div>
-  </div>
-
   <!-- 専用UI: HTTP ステータス -->
   <div id="ui-httpstatus" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:16px;gap:12px;">
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
@@ -862,24 +827,6 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
     </div>
   </div>
 
-  <!-- 専用UI: Lorem Ipsum -->
-  <div id="ui-lorem" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:12px;">
-    <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap;">
-      <div>
-        <div class="calc-result-label">Count</div>
-        <input type="range" id="loremCount" min="1" max="20" value="3" oninput="loremLive()" style="display:block;margin-top:6px;width:160px;accent-color:var(--accent);">
-        <span id="loremCountVal" style="font-size:11px;color:var(--text-dim);"></span>
-      </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
-        <button class="btn-mini lorem-type-btn active" data-type="para" onclick="setLoremType('para')">段落</button>
-        <button class="btn-mini lorem-type-btn" data-type="sent" onclick="setLoremType('sent')">文</button>
-        <button class="btn-mini lorem-type-btn" data-type="word" onclick="setLoremType('word')">単語</button>
-      </div>
-      <button class="btn-mini" onclick="navigator.clipboard.writeText(document.getElementById('loremOut').innerText)">COPY</button>
-    </div>
-    <div id="loremOut" style="flex:1;background:var(--panel);border-radius:10px;padding:16px;font-size:13px;line-height:1.8;overflow:auto;white-space:pre-wrap;color:var(--text-dim);"></div>
-  </div>
-
   <!-- 専用UI: カラーパレット -->
   <div id="ui-palette" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:16px;gap:12px;">
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
@@ -975,21 +922,6 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
     </div>
     <div id="spacingBars" style="flex:1;overflow:auto;display:flex;flex-direction:column;gap:6px;"></div>
   </div>
-
-  <!-- 専用UI: ローマ数字 -->
-  <div id="ui-roman" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:14px;">
-    <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap;">
-      <div style="flex:1;min-width:180px;">
-        <div class="calc-result-label">Arabic → Roman</div>
-        <input id="romanArabic" class="calc-input" type="number" min="1" max="3999" placeholder="1〜3999"
-          oninput="romanFromArabic()" style="font-size:20px;text-align:center;margin-top:4px;">
-      </div>
-      <div style="flex:1;min-width:180px;">
-        <div class="calc-result-label">Roman → Arabic</div>
-        <input id="romanRoman" class="calc-input" placeholder="XIV" oninput="romanFromRoman()"
-          style="font-size:20px;text-align:center;margin-top:4px;font-family:'JetBrains Mono',monospace;">
-      </div>
-    </div>
     <!-- 変換結果 -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
       <div class="pct-result" id="romanResultA" style="display:none;text-align:center;">
@@ -1036,7 +968,6 @@ const ALL_TOOLS=[
  {id:'xml',cat:'data',en:'XML Format',ja:'XML整形',ed:'Prettify XML',jd:'XMLを整形します'},
  {id:'tsv-json',cat:'data',en:'TSV↔JSON',ja:'TSV変換',ed:'Convert TSV to/from JSON',jd:'TSVとJSONを相互変換'},
  {id:'ini-parse',cat:'data',en:'INI Parse',ja:'INI解析',ed:'Parse INI / config file format',jd:'INI設定ファイルを解析します'},
- {id:'toml-parse',cat:'data',en:'TOML Parse',ja:'TOML解析',ed:'Parse TOML config format',jd:'TOML設定ファイルを解析します'},
  // SECURITY
  {id:'b64e',cat:'security',en:'Base64 Enc',ja:'B64エンコード',ed:'Text → Base64',jd:'Base64にエンコード'},
  {id:'b64d',cat:'security',en:'Base64 Dec',ja:'B64デコード',ed:'Base64 → Text',jd:'Base64をデコード'},
@@ -1056,19 +987,15 @@ const ALL_TOOLS=[
  {id:'aes-enc',cat:'security',en:'AES Encrypt',ja:'AES暗号化',ed:'TEXT / PASSWORD',jd:'テキスト / パスワード'},
  {id:'aes-dec',cat:'security',en:'AES Decrypt',ja:'AES復号',ed:'CIPHER / PASSWORD',jd:'暗号文 / パスワード'},
  {id:'pass-gen',cat:'security',en:'Password Gen',ja:'パスワード生成',ed:'Enter length (default 16)',jd:'長さを入力（デフォルト16）'},
- {id:'pbkdf2',cat:'security',en:'PBKDF2 Hash',ja:'PBKDF2ハッシュ',ed:'Hash password (PBKDF2-SHA256)',jd:'PBKDF2でパスワードをハッシュ化'},
- {id:'xor',cat:'security',en:'XOR Cipher',ja:'XOR暗号',ed:'TEXT / KEY',jd:'テキスト / キー を入力'},
  // UTILS
  {id:'qr',cat:'utils',en:'QR Code',ja:'QR作成',ed:'Generate QR code image',jd:'QRコードを生成します'},
  {id:'uuid',cat:'utils',en:'UUID Gen',ja:'UUID生成',ed:'Generate 5× UUID v4',jd:'UUID v4を5個生成します'},
- {id:'nanoid',cat:'utils',en:'NanoID',ja:'NanoID',ed:'Generate compact random IDs',jd:'コンパクトなランダムIDを生成'},
  {id:'epoch',cat:'utils',en:'Unix Time',ja:'エポック変換',ed:'Unix timestamp ↔ Date',jd:'Unix時間と日時を変換'},
  {id:'color',cat:'utils',en:'Color Convert',ja:'カラー変換',ed:'HEX / RGB / HSL convert',jd:'カラーコードを相互変換'},
  {id:'textstats',cat:'utils',en:'Text Stats',ja:'テキスト統計',ed:'Count chars, words, lines…',jd:'文字数・単語数・行数を集計'},
  {id:'markdown',cat:'utils',en:'Markdown',ja:'MDプレビュー',ed:'Preview Markdown as HTML',jd:'MarkdownをHTMLでプレビュー'},
  {id:'diff',cat:'utils',en:'Text Diff',ja:'テキスト比較',ed:'TEXT A / TEXT B',jd:'テキスト A / テキスト B'},
  {id:'regex',cat:'utils',en:'Regex Test',ja:'Regexテスト',ed:'PATTERN / TEXT',jd:'パターン / テキスト'},
- {id:'lorem',cat:'utils',en:'Lorem Ipsum',ja:'Lorem生成',ed:'Enter number of paragraphs',jd:'段落数を入力（数字）'},
  {id:'baseconv',cat:'utils',en:'Base Convert',ja:'進数変換',ed:'"FF 16" or "255 10"',jd:'"FF 16" や "255 10" と入力'},
  {id:'cron',cat:'utils',en:'CRON Parse',ja:'CRON解析',ed:'Explain a CRON expression',jd:'CRON式を人間語で説明'},
  {id:'url-parse',cat:'utils',en:'URL Parse',ja:'URL解析',ed:'Break down a full URL',jd:'URLを各部分に分解します'},
@@ -1080,9 +1007,7 @@ const ALL_TOOLS=[
  {id:'dedup',cat:'text',en:'Deduplicate',ja:'重複削除',ed:'Remove duplicate lines',jd:'重複行を削除します'},
  {id:'sort-lines',cat:'text',en:'Sort Lines',ja:'行ソート',ed:'Sort lines A→Z or Z→A',jd:'行をソートします'},
  {id:'slug',cat:'text',en:'Slugify',ja:'スラッグ化',ed:'Convert text to URL slug',jd:'テキストをURLスラッグに変換'},
- {id:'rot13',cat:'text',en:'ROT13',ja:'ROT13',ed:'Apply ROT13 cipher',jd:'ROT13暗号を適用します'},
  {id:'caesar',cat:'text',en:'Caesar Cipher',ja:'シーザー暗号',ed:'Line 1=shift, rest=text',jd:'1行目=シフト数、残り=テキスト'},
- {id:'morse',cat:'text',en:'Morse Code',ja:'モールス符号',ed:'Text ↔ Morse (prefix "." to decode)',jd:'"." を先頭に付けるとデコード'},
  {id:'strip-emoji',cat:'text',en:'Strip Emoji',ja:'絵文字除去',ed:'Remove all emoji from text',jd:'絵文字を全て削除します'},
  {id:'extract-url',cat:'text',en:'Extract URLs',ja:'URL抽出',ed:'Extract all URLs from text',jd:'テキストからURLを全て抽出'},
  {id:'extract-email',cat:'text',en:'Extract Emails',ja:'メール抽出',ed:'Extract all email addresses',jd:'メールアドレスを全て抽出'},
@@ -1099,16 +1024,12 @@ const ALL_TOOLS=[
  {id:'calc',cat:'math',en:'Calculator',ja:'計算機',ed:'Evaluate math expression',jd:'数式を評価します（JS式）'},
  {id:'stats',cat:'math',en:'Statistics',ja:'統計計算',ed:'Numbers separated by commas',jd:'カンマ区切りで数字を入力'},
  {id:'prime',cat:'math',en:'Prime Check',ja:'素数判定',ed:'Check if a number is prime',jd:'素数かどうか判定します'},
- {id:'fib',cat:'math',en:'Fibonacci',ja:'フィボナッチ',ed:'Enter N to get first N numbers',jd:'N番目までのフィボナッチ数列'},
  {id:'factor',cat:'math',en:'Factorize',ja:'素因数分解',ed:'Prime factorization',jd:'素因数分解をします'},
  {id:'gcd-lcm',cat:'math',en:'GCD / LCM',ja:'最大公約数/最小公倍数',ed:'Two numbers, comma-separated',jd:'カンマ区切りで2つの数字'},
  {id:'unit-conv',cat:'math',en:'Unit Convert',ja:'単位変換',ed:'"100 km to miles" etc.',jd:'"100 km to miles" など'},
- {id:'matrix',cat:'math',en:'Matrix Calc',ja:'行列計算',ed:'Two matrices separated by ---',jd:'--- で区切った2つの行列'},
  {id:'percent',cat:'math',en:'Percentage',ja:'パーセント計算',ed:'"30 of 150" / "150 * 20%"',jd:'"30 of 150" / "150 * 20%"'},
  {id:'random',cat:'math',en:'Random Num',ja:'乱数生成',ed:'"min max" e.g. "1 100"',jd:'"最小 最大" 例: "1 100"'},
- {id:'angle',cat:'math',en:'Angle Convert',ja:'角度変換',ed:'Enter degrees or radians (e.g. "90 deg")',jd:'"90 deg" や "1.57 rad" と入力'},
  {id:'bitwise',cat:'math',en:'Bitwise',ja:'ビット演算',ed:'"a OP b" e.g. "12 AND 10"',jd:'"a OP b" 例: "12 AND 10"'},
- {id:'roman',cat:'math',en:'Roman Numeral',ja:'ローマ数字',ed:'Convert between Arabic and Roman',jd:'アラビア数字とローマ数字を変換'},
  {id:'tax',cat:'math',en:'Tax Calc',ja:'税額計算',ed:'"amount rate" e.g. "1000 0.1"',jd:'"金額 税率" 例: "1000 0.1"'},
  // NETWORK
  {id:'ua-parse',cat:'network',en:'User-Agent',ja:'UA解析',ed:'Parse a User-Agent string',jd:'User-Agentを解析します'},
@@ -1126,38 +1047,25 @@ const ALL_TOOLS=[
  {id:'spacing',cat:'design',en:'Spacing Scale',ja:'スペーシング計算',ed:'Enter base size in px (e.g. 16)',jd:'基準サイズをpxで入力'},
  {id:'shadow',cat:'design',en:'Box Shadow',ja:'シャドウ生成',ed:'"x y blur spread color"',jd:'"x y blur spread color"'},
  {id:'gradient',cat:'design',en:'Gradient Gen',ja:'グラデーション生成',ed:'"color1 color2 deg" e.g. "#f00 #00f 45"',jd:'"色1 色2 角度" 例: "#f00 #00f 45"'},
- {id:'border-radius',cat:'design',en:'Border Radius',ja:'角丸プレビュー',ed:'Enter border-radius value (e.g. 8px or 50%)',jd:'border-radiusの値を入力'},
  {id:'palette',cat:'design',en:'Color Palette',ja:'カラーパレット',ed:'Enter a base HEX color',jd:'ベースカラーを入力'},
- {id:'aspect',cat:'design',en:'Aspect Ratio',ja:'アスペクト比',ed:'"width height" e.g. "1920 1080"',jd:'"幅 高さ" 例: "1920 1080"'},
  // DEV
- {id:'html-preview2',cat:'dev',en:'HTML Preview',ja:'HTMLプレビュー',ed:'Render HTML in output pane',jd:'HTMLをプレビュー表示します'},
  {id:'css-minify',cat:'dev',en:'CSS Minify',ja:'CSS圧縮',ed:'Minify CSS code',jd:'CSSコードを圧縮します'},
  {id:'css-format',cat:'dev',en:'CSS Format',ja:'CSS整形',ed:'Prettify CSS code',jd:'CSSコードを整形します'},
  {id:'char-codes',cat:'dev',en:'Char Codes',ja:'文字コード',ed:'Show Unicode / char codes of text',jd:'テキストの文字コードを表示'},
  {id:'hex-rgb',cat:'dev',en:'Hex↔RGB Bytes',ja:'16進↔RGB',ed:'Hex string to RGB bytes or vice versa',jd:'16進数とRGBバイト列を変換'},
- {id:'semver2',cat:'dev',en:'SemVer Compare',ja:'バージョン比較',ed:'"1.2.3 vs 1.3.0"',jd:'"1.2.3 vs 1.3.0" のように入力'},
  {id:'gitignore',cat:'dev',en:'Gitignore Gen',ja:'.gitignore生成',ed:'Enter languages/frameworks (comma-sep)',jd:'言語・フレームワークをカンマ区切りで'},
  {id:'chmod',cat:'dev',en:'chmod Calc',ja:'chmod計算',ed:'Enter octal (e.g. 755) or symbolic',jd:'8進数(例:755)またはシンボリック表記'},
  {id:'env-parse',cat:'dev',en:'.env Parse',ja:'.env解析',ed:'Paste .env file content',jd:'.envファイルの内容を貼り付け'},
- {id:'pkg-semver',cat:'dev',en:'npm SemVer',ja:'npm バージョン範囲',ed:'Enter npm version range (e.g. ^1.2.3)',jd:'npmバージョン範囲を解説'},
- {id:'http-mock',cat:'dev',en:'HTTP Req Mock',ja:'HTTPリクエスト生成',ed:'Generate mock HTTP request from URL',jd:'URLからモックHTTPリクエストを生成'},
  // AI
  {id:'token-est',cat:'ai',en:'Token Estimator',ja:'トークン数推定',ed:'Estimate token count for LLM input',jd:'LLMへの入力トークン数を推定'},
- {id:'prompt-json',cat:'ai',en:'Prompt→JSON',ja:'プロンプト→JSON',ed:'Wrap text as an LLM messages array',jd:'テキストをLLMメッセージJSON形式に変換'},
- {id:'sys-prompt',cat:'ai',en:'System Prompt',ja:'システムプロンプト生成',ed:'Generate system prompt from description',jd:'説明からシステムプロンプトを生成'},
- {id:'embedding-sim',cat:'ai',en:'Cosine Sim',ja:'コサイン類似度',ed:'Enter two comma-separated vectors with --- sep',jd:'--- で区切った2つのベクトルを入力'},
  // TIME
  {id:'ts-format',cat:'time',en:'Timestamp Fmt',ja:'時刻フォーマット',ed:'Format any timestamp or date string',jd:'タイムスタンプをフォーマット'},
  {id:'tz-convert',cat:'time',en:'Timezone Conv',ja:'タイムゾーン変換',ed:'"2024-01-01 12:00 JST to UTC"',jd:'"日時 元TZ to 変換先TZ"'},
  {id:'date-diff',cat:'time',en:'Date Diff',ja:'日付の差分',ed:'"2020-01-01" and "2024-12-31" (sep by ---)',jd:'--- で区切った2つの日付'},
  {id:'date-add',cat:'time',en:'Date Add',ja:'日付の加算',ed:'"2024-01-01 +30 days"',jd:'"日付 +日数 days" など'},
- {id:'weekday',cat:'time',en:'Weekday',ja:'曜日計算',ed:'Enter a date to get its weekday',jd:'日付を入力して曜日を取得'},
- {id:'iso-week',cat:'time',en:'ISO Week',ja:'ISO週番号',ed:'Enter a date to get ISO week number',jd:'日付からISO週番号を取得'},
- {id:'countdown',cat:'time',en:'Countdown',ja:'カウントダウン',ed:'Enter a future date to count down to',jd:'未来の日付までのカウントダウン'},
- {id:'duration',cat:'time',en:'Duration Fmt',ja:'期間フォーマット',ed:'Enter seconds to format as duration',jd:'秒数を期間形式にフォーマット'},
-];
+ {id:'duration',cat:'time',en:'Duration Fmt',ja:'期間フォーマット',ed:'Enter seconds to format as duration',jd:'秒数を期間形式にフォーマット'}];
 
-const DUAL=['json-diff','diff','regex','aes-enc','aes-dec','jwt-gen','hmac','xor','contrast','semver2','embedding-sim','date-diff'];
+const DUAL=['json-diff','diff','regex','aes-enc','aes-dec','jwt-gen','hmac','contrast','date-diff'];
 const CATS=['data','security','utils','text','math','network','design','dev','ai','time','favorites'];
 let lang=localStorage.getItem('p_lang')||'en';
 let curCat='data',curTool='json';
@@ -1238,7 +1146,7 @@ const LOREM_W='lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiu
 function lorem(n=5){return Array.from({length:Math.min(n,20)},()=>{const len=40+Math.floor(Math.random()*40);const w=Array.from({length:len},()=>LOREM_W[Math.floor(Math.random()*LOREM_W.length)]);w[0]=w[0][0].toUpperCase()+w[0].slice(1);return w.join(' ')+'.';}).join('\n\n');}
 function hexToRgb(hex){hex=hex.replace(/^#/,'');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return{r:(n>>16)&255,g:(n>>8)&255,b:n&255};}
 function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b);let h,s,l=(max+min)/2;if(max===min){h=s=0;}else{const d=max-min;s=l>0.5?d/(2-max-min):d/(max+min);switch(max){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;case b:h=(r-g)/d+4;break;}h/=6;}return{h:Math.round(h*360),s:Math.round(s*100),l:Math.round(l*100)};}
-function parseColorInput(input){input=input.trim();let r,g,b;if(/^#?[0-9a-fA-F]{3,6}$/.test(input)){const rgb=hexToRgb(input.startsWith('#')?input:'#'+input);r=rgb.r;g=rgb.g;b=rgb.b;}else if(/^rgb/i.test(input)){const m=input.match(/(\d+)[,\s]+(\d+)[,\s]+(\d+)/);r=+m[1];g=+m[2];b=+m[3];}else throw new Error(e_('hex_or_rgb'));return{r,g,b};}
+function parseColorInput(input){input=input.trim();let r,g,b;if(/^#?[0-9a-fA-F]{3,6}$/.test(input)){const rgb=hexToRgb(input.startsWith('#')?input:'#'+input);r=rgb.r;g=rgb.g;b=rgb.b;}else if(/^rgb/i.test(input)){const m=input.match(/(\d+)[\s]+(\d+)[\s]+(\d+)/);r=+m[1];g=+m[2];b=+m[3];}else throw new Error(e_('hex_or_rgb'));return{r,g,b};}
 function convertColor(input){const{r,g,b}=parseColorInput(input);const hex='#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');const hsl=rgbToHsl(r,g,b);return{text:`HEX  : ${hex}\nRGB  : rgb(${r}, ${g}, ${b})\nHSL  : hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)\nRGBA : rgba(${r}, ${g}, ${b}, 1.0)`,hex};}
 function b64url(s){return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
 async function generateJWT(payloadStr,secret){const header=b64url(JSON.stringify({alg:'HS256',typ:'JWT'}));const payload=b64url(payloadStr);const data=`${header}.${payload}`;const enc=new TextEncoder();const key=await crypto.subtle.importKey('raw',enc.encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);const sig=await crypto.subtle.sign('HMAC',key,enc.encode(data));return`${data}.${b64url(String.fromCharCode(...new Uint8Array(sig)))}`;}
@@ -1253,11 +1161,11 @@ function isPrime(n){if(n<2)return false;if(n<4)return true;if(n%2===0||n%3===0)r
 function primeFactors(n){const f=[];let d=2;while(n>1){while(n%d===0){f.push(d);n/=d;}d++;}return f;}
 function gcd(a,b){while(b){[a,b]=[b,a%b];}return a;}
 function lcm(a,b){return a/gcd(a,b)*b;}
-function parseMat(str){return str.trim().split('\n').map(r=>r.trim().split(/[\s,]+/).map(Number));}
+function parseMat(str){return str.trim().split('\n').map(r=>r.trim().split(/[\s]+/).map(Number));}
 function matStr(m){return m.map(r=>'[ '+r.map(v=>String(v).padStart(7)).join('  ')+' ]').join('\n');}
 function matMul(a,b){const rows=a.length,cols=b[0].length,inner=b.length;return Array.from({length:rows},(_,i)=>Array.from({length:cols},(_,j)=>Array.from({length:inner},(_,k)=>a[i][k]*b[k][j]).reduce((s,v)=>s+v,0)));}
 function matAdd(a,b){return a.map((r,i)=>r.map((v,j)=>v+b[i][j]));}
-function unitConvert(input){const conv={'km to miles':v=>v*0.621371,'miles to km':v=>v/0.621371,'km to m':v=>v*1000,'m to km':v=>v/1000,'m to cm':v=>v*100,'cm to m':v=>v/100,'cm to mm':v=>v*10,'mm to cm':v=>v/10,'feet to m':v=>v*0.3048,'m to feet':v=>v/0.3048,'inches to cm':v=>v*2.54,'cm to inches':v=>v/2.54,'yards to m':v=>v*0.9144,'m to yards':v=>v/0.9144,'kg to lb':v=>v*2.20462,'lb to kg':v=>v/2.20462,'kg to g':v=>v*1000,'g to kg':v=>v/1000,'g to mg':v=>v*1000,'mg to g':v=>v/1000,'oz to g':v=>v*28.3495,'g to oz':v=>v/28.3495,'c to f':v=>v*9/5+32,'f to c':v=>(v-32)*5/9,'c to k':v=>v+273.15,'k to c':v=>v-273.15,'f to k':v=>(v-32)*5/9+273.15,'k to f':v=>(v-273.15)*9/5+32,'kb to mb':v=>v/1024,'mb to kb':v=>v*1024,'mb to gb':v=>v/1024,'gb to mb':v=>v*1024,'gb to tb':v=>v/1024,'tb to gb':v=>v*1024,'bytes to kb':v=>v/1024,'kb to bytes':v=>v*1024,'kph to mph':v=>v*0.621371,'mph to kph':v=>v/0.621371,'m/s to kph':v=>v*3.6,'kph to m/s':v=>v/3.6};const m=input.toLowerCase().match(/^([\d.]+)\s+(.+?)\s+to\s+(.+)$/);if(!m)throw new Error(e_('format_unit'));const[,num,from,to]=m;const key=`${from.trim()} to ${to.trim()}`;if(!conv[key])throw new Error(e_('unknown_unit',key));return`${num} ${from} = ${conv[key](parseFloat(num)).toFixed(6)} ${to}`;}
+function unitConvert(input){const conv={'km to miles':v=>v*0.621371,'miles to km':v=>v/0.621371,'km to m':v=>v*1000,'m to km':v=>v/1000,'m to cm':v=>v*100,'cm to m':v=>v/100,'cm to mm':v=>v*10,'mm to cm':v=>v/10,'feet to m':v=>v*0.3048,'m to feet':v=>v/0.3048,'inches to cm':v=>v*2.54,'cm to inches':v=>v/2.54,'yards to m':v=>v*0.9144,'m to yards':v=>v/0.9144,'kg to lb':v=>v*2.20462,'lb to kg':v=>v/2.20462,'kg to g':v=>v*1000,'g to kg':v=>v/1000,'g to mg':v=>v*1000,'mg to g':v=>v/1000,'oz to g':v=>v*28.3495,'g to oz':v=>v/28.3495,'c to f':v=>v*9/5+32,'f to c':v=>(v-32)*5/9,'c to k':v=>v+273.15,'k to c':v=>v-273.15,'f to k':v=>(v-32)*5/9+273.15,'k to f':v=>(v-273.15)*9/5+32,'kb to mb':v=>v/1024,'mb to kb':v=>v*1024,'mb to gb':v=>v/1024,'gb to mb':v=>v*1024,'gb to tb':v=>v/1024,'tb to gb':v=>v*1024,'bytes to kb':v=>v/1024,'kb to bytes':v=>v*1024,'kph to mph':v=>v*0.621371,'mph to kph':v=>v/0.621371,'m/s to kph':v=>v*3.6,'kph to m/s':v=>v/3.6};const m=input.toLowerCase().match(/^([\d.]+)\s+(.+?)\s+to\s+(.+)$/);if(!m)throw new Error(e_('format_unit'));const[num,from,to]=m;const key=`${from.trim()} to ${to.trim()}`;if(!conv[key])throw new Error(e_('unknown_unit',key));return`${num} ${from} = ${conv[key](parseFloat(num)).toFixed(6)} ${to}`;}
 function slugify(s){return s.toLowerCase().trim().replace(/[^\w\s-]/g,'').replace(/[\s_-]+/g,'-').replace(/^-+|-+$/g,'');}
 function rot13(s){return s.replace(/[a-zA-Z]/g,c=>{const b=c<='Z'?65:97;return String.fromCharCode((c.charCodeAt(0)-b+13)%26+b);});}
 function caesar(s,shift){return s.replace(/[a-zA-Z]/g,c=>{const b=c<='Z'?65:97;return String.fromCharCode((c.charCodeAt(0)-b+((shift%26)+26))%26+b);});}
@@ -1296,7 +1204,7 @@ const HTTP_DESC={200:'The request succeeded.',201:'A new resource was created.',
 const MIME_MAP={html:'text/html',htm:'text/html',css:'text/css',js:'text/javascript',mjs:'text/javascript',json:'application/json',xml:'application/xml',csv:'text/csv',txt:'text/plain',md:'text/markdown',jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',gif:'image/gif',webp:'image/webp',svg:'image/svg+xml',ico:'image/x-icon',avif:'image/avif',mp4:'video/mp4',webm:'video/webm',mov:'video/quicktime',mp3:'audio/mpeg',ogg:'audio/ogg',wav:'audio/wav',flac:'audio/flac',pdf:'application/pdf',zip:'application/zip',gz:'application/gzip',tar:'application/x-tar',woff:'font/woff',woff2:'font/woff2',ttf:'font/ttf',otf:'font/otf',wasm:'application/wasm'};
 const MIME_REV=Object.fromEntries(Object.entries(MIME_MAP).map(([k,v])=>[v,k]));
 function parseUA(ua){const browser=ua.match(/(?:Chrome|Firefox|Safari|Edge|OPR|Opera|MSIE|Trident)[\s/]?([\d.]+)?/g)||[];const os=ua.match(/\(([^)]+)\)/)?.[1]||'Unknown';const mobile=/Mobile|Android|iPhone|iPad/.test(ua);const bot=/bot|crawl|spider|slurp/i.test(ua);return[`Raw:     ${ua}`,`OS:      ${os}`,`Browser: ${browser.join(', ')||'Unknown'}`,`Mobile:  ${mobile?'Yes':'No'}`,`Bot:     ${bot?'Yes':'No'}`].join('\n');}
-function analyzeIP(ip){ip=ip.trim();const v4=/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(ip);if(v4){const[,a,b,c,d]=[...v4].map(Number);if([a,b,c,d].some(x=>x>255))throw new Error(e_('invalid_ipv4'));let type='Public';if(a===10||(a===172&&b>=16&&b<=31)||(a===192&&b===168))type='Private (RFC1918)';if(a===127)type='Loopback';if(a===169&&b===254)type='Link-local';const bin=[a,b,c,d].map(n=>n.toString(2).padStart(8,'0')).join('.');return[`Version:  IPv4`,`Address:  ${ip}`,`Type:     ${type}`,`Binary:   ${bin}`,`Class:    ${a<128?'A':a<192?'B':a<224?'C':'D/E'}`].join('\n');}if(ip.includes(':')){let type='Global Unicast';if(ip.startsWith('::1'))type='Loopback';else if(/^fe80/i.test(ip))type='Link-local';else if(/^f[cd]/i.test(ip))type='Unique Local';else if(/^ff/i.test(ip))type='Multicast';return[`Version:  IPv6`,`Address:  ${ip}`,`Type:     ${type}`].join('\n');}throw new Error(e_('invalid_ip'));}
+function analyzeIP(ip){ip=ip.trim();const v4=/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(ip);if(v4){const[a,b,c,d]=[...v4].map(Number);if([a,b,c,d].some(x=>x>255))throw new Error(e_('invalid_ipv4'));let type='Public';if(a===10||(a===172&&b>=16&&b<=31)||(a===192&&b===168))type='Private (RFC1918)';if(a===127)type='Loopback';if(a===169&&b===254)type='Link-local';const bin=[a,b,c,d].map(n=>n.toString(2).padStart(8,'0')).join('.');return[`Version:  IPv4`,`Address:  ${ip}`,`Type:     ${type}`,`Binary:   ${bin}`,`Class:    ${a<128?'A':a<192?'B':a<224?'C':'D/E'}`].join('\n');}if(ip.includes(':')){let type='Global Unicast';if(ip.startsWith('::1'))type='Loopback';else if(/^fe80/i.test(ip))type='Link-local';else if(/^f[cd]/i.test(ip))type='Unique Local';else if(/^ff/i.test(ip))type='Multicast';return[`Version:  IPv6`,`Address:  ${ip}`,`Type:     ${type}`].join('\n');}throw new Error(e_('invalid_ip'));}
 function parseHeaders(raw){const notes={'content-type':'Describes the media type','authorization':'Contains credentials for authentication','cache-control':'Directives for caching','content-length':'Size of the body in bytes','x-forwarded-for':'IP addresses request was forwarded from','set-cookie':'Instructs client to store a cookie','access-control-allow-origin':'CORS allowed origin'};return raw.trim().split('\n').map(line=>{const idx=line.indexOf(':');if(idx<0)return line;const key=line.slice(0,idx).trim();const val=line.slice(idx+1).trim();const note=notes[key.toLowerCase()]||'';return`${key}: ${val}${note?`\n  ↳ ${note}`:''}`}).join('\n');}
 function parseCurl(cmd){const url=cmd.match(/curl\s+(?:'([^']+)'|"([^"]+)"|(https?:\S+))/);const method=cmd.match(/-X\s+(\w+)/)?.[1]||'GET';const headers=[...cmd.matchAll(/-H\s+['"]([^'"]+)['"]/g)].map(m=>m[1]);const data=cmd.match(/(?:--data|-d)\s+['"]([^'"]+)['"]/)?.[1];const lines=[`Method:  ${method}`,`URL:     ${url?url[1]||url[2]||url[3]:'(not found)'}`];if(headers.length)lines.push(`Headers:\n${headers.map(h=>'  '+h).join('\n')}`);if(data)lines.push(`Body:    ${data}`);return lines.join('\n');}
 function jwtExpiry(token){const p=token.trim().split('.');if(p.length!==3)throw new Error(e_('invalid_jwt'));const payload=JSON.parse(atob(p[1]));const now=Math.floor(Date.now()/1000);const lines=[];if(payload.exp){const exp=new Date(payload.exp*1000);const expired=payload.exp<now;lines.push(`exp:     ${payload.exp} (${exp.toLocaleString()})`);lines.push(`Status:  ${expired?'❌ EXPIRED':'✅ Valid'}`);if(!expired)lines.push(`Expires: in ${Math.round((payload.exp-now)/60)} minutes`);else lines.push(`Expired: ${Math.round((now-payload.exp)/60)} minutes ago`);}else{lines.push('No exp claim — token has no expiry.');}if(payload.iat)lines.push(`iat:     ${payload.iat} (${new Date(payload.iat*1000).toLocaleString()})`);if(payload.iss)lines.push(`iss:     ${payload.iss}`);if(payload.sub)lines.push(`sub:     ${payload.sub}`);return lines.join('\n');}
@@ -1305,7 +1213,7 @@ function calcPercent(input){input=input.trim();let m;if(m=input.match(/^([\d.]+)
 function contrastRatio(fg,bg){function lum({r,g,b}){const [rs,gs,bs]=[r,g,b].map(v=>{v/=255;return v<=0.03928?v/12.92:((v+0.055)/1.055)**2.4;});return 0.2126*rs+0.7152*gs+0.0722*bs;}const l1=lum(parseColorInput(fg)),l2=lum(parseColorInput(bg));const ratio=(Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05);return`Contrast ratio: ${ratio.toFixed(2)}:1\n\nWCAG AA normal text:  ${ratio>=4.5?'✅ Pass':'❌ Fail'} (need 4.5:1)\nWCAG AA large text:   ${ratio>=3?'✅ Pass':'❌ Fail'} (need 3:1)\nWCAG AAA normal:      ${ratio>=7?'✅ Pass':'❌ Fail'} (need 7:1)\nWCAG AAA large:       ${ratio>=4.5?'✅ Pass':'❌ Fail'} (need 4.5:1)`;}
 function spacingScale(base){const scales=[0.25,0.5,0.75,1,1.25,1.5,2,2.5,3,4,5,6,8,10,12,16];return scales.map(s=>`${base*s}px  (${s} × base)`).join('\n');}
 function generatePalette(hex){const {r,g,b}=hexToRgb(hex);const {h,s}=rgbToHsl(r,g,b);const shades=[10,20,30,40,50,60,70,80,90];function hslToHex(h,s,l){h/=360;s/=100;l/=100;const q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q,h2r=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};const[rr,gg,bb]=[h2r(p,q,h+1/3),h2r(p,q,h),h2r(p,q,h-1/3)].map(v=>Math.round(v*255));return'#'+[rr,gg,bb].map(v=>v.toString(16).padStart(2,'0')).join('');}return shades.map(l=>`${String(l*10).padStart(3)}: ${hslToHex(h,s,l)}`).join('\n');}
-function parseSemver(v){const m=v.match(/^v?(\d+)\.(\d+)\.(\d+)(?:-([^+]+))?(?:\+(.+))?$/);if(!m)throw new Error(e_('invalid_semver'));const[,major,minor,patch,pre,build]=m;return[`Major:      ${major}`,`Minor:      ${minor}`,`Patch:      ${patch}`,`Pre-release: ${pre||'(none)'}`,`Build meta: ${build||'(none)'}`,`\nBreaking changes: bump major (${major})`,`New features:     bump minor (${minor})`,`Bug fixes:        bump patch (${patch})`].join('\n');}
+function parseSemver(v){const m=v.match(/^v?(\d+)\.(\d+)\.(\d+)(?:-([^+]+))?(?:\+(.+))?$/);if(!m)throw new Error(e_('invalid_semver'));const[major,minor,patch,pre,build]=m;return[`Major:      ${major}`,`Minor:      ${minor}`,`Patch:      ${patch}`,`Pre-release: ${pre||'(none)'}`,`Build meta: ${build||'(none)'}`,`\nBreaking changes: bump major (${major})`,`New features:     bump minor (${minor})`,`Bug fixes:        bump patch (${patch})`].join('\n');}
 function compareSemver(a,b){const pa=a.match(/(\d+)\.(\d+)\.(\d+)/),pb=b.match(/(\d+)\.(\d+)\.(\d+)/);if(!pa||!pb)throw new Error('Invalid semver');for(let i=1;i<=3;i++){const d=+pa[i]-+pb[i];if(d!==0)return d<0?`${a} < ${b} (older)`:`${a} > ${b} (newer)`;}return`${a} = ${b} (same)`;}
 function cssMinify(css){return css.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\s+/g,' ').replace(/\s*([{}:;,>~+])\s*/g,'$1').replace(/;}/g,'}').trim();}
 function cssFormat(css){let d=0;return css.replace(/\s+/g,' ').replace(/([{}])/g,'\n$1\n').replace(/(;)/g,'$1\n').split('\n').map(l=>{l=l.trim();if(!l)return'';if(l==='}')d--;const out='  '.repeat(Math.max(0,d))+l;if(l.endsWith('{'))d++;return out;}).filter(Boolean).join('\n');}
@@ -1473,7 +1381,7 @@ async function execute(){
   const htm=document.getElementById('htmlResult');
   const spe=document.getElementById('specialResult');
   txt.innerText='';img.style.display='none';pre.style.display='block';dif.style.display='none';htm.style.display='none';spe.style.display='none';
-  if(!val&&!['uuid','nanoid','lorem'].includes(curTool))return;
+  if(!val&&!['uuid','lorem'].includes(curTool))return;
   localStorage.setItem('last_'+curTool,val);
   if(DUAL.includes(curTool))localStorage.setItem('last2_'+curTool,val2);
   try{
@@ -1484,7 +1392,7 @@ async function execute(){
     if(curTool==='json-diff'){const d=jsonDiff(JSON.parse(val),JSON.parse(val2));r=d.length?d.join('\n'):'✓ No differences found';}
     if(curTool==='jsonpath'){const[path,...rest]=val.split('\n');r=JSON.stringify(evalJSONPath(JSON.parse(rest.join('\n')),path.trim()),null,2);}
     // 専用UIにリダイレクト
-    if(['jsonpath','tz-convert','baseconv','url-parse','regex','fib','angle','http-status','bitwise'].includes(curTool)){
+    if(['jsonpath','tz-convert','baseconv','url-parse','regex','http-status','bitwise'].includes(curTool)){
       if(curTool==='jsonpath')jsonpathLive();
       if(curTool==='tz-convert')tzLive();
       if(curTool==='baseconv')baseConvLive();
@@ -1577,7 +1485,7 @@ async function execute(){
     if(curTool==='count-words'){const freq={};for(const w of val.toLowerCase().match(/\b\w+\b/g)||[])freq[w]=(freq[w]||0)+1;r=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,50).map(([w,c])=>`${String(c).padStart(4)}  ${w}`).join('\n');}
     // MATH
     if(curTool==='calc')r=String(Function('"use strict";return ('+val+')')());
-    if(curTool==='stats'){const nums=val.split(/[\s,]+/).map(Number).filter(x=>!isNaN(x));if(!nums.length)throw new Error(e_('invalid_number'));r=calcStats(nums);}
+    if(curTool==='stats'){const nums=val.split(/[\s]+/).map(Number).filter(x=>!isNaN(x));if(!nums.length)throw new Error(e_('invalid_number'));r=calcStats(nums);}
     if(curTool==='prime'){const n=parseInt(val);r=`${n} is ${isPrime(n)?'✅ prime':'❌ not prime'}.\n\nNearby primes: ${Array.from({length:30},(_,i)=>n+i).filter(isPrime).slice(0,5).join(', ')}`;}
     if(curTool==='fib'){const n=Math.min(parseInt(val)||10,80);const fib=[0n,1n];while(fib.length<n)fib.push(fib[fib.length-1]+fib[fib.length-2]);r=fib.slice(0,n).map((v,i)=>`F(${i}) = ${v}`).join('\n');}
     if(curTool==='factor'){const n=parseInt(val);const f=primeFactors(n);r=`${n} = ${f.join(' × ')}\nPrime factors: ${[...new Set(f)].join(', ')}\nTotal: ${f.length}`;}
@@ -1587,7 +1495,7 @@ async function execute(){
     if(curTool==='percent')r=calcPercent(val);
     if(curTool==='random'){const[mn,mx]=val.trim().split(/\s+/).map(Number);r=String(Math.floor(Math.random()*(mx-mn+1))+mn);}
     if(curTool==='angle'){const m=val.trim().match(/^([\d.]+)\s*(deg|rad)?$/i);if(!m)throw new Error('e.g. "90 deg" or "1.57 rad"');const v=parseFloat(m[1]),unit=(m[2]||'deg').toLowerCase();const deg=unit==='rad'?v*180/Math.PI:v;const rad=unit==='rad'?v:v*Math.PI/180;r=`Degrees: ${deg.toFixed(6)}\nRadians: ${rad.toFixed(6)}\nGradians: ${(deg*10/9).toFixed(6)}`;}
-    if(curTool==='bitwise'){const m=val.match(/^(\d+)\s+(AND|OR|XOR|NOT|LSHIFT|RSHIFT)\s*(\d*)$/i);if(!m)throw new Error('"a OP b" — AND OR XOR NOT LSHIFT RSHIFT');const[,a,op,b]=[...m].map((x,i)=>i>1&&i<4?x:+x);const ops={AND:()=>a&b,OR:()=>a|b,XOR:()=>a^b,NOT:()=>~a,LSHIFT:()=>a<<b,RSHIFT:()=>a>>b};const res=ops[op.toUpperCase()]();r=`Result: ${res}\nBinary: ${res.toString(2)}\nHex:    0x${res.toString(16).toUpperCase()}`;}
+    if(curTool==='bitwise'){const m=val.match(/^(\d+)\s+(AND|OR|XOR|NOT|LSHIFT|RSHIFT)\s*(\d*)$/i);if(!m)throw new Error('"a OP b" — AND OR XOR NOT LSHIFT RSHIFT');const[a,op,b]=[...m].map((x,i)=>i>1&&i<4?x:+x);const ops={AND:()=>a&b,OR:()=>a|b,XOR:()=>a^b,NOT:()=>~a,LSHIFT:()=>a<<b,RSHIFT:()=>a>>b};const res=ops[op.toUpperCase()]();r=`Result: ${res}\nBinary: ${res.toString(2)}\nHex:    0x${res.toString(16).toUpperCase()}`;}
     if(curTool==='roman'){romanFromArabic();return;}
     if(curTool==='tax'){const[amount,rate]=val.trim().split(/\s+/).map(Number);if(isNaN(amount)||isNaN(rate))throw new Error('"amount rate" e.g. "1000 0.1"');const tax=amount*rate;r=`Original: ${amount}\nTax (${(rate*100).toFixed(1)}%): ${tax.toFixed(2)}\nTotal: ${(amount+tax).toFixed(2)}`;}
     // NETWORK
@@ -1627,7 +1535,7 @@ async function execute(){
     if(curTool==='gitignore')r=generateGitignore(val);
     if(curTool==='chmod')r=chmodCalc(val);
     if(curTool==='env-parse')r=parseEnv(val);
-    if(curTool==='pkg-semver'){const m=val.trim().match(/^([~^]?)(\d+)\.(\d+)\.(\d+)$/);if(!m)throw new Error('Enter semver range like ^1.2.3 or ~1.0.0');const[,prefix,maj,min,pat]=m;if(prefix==='^')r=`^${maj}.${min}.${pat} — compatible with ${maj}.x.x\nAllows: minor + patch updates\nBlocks: major updates`;else if(prefix==='~')r=`~${maj}.${min}.${pat} — approximately ${maj}.${min}.x\nAllows: patch updates only\nBlocks: minor + major updates`;else r=`${maj}.${min}.${pat} — exact version only`;}
+    if(curTool==='pkg-semver'){const m=val.trim().match(/^([~^]?)(\d+)\.(\d+)\.(\d+)$/);if(!m)throw new Error('Enter semver range like ^1.2.3 or ~1.0.0');const[prefix,maj,min,pat]=m;if(prefix==='^')r=`^${maj}.${min}.${pat} — compatible with ${maj}.x.x\nAllows: minor + patch updates\nBlocks: major updates`;else if(prefix==='~')r=`~${maj}.${min}.${pat} — approximately ${maj}.${min}.x\nAllows: patch updates only\nBlocks: minor + major updates`;else r=`${maj}.${min}.${pat} — exact version only`;}
     if(curTool==='http-mock'){const u=new URL(val);const headers=[`GET ${u.pathname}${u.search} HTTP/1.1`,`Host: ${u.host}`,'Accept: application/json','User-Agent: DevTools/1.0',''];r=headers.join('\n');}
     // AI
     if(curTool==='token-est')r=estimateTokens(val);
@@ -1653,29 +1561,26 @@ async function execute(){
 const SPECIAL_UI={
   'calc':'ui-calc','unit-conv':'ui-conv','percent':'ui-pct','tax':'ui-pct',
   'random':'ui-random','color':'ui-color','stats':'ui-stats','gcd-lcm':'ui-gcdlcm',
-  'prime':'ui-prime','caesar':'ui-caesar','morse':'ui-morse',
+  'prime':'ui-prime','caesar':'ui-caesar',
   'ts-format':'ui-date','date-diff':'ui-date','date-add':'ui-date',
-  'weekday':'ui-date','iso-week':'ui-date','countdown':'ui-date',
   'jsonpath':'ui-jsonpath','tz-convert':'ui-tz','baseconv':'ui-baseconv',
-  'url-parse':'ui-urlparse','regex':'ui-regex','fib':'ui-fib',
-  'angle':'ui-angle','http-status':'ui-httpstatus','bitwise':'ui-bitwise',
-  'uuid':'ui-uuid','nanoid':'ui-nanoid',
-  'pass-gen':'ui-passgen','textstats':'ui-textstats','qr':'ui-qr',
-  'epoch':'ui-epoch','lorem':'ui-lorem','palette':'ui-palette',
+  'url-parse':'ui-urlparse','regex':'ui-regex',
+  'http-status':'ui-httpstatus','bitwise':'ui-bitwise',
+  'uuid':'ui-uuid','pass-gen':'ui-passgen','textstats':'ui-textstats','qr':'ui-qr',
+  'epoch':'ui-epoch','palette':'ui-palette',
   'gradient':'ui-gradient','shadow':'ui-shadow','spacing':'ui-spacing',
-  'color':'ui-color','roman':'ui-roman',
 };
 const ALL_UIS=['editorGrid','ui-calc','ui-conv','ui-pct','ui-random','ui-color',
-  'ui-stats','ui-gcdlcm','ui-prime','ui-caesar','ui-morse','ui-date',
-  'ui-jsonpath','ui-tz','ui-baseconv','ui-urlparse','ui-regex','ui-fib',
-  'ui-angle','ui-httpstatus','ui-bitwise','ui-uuid','ui-nanoid',
-  'ui-passgen','ui-textstats','ui-qr','ui-epoch','ui-lorem',
-  'ui-palette','ui-gradient','ui-shadow','ui-spacing','ui-roman'];
+  'ui-stats','ui-gcdlcm','ui-prime','ui-caesar','ui-date',
+  'ui-jsonpath','ui-tz','ui-baseconv','ui-urlparse','ui-regex',
+  'ui-httpstatus','ui-bitwise','ui-uuid',
+  'ui-passgen','ui-textstats','ui-qr','ui-epoch',
+  'ui-palette','ui-gradient','ui-shadow','ui-spacing'];
 function showUI(toolId){
   const target=SPECIAL_UI[toolId]||'editorGrid';
-  const flexUIs=['ui-stats','ui-gcdlcm','ui-caesar','ui-morse','ui-date',
+  const flexUIs=['ui-stats','ui-gcdlcm','ui-caesar','ui-date',
     'ui-jsonpath','ui-regex','ui-urlparse','ui-tz','ui-baseconv',
-    'ui-fib','ui-angle','ui-httpstatus','ui-bitwise','ui-textstats'];
+    'ui-httpstatus','ui-bitwise','ui-textstats'];
   ALL_UIS.forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
@@ -1898,12 +1803,11 @@ function updateCharCount(){
 
 /* ── リアルタイム変換（入力だけで変換） ── */
 const REALTIME_TOOLS=['b64e','b64d','b64url-e','b64url-d','url-enc','url-dec','html-enc','html-dec',
-  'sha256','md5','sha1','sha512','rot13','slug','strip-emoji','normalize','trim-lines',
+  'sha256','md5','sha1','sha512','slug','strip-emoji','normalize','trim-lines',
   'remove-blank','reverse','number-lines','esc-js','ts-format','url-parse','textstats',
-  'baseconv','token-est','extract-url','extract-email','extract-num','morse',
-  'json','json-min','json-keys','json-flat','json-schema','yaml','csv-json','xml',
+  'baseconv','token-est','extract-url','extract-email','extract-num','json','json-min','json-keys','json-flat','json-schema','yaml','csv-json','xml',
   'case','dedup','sort-lines','char-codes','semver','cron','url-parse',
-  'http-status','bitwise','angle','fib','jsonpath','roman'];
+  'http-status','bitwise','jsonpath','roman'];
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('input')?.addEventListener('input',()=>{
     if(REALTIME_TOOLS.includes(curTool))execute();
@@ -1938,8 +1842,7 @@ function statsCalc(){
     {lbl:lang==='ja'?'個数':'Count',val:n},{lbl:lang==='ja'?'合計':'Sum',val:all.reduce((a,b)=>a+b,0)},
     {lbl:lang==='ja'?'平均':'Mean',val:mean.toFixed(4)},{lbl:lang==='ja'?'中央値':'Median',val:med},
     {lbl:lang==='ja'?'最頻値':'Mode',val:mode},{lbl:lang==='ja'?'最小':'Min',val:sorted[0]},{lbl:lang==='ja'?'最大':'Max',val:sorted[n-1]},
-    {lbl:lang==='ja'?'範囲':'Range',val:sorted[n-1]-sorted[0]},{lbl:lang==='ja'?'標準偏差':'Std Dev',val:sd.toFixed(4)},{lbl:lang==='ja'?'分散':'Variance',val:variance.toFixed(4)},
-  ];
+    {lbl:lang==='ja'?'範囲':'Range',val:sorted[n-1]-sorted[0]},{lbl:lang==='ja'?'標準偏差':'Std Dev',val:sd.toFixed(4)},{lbl:lang==='ja'?'分散':'Variance',val:variance.toFixed(4)}];
   cards.innerHTML=stats.map(s=>`<div class="stat-card"><div class="val">${s.val}</div><div class="lbl">${s.lbl}</div></div>`).join('');
 }
 
@@ -2073,7 +1976,7 @@ function morseLive(){
     out.innerText=morseDecode(inp);
   }
 }
-function copyMorseResult(){navigator.clipboard.writeText(document.getElementById('morseOutput')?.innerText||'');}
+
 
 /* 再生停止トグル */
 let morsePlayNodes=[];
@@ -2128,59 +2031,17 @@ document.addEventListener('keydown',e=>{
     const active=document.activeElement;
     const isInInput=active&&(active.id==='input'||active.id==='input2');
     const isSpecial=!!SPECIAL_UI[curTool];
-    if(isInInput&&!isSpecial){
-      e.preventDefault();
-      execute();
-      return;
-    }
+    if(isInInput&&!isSpecial){e.preventDefault();execute();return;}
+    if(curTool==='random'){doRandom();return;}
   }
-  if(e.code==='Space'&&morseMode==='key'&&curTool==='morse'){
-    e.preventDefault();
-    if(morseKeyPressTime>0)return;
-    morseKeyPressTime=Date.now();
-    clearTimeout(morseKeyTimer);
-    if(!morseMute&&!window._mOsc){
-      try{const ctx=getMorseAudio();const o=ctx.createOscillator();const g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=600;g.gain.value=0.3;o.start();window._mOsc={o,g};}catch(_){}
-    }
-  }else if(e.key==='Enter'&&curTool==='random'){doRandom();}
-  else if(curTool==='calc'&&document.getElementById('ui-calc')?.style.display!=='none'){
+  if(curTool==='calc'&&document.getElementById('ui-calc')?.style.display!=='none'){
     const ci=document.getElementById('calcInput');
     if(document.activeElement!==ci)ci?.focus();
   }
 });
-document.addEventListener('keyup',e=>{
-  if(e.code==='Space'&&morseMode==='key'&&curTool==='morse'){
-    e.preventDefault();
-    const held=Date.now()-morseKeyPressTime;
-    morseKeyPressTime=0;
-    if(window._mOsc){try{window._mOsc.o.stop();}catch(_){}window._mOsc=null;}
-    const sym=held>=200?'-':'.';
-    morseKeyBuffer+=sym;
-    const disp=document.getElementById('morseKeyDisplay');
-    if(disp)disp.innerText=morseKeyBuffer||'—';
-    clearTimeout(morseKeyTimer);
-    morseKeyTimer=setTimeout(()=>{
-      if(morseKeyBuffer){
-        const ch=MORSE_DEC[morseKeyBuffer]||'';
-        morseKeyDecodeBuffer+=ch;
-        const dec=document.getElementById('morseKeyDecoded');
-        const raw=document.getElementById('morseKeyRaw');
-        if(dec)dec.innerText=morseKeyDecodeBuffer;
-        if(raw)raw.innerText=(raw.innerText||'')+morseKeyBuffer+' ';
-        morseKeyBuffer='';
-        if(disp)disp.innerText='—';
-      }
-    },500);
-  }
-});
-function morseKeyClear(){
-  morseKeyBuffer='';morseKeyDecodeBuffer='';
-  const d=document.getElementById('morseKeyDisplay');
-  const dec=document.getElementById('morseKeyDecoded');
-  const raw=document.getElementById('morseKeyRaw');
-  if(d)d.innerText='—';if(dec)dec.innerText='';if(raw)raw.innerText='';
-}
-function copyMorseKey(){navigator.clipboard.writeText(document.getElementById('morseKeyDecoded')?.innerText||'');}
+
+
+
 
 /* ── 日付系専用UI ── */
 const DATE_MODES={
@@ -2247,8 +2108,7 @@ const TZ_LIST_JA=[
   ['Europe/Berlin','CET (ドイツ)'],['Europe/Moscow','MSK (モスクワ)'],['America/New_York','EST/EDT (米国東部)'],
   ['America/Chicago','CST/CDT (米国中部)'],['America/Denver','MST/MDT (米国山岳部)'],
   ['America/Los_Angeles','PST/PDT (米国西部)'],['America/Sao_Paulo','BRT (ブラジル)'],
-  ['Australia/Sydney','AEST (オーストラリア東部)'],['Pacific/Auckland','NZST (ニュージーランド)'],
-];
+  ['Australia/Sydney','AEST (オーストラリア東部)'],['Pacific/Auckland','NZST (ニュージーランド)']];
 const TZ_LIST_EN=[
   ['UTC','UTC'],['Asia/Tokyo','JST (Japan)'],['Asia/Shanghai','CST (China)'],
   ['Asia/Seoul','KST (Korea)'],['Asia/Singapore','SGT (Singapore)'],['Asia/Kolkata','IST (India)'],
@@ -2256,8 +2116,7 @@ const TZ_LIST_EN=[
   ['Europe/Berlin','CET (Germany)'],['Europe/Moscow','MSK (Russia)'],['America/New_York','EST/EDT (US East)'],
   ['America/Chicago','CST/CDT (US Central)'],['America/Denver','MST/MDT (US Mountain)'],
   ['America/Los_Angeles','PST/PDT (US West)'],['America/Sao_Paulo','BRT (Brazil)'],
-  ['Australia/Sydney','AEST (Australia East)'],['Pacific/Auckland','NZST (New Zealand)'],
-];
+  ['Australia/Sydney','AEST (Australia East)'],['Pacific/Auckland','NZST (New Zealand)']];
 function getTzList(){return lang==='ja'?TZ_LIST_JA:TZ_LIST_EN;}
 const TZ_LIST=new Proxy([],{get(_,k){return getTzList()[k];}});
 function initTz(){
@@ -2496,10 +2355,7 @@ function nanoidGenerate(){
 }
 // Enterキーで再生成
 document.addEventListener('keydown',e=>{
-  if(e.key==='Enter'&&!e.shiftKey){
-    if(curTool==='uuid')uuidGenerate();
-    if(curTool==='nanoid')nanoidGenerate();
-  }
+  if(e.key==='Enter'&&!e.shiftKey&&curTool==='uuid')uuidGenerate();
 });
 
 /* ── エラーメッセージ i18n ── */
@@ -2648,8 +2504,7 @@ function tsLive(){
     {lbl:lang==='ja'?'単語数':'Words',val:w},{lbl:lang==='ja'?'行数':'Lines',val:lines},
     {lbl:lang==='ja'?'段落数':'Paragraphs',val:paras},{lbl:lang==='ja'?'文数':'Sentences',val:sents},
     {lbl:lang==='ja'?'バイト数':'Bytes',val:bytes},{lbl:lang==='ja'?'読了時間':'Read time',val:lang==='ja'?`約${readMin}分`:`~${readMin}min`},
-    {lbl:lang==='ja'?'平均単語長':'Avg word',val:w?(cn/w).toFixed(1)+(lang==='ja'?'文字':'ch'):'—'},
-  ];
+    {lbl:lang==='ja'?'平均単語長':'Avg word',val:w?(cn/w).toFixed(1)+(lang==='ja'?'文字':'ch'):'—'}];
   cards.innerHTML=stats.map(s=>`<div class="stat-card"><div class="val">${s.val}</div><div class="lbl">${s.lbl}</div></div>`).join('');
 }
 
@@ -2877,8 +2732,7 @@ function spacingLive(){
 const ROMAN_UNI_LIST=[
   ['Ⅰ','ⅰ',1],['Ⅱ','ⅱ',2],['Ⅲ','ⅲ',3],['Ⅳ','ⅳ',4],['Ⅴ','ⅴ',5],
   ['Ⅵ','ⅵ',6],['Ⅶ','ⅶ',7],['Ⅷ','ⅷ',8],['Ⅸ','ⅸ',9],['Ⅹ','ⅹ',10],
-  ['Ⅺ','ⅺ',11],['Ⅻ','ⅻ',12],['Ⅼ','ⅼ',50],['Ⅽ','ⅽ',100],['Ⅾ','ⅾ',500],['Ⅿ','ⅿ',1000],
-];
+  ['Ⅺ','ⅺ',11],['Ⅻ','ⅻ',12],['Ⅼ','ⅼ',50],['Ⅽ','ⅽ',100],['Ⅾ','ⅾ',500],['Ⅿ','ⅿ',1000]];
 function toRomanASCII(n){
   const vals=[1000,900,500,400,100,90,50,40,10,9,5,4,1];
   const syms=['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];
@@ -2936,7 +2790,7 @@ function romanFromArabic(){
   document.getElementById('romanCopyAscii').onclick=()=>navigator.clipboard.writeText(ascii);
   if(rA)rA.style.display='block';
   // Unicode対応チェック
-  const uni=ROMAN_UNI_LIST.find(([,, v])=>v===n);
+  const uni=ROMAN_UNI_LIST.find(([ v])=>v===n);
   if(uni){
     document.getElementById('romanUniUp').innerText=uni[0];
     document.getElementById('romanUniLo').innerText=uni[1];
