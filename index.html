@@ -18,6 +18,8 @@ body.light{--bg:#f8f8fc;--sidebar:#f0f0f5;--panel:#ffffff;--border:#e2e0f0;--tex
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;}
 .app-shell{display:flex;height:100vh;width:100vw;}
 .nav-rail{width:68px;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:12px 0;z-index:1000;flex-shrink:0;gap:2px;}
+.nav-rail-cats{display:contents;}
+.nav-rail-ctrl{display:contents;}
 .rail-btn{width:50px;height:48px;border-radius:13px;border:none;background:transparent;font-size:19px;cursor:pointer;color:var(--text-dim);display:flex;align-items:center;justify-content:center;transition:.2s;position:relative;}
 .rail-btn:hover{background:var(--panel);}
 .rail-btn.active{background:var(--accent);color:#fff;box-shadow:0 4px 16px #818cf844;}
@@ -176,16 +178,43 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
 @media(max-width:768px){
   body{overflow:hidden;}
   .app-shell{flex-direction:column;}
-  .nav-rail{width:100%;height:52px;flex-direction:row;padding:0 6px;border-right:none;border-bottom:1px solid var(--border);gap:1px;}
-  .rail-btn{width:42px;height:42px;font-size:17px;}
+  .nav-rail{
+    width:100%;height:56px;flex-direction:row;
+    padding:0;border-right:none;border-bottom:1px solid var(--border);
+    gap:0;align-items:stretch;flex-shrink:0;
+  }
+  .nav-rail-cats{
+    display:grid;
+    grid-template-rows:1fr 1fr;
+    grid-auto-flow:column;
+    grid-auto-columns:46px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    flex:1;
+    scrollbar-width:none;
+    padding:2px 3px;
+  }
+  .nav-rail-cats::-webkit-scrollbar{display:none;}
+  .rail-btn{width:44px;height:24px;font-size:15px;border-radius:6px;margin:1px;}
   .rail-tip{display:none;}
-  .ctrl-btn{margin-bottom:0;margin-left:4px;width:40px;height:40px;}
-  .tool-sidebar{width:100%;height:auto;}
-  .tool-list{display:flex;overflow-x:auto;padding:5px;flex-direction:row;}
+  .nav-rail-ctrl{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:1fr 1fr;
+    gap:2px;
+    padding:3px;
+    border-left:1px solid var(--border);
+    flex-shrink:0;
+    background:var(--sidebar);
+  }
+  .ctrl-btn{width:34px;height:24px;margin:0;border-radius:6px;font-size:10px;}
+  .tool-sidebar{width:100%;height:auto;flex-shrink:0;}
+  .tool-list{display:flex;overflow-x:auto;padding:4px 6px;flex-direction:row;scrollbar-width:none;}
+  .tool-list::-webkit-scrollbar{display:none;}
   .tool-item{white-space:nowrap;width:auto;margin-bottom:0;margin-right:3px;flex-shrink:0;}
-  .workspace{height:calc(100vh - 112px);overflow-y:auto;}
+  .workspace{height:calc(100vh - 56px - 44px);overflow-y:auto;}
   .editor-grid{display:block;overflow-y:visible;}
-  .pane{height:380px;border-bottom:4px solid var(--border);}
+  .pane{height:360px;border-bottom:4px solid var(--border);}
 }
 </style>
 </head>
@@ -215,8 +244,8 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <button class="ov-close" onclick="closeOv('supportOverlay')">×</button>
   <h2 id="ov-sup-title"></h2>
   <p class="sub" id="ov-sup-sub"></p>
-  <a class="sup-btn" href="https://www.buymeacoffee.com/heru0729" target="_blank" rel="noopener">
-    <span class="ic">☕</span><div><div>Buy Me a Coffee</div><div class="sd" id="sup-bmc-sd"></div></div>
+  <a class="sup-btn" href="https://github.com/sponsors/heru0729" target="_blank" rel="noopener">
+    <span class="ic">💖</span><div><div>GitHub Sponsors</div><div class="sd" id="sup-gh-sd"></div></div>
   </a>
   <a class="sup-btn" href="https://qr.paypay.ne.jp/p2p01_g8IlYBZ1E3hagp7L" target="_blank" rel="noopener">
     <span class="ic">🟡</span><div><div>PayPay</div><div class="sd" id="sup-pp-sd"></div></div>
@@ -230,22 +259,27 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
 
 <div class="app-shell">
 <nav class="nav-rail">
-  <button class="rail-btn active" onclick="setCat('data')">📦<span class="rail-tip">Data</span></button>
-  <button class="rail-btn" onclick="setCat('security')">🔐<span class="rail-tip">Security</span></button>
-  <button class="rail-btn" onclick="setCat('utils')">🛠️<span class="rail-tip">Utils</span></button>
-  <button class="rail-btn" onclick="setCat('text')">📝<span class="rail-tip">Text</span></button>
-  <button class="rail-btn" onclick="setCat('math')">🔢<span class="rail-tip">Math</span></button>
-  <button class="rail-btn" onclick="setCat('network')">🌐<span class="rail-tip">Network</span></button>
-  <button class="rail-btn" onclick="setCat('design')">🎨<span class="rail-tip">Design</span></button>
-  <button class="rail-btn" onclick="setCat('dev')">⚙️<span class="rail-tip">Dev</span></button>
-  <button class="rail-btn" onclick="setCat('ai')">🤖<span class="rail-tip">AI</span></button>
-  <button class="rail-btn" onclick="setCat('time')">🕐<span class="rail-tip">Time</span></button>
-  <button class="rail-btn" id="favRailBtn" onclick="setCat('favorites')">⭐<span class="rail-tip">Favorites</span></button>
-  <div class="rail-spacer"></div>
-  <button class="ctrl-btn" onclick="openOv('aboutOverlay')">ℹ️</button>
-  <button class="ctrl-btn" onclick="openOv('supportOverlay')">☕</button>
-  <button class="ctrl-btn" id="langBtn" onclick="toggleLang()">EN</button>
-  <button class="ctrl-btn" onclick="document.body.classList.toggle('light')">🌓</button>
+  <!-- 左: カテゴリ（2段グリッド横スクロール） -->
+  <div class="nav-rail-cats">
+    <button class="rail-btn active" onclick="setCat('data')">📦<span class="rail-tip">Data</span></button>
+    <button class="rail-btn" onclick="setCat('security')">🔐<span class="rail-tip">Security</span></button>
+    <button class="rail-btn" onclick="setCat('utils')">🛠️<span class="rail-tip">Utils</span></button>
+    <button class="rail-btn" onclick="setCat('text')">📝<span class="rail-tip">Text</span></button>
+    <button class="rail-btn" onclick="setCat('math')">🔢<span class="rail-tip">Math</span></button>
+    <button class="rail-btn" onclick="setCat('network')">🌐<span class="rail-tip">Network</span></button>
+    <button class="rail-btn" onclick="setCat('design')">🎨<span class="rail-tip">Design</span></button>
+    <button class="rail-btn" onclick="setCat('dev')">⚙️<span class="rail-tip">Dev</span></button>
+    <button class="rail-btn" onclick="setCat('ai')">🤖<span class="rail-tip">AI</span></button>
+    <button class="rail-btn" onclick="setCat('time')">🕐<span class="rail-tip">Time</span></button>
+    <button class="rail-btn" id="favRailBtn" onclick="setCat('favorites')">⭐<span class="rail-tip">Favorites</span></button>
+  </div>
+  <!-- 右: コントロール（2×2固定） -->
+  <div class="nav-rail-ctrl">
+    <button class="ctrl-btn" onclick="openOv('aboutOverlay')">ℹ️</button>
+    <button class="ctrl-btn" onclick="openOv('supportOverlay')">☕</button>
+    <button class="ctrl-btn" id="langBtn" onclick="toggleLang()">EN</button>
+    <button class="ctrl-btn" onclick="document.body.classList.toggle('light')">🌓</button>
+  </div>
 </nav>
 <aside class="tool-sidebar">
   <div class="sidebar-title" id="lbl-tools">TOOLS</div>
@@ -1040,7 +1074,7 @@ const I18N={
     'about-body':'All processing happens locally in your browser. No data is ever sent to a server. No tracking. No paywalls — and it will always stay that way.\n\nBuilt and maintained by an independent developer.',
     'stat-tools':'Tools','stat-cats':'Categories','stat-browser':'Browser only','stat-free':'Forever free',
     'sup-title':'☕ Support','sup-sub':'DevTools is completely free. If it saves you time, any support is appreciated!',
-    'sup-bmc-sd':'Buy a coffee to support development',
+    'sup-gh-sd':'Support via GitHub Sponsors',
     'sup-pp-sd':'Send via PayPay QR link',
     'sup-share-title':'Share on X','sup-share-sd':'Spread the word!',
     'share-text':'https://devtools.f5.si is the best!!\n#DevTools #Tools',
@@ -1053,7 +1087,7 @@ const I18N={
     'about-body':'すべての処理はあなたのブラウザ内で完結します。データがサーバーに送信されることは一切ありません。トラッキングなし。永久無料です。\n\n個人開発者によって制作・運営されています。',
     'stat-tools':'ツール数','stat-cats':'カテゴリ数','stat-browser':'ブラウザ完結','stat-free':'永続無料',
     'sup-title':'☕ 支援する','sup-sub':'DevToolsは完全無料で公開しています。気に入っていただけたら支援をご検討ください！',
-    'sup-bmc-sd':'コーヒー1杯で開発を応援できます',
+    'sup-gh-sd':'GitHub Sponsorsで支援できます',
     'sup-pp-sd':'PayPay QRリンクから送金できます',
     'sup-share-title':'SNSでシェア','sup-share-sd':'広めてもらえると嬉しいです',
     'share-text':'https://devtools.f5.si is the best!!\n#DevTools #Tools',
@@ -1167,7 +1201,7 @@ function render(){
   // Support
   document.getElementById('ov-sup-title').innerText=t('sup-title');
   document.getElementById('ov-sup-sub').innerText=t('sup-sub');
-  document.getElementById('sup-bmc-sd').innerText=t('sup-bmc-sd');
+  document.getElementById('sup-gh-sd').innerText=t('sup-gh-sd');
   document.getElementById('sup-pp-sd').innerText=t('sup-pp-sd');
   document.getElementById('sup-share-title').innerText=t('sup-share-title');
   document.getElementById('sup-share-sd').innerText=t('sup-share-sd');
