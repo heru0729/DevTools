@@ -1,451 +1,469 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DevTools</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql-formatter/15.3.1/sql-formatter.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>DevTools</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql-formatter/15.3.1/sql-formatter.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 <style>
-:root {
-    --bg: #0c0c0e; --sidebar: #141418; --panel: #1c1c22;
-    --accent: #818cf8; --border: #27272a; --text: #f4f4f5; --text-dim: #71717a;
-    --add: #22c55e; --del: #ef4444; --add-bg: #14532d33; --del-bg: #7f1d1d33;
-}
-body.light {
-    --bg: #ffffff; --sidebar: #f4f4f5; --panel: #ffffff;
-    --border: #e2e8f0; --text: #0f172a; --text-dim: #64748b; --accent: #4f46e5;
-    --add-bg: #dcfce7; --del-bg: #fee2e2;
-}
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
-.app-shell { display: flex; height: 100vh; width: 100vw; }
-
-.nav-rail { width: 72px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 20px 0; z-index: 1000; flex-shrink: 0; }
-.rail-group { display: flex; flex-direction: column; gap: 12px; }
-.rail-btn { width: 52px; height: 52px; border-radius: 14px; border: none; background: transparent; font-size: 22px; cursor: pointer; color: var(--text-dim); display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-.rail-btn.active { background: var(--accent); color: white; }
-.rail-spacer { flex: 1; }
-.control-btn { width: 48px; height: 48px; border-radius: 12px; border: 1px solid var(--border); background: var(--panel); color: var(--text); cursor: pointer; margin-bottom: 12px; font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center; }
-
-.tool-sidebar { width: 180px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
-.sidebar-title { padding: 25px 16px 10px; font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; }
-.tool-list { flex: 1; overflow-y: auto; padding: 8px; }
-.tool-item { width: 100%; padding: 11px 14px; border: none; background: transparent; color: var(--text-dim); text-align: left; cursor: pointer; border-radius: 8px; font-weight: 600; font-size: 13px; margin-bottom: 2px; transition: 0.15s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.tool-item:hover { background: var(--panel); color: var(--text); }
-.tool-item.active { background: var(--panel); color: var(--accent); }
-
-.workspace { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-.workspace-header { padding: 18px 28px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg); flex-shrink: 0; }
-.header-title h1 { margin: 0; font-size: 18px; font-weight: 800; }
-.header-title p  { margin: 4px 0 0; font-size: 12px; color: var(--text-dim); }
-
-.editor-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; background: var(--border); gap: 1px; overflow: hidden; }
-.pane { background: var(--bg); display: flex; flex-direction: column; height: 100%; overflow: hidden; }
-.pane-inputs { display: flex; flex-direction: column; }
-.pane-header { padding: 10px 18px; font-size: 11px; font-weight: 800; color: var(--text-dim); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg); flex-shrink: 0; }
-
-textarea { flex: 1; background: transparent; border: none; color: var(--text); padding: 16px 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; outline: none; resize: none; line-height: 1.6; min-height: 80px; }
-
-pre { margin: 0; flex: 1; overflow: auto; background: var(--bg) !important; }
-code.hljs { padding: 16px 20px !important; background: transparent !important; display: block; border: none !important; font-size: 13px; }
-
-.image-center { display: none; padding: 40px; text-align: center; background: var(--bg); flex: 1; }
-.image-center img { max-width: 100%; height: auto; border-radius: 10px; }
-
-.btn-run { background: var(--accent); color: white; border: none; padding: 10px 24px; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 14px; }
-.btn-mini-copy { background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; }
-
-.diff-wrap { }
-.diff-line { padding: 2px 16px; line-height: 1.5; white-space: pre-wrap; word-break: break-all; }
-.diff-eq   { color: var(--text-dim); }
-.diff-add  { background: var(--add-bg); color: var(--add); }
-.diff-del  { background: var(--del-bg); color: var(--del); }
-.diff-ln   { display: inline-block; width: 20px; user-select: none; opacity: 0.6; }
-
-.md-preview { line-height: 1.8; }
-.md-preview h1 { font-size: 1.6em; font-weight: 800; margin: 0 0 12px; }
-.md-preview h2 { font-size: 1.3em; font-weight: 700; margin: 20px 0 8px; }
-.md-preview h3 { font-size: 1.1em; font-weight: 700; margin: 16px 0 6px; }
-.md-preview code { background: var(--panel); padding: 2px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
-.md-preview a { color: var(--accent); }
-.md-preview li { margin: 4px 0; }
-
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-#input2-row { display: none; flex-direction: column; flex: 1; border-top: 1px solid var(--border); }
-
-@media (max-width: 768px) {
-    body { overflow: hidden; }
-    .app-shell { flex-direction: column; }
-    .nav-rail { width: 100%; height: 60px; flex-direction: row; padding: 0 10px; border-right: none; border-bottom: 1px solid var(--border); }
-    .rail-group { flex-direction: row; gap: 8px; }
-    .rail-btn { width: 48px; height: 48px; }
-    .control-btn { margin-bottom: 0; margin-left: 8px; width: 44px; height: 44px; }
-    .tool-sidebar { width: 100%; height: auto; flex-shrink: 0; }
-    .tool-list { display: flex; overflow-x: auto; padding: 6px; }
-    .tool-item { white-space: nowrap; width: auto; padding: 8px 14px; margin-bottom: 0; margin-right: 4px; }
-    .workspace { height: calc(100vh - 120px); overflow-y: auto; }
-    .editor-grid { display: block; overflow-y: visible; }
-    .pane { height: 420px; border-bottom: 4px solid var(--border); }
+:root{--bg:#0c0c0e;--sidebar:#141418;--panel:#1c1c22;--accent:#818cf8;--accent2:#a78bfa;--border:#27272a;--text:#f4f4f5;--text-dim:#71717a;--add:#22c55e;--del:#ef4444;--add-bg:#14532d33;--del-bg:#7f1d1d33;}
+body.light{--bg:#f8f8fc;--sidebar:#f0f0f5;--panel:#ffffff;--border:#e2e0f0;--text:#0f0f1a;--text-dim:#6060a0;--accent:#4f46e5;--accent2:#7c3aed;--add-bg:#dcfce7;--del-bg:#fee2e2;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;}
+.app-shell{display:flex;height:100vh;width:100vw;}
+.nav-rail{width:68px;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:14px 0;z-index:1000;flex-shrink:0;gap:3px;}
+.rail-btn{width:50px;height:50px;border-radius:14px;border:none;background:transparent;font-size:20px;cursor:pointer;color:var(--text-dim);display:flex;align-items:center;justify-content:center;transition:.2s;position:relative;}
+.rail-btn:hover{background:var(--panel);}
+.rail-btn.active{background:var(--accent);color:#fff;box-shadow:0 4px 16px #818cf844;}
+.rail-tip{position:absolute;left:60px;background:#1e1e2e;color:#fff;padding:4px 10px;border-radius:6px;font-size:11px;white-space:nowrap;pointer-events:none;opacity:0;transition:.15s;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;z-index:9999;}
+.rail-btn:hover .rail-tip{opacity:1;}
+.rail-spacer{flex:1;}
+.ctrl-btn{width:46px;height:46px;border-radius:12px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;transition:.15s;margin-bottom:3px;}
+.ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
+.tool-sidebar{width:172px;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+.sidebar-title{padding:18px 14px 7px;font-size:10px;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;}
+.tool-list{flex:1;overflow-y:auto;padding:5px;}
+.tool-item{width:100%;padding:10px 12px;border:none;background:transparent;color:var(--text-dim);text-align:left;cursor:pointer;border-radius:8px;font-weight:600;font-size:12.5px;margin-bottom:1px;transition:.13s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:inherit;}
+.tool-item:hover{background:var(--panel);color:var(--text);}
+.tool-item.active{background:var(--panel);color:var(--accent);}
+.workspace{flex:1;display:flex;flex-direction:column;min-width:0;}
+.workspace-header{padding:14px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--bg);flex-shrink:0;}
+.header-title h1{font-size:16px;font-weight:800;}
+.header-title p{font-size:11px;color:var(--text-dim);margin-top:3px;}
+.header-actions{display:flex;gap:7px;align-items:center;}
+.btn-run{background:var(--accent);color:#fff;border:none;padding:8px 20px;border-radius:10px;font-weight:800;cursor:pointer;font-size:13px;transition:.15s;}
+.btn-run:hover{background:var(--accent2);}
+.btn-mini{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:5px 11px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn-mini:hover{border-color:var(--accent);color:var(--accent);}
+.editor-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;background:var(--border);gap:1px;overflow:hidden;}
+.pane{background:var(--bg);display:flex;flex-direction:column;overflow:hidden;}
+.pane-header{padding:9px 15px;font-size:10.5px;font-weight:800;color:var(--text-dim);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;letter-spacing:.05em;}
+textarea{flex:1;background:transparent;border:none;color:var(--text);padding:14px 17px;font-family:'JetBrains Mono',monospace;font-size:12.5px;outline:none;resize:none;line-height:1.65;min-height:60px;}
+pre{margin:0;flex:1;overflow:auto;background:var(--bg)!important;}
+code.hljs{padding:14px 17px!important;background:transparent!important;display:block;border:none!important;font-size:12.5px;}
+#input2-row{display:none;flex-direction:column;flex:1;border-top:1px solid var(--border);}
+.image-center{display:none;padding:28px;text-align:center;flex:1;overflow:auto;}
+.image-center img{max-width:100%;border-radius:10px;}
+#diffResult{display:none;overflow:auto;flex:1;padding:8px 0;font-family:'JetBrains Mono',monospace;font-size:12px;}
+#htmlResult{display:none;overflow:auto;flex:1;padding:16px 18px;}
+#specialResult{display:none;overflow:auto;flex:1;}
+.diff-line{padding:2px 13px;line-height:1.5;white-space:pre-wrap;word-break:break-all;}
+.diff-eq{color:var(--text-dim);}
+.diff-add{background:var(--add-bg);color:var(--add);}
+.diff-del{background:var(--del-bg);color:var(--del);}
+.diff-ln{display:inline-block;width:18px;user-select:none;opacity:.6;}
+.md-preview{line-height:1.8;}
+.md-preview h1{font-size:1.5em;font-weight:800;margin-bottom:12px;}
+.md-preview h2{font-size:1.25em;font-weight:700;margin:16px 0 7px;}
+.md-preview h3{font-size:1.05em;font-weight:700;margin:13px 0 5px;}
+.md-preview code{background:var(--panel);padding:2px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.87em;}
+.md-preview a{color:var(--accent);}
+.md-preview li{margin:3px 0;}
+.md-preview blockquote{border-left:3px solid var(--accent);margin:8px 0;padding:3px 12px;color:var(--text-dim);}
+.overlay{display:none;position:fixed;inset:0;background:#00000088;z-index:9000;align-items:center;justify-content:center;}
+.overlay.open{display:flex;}
+.ov-card{background:var(--sidebar);border:1px solid var(--border);border-radius:20px;padding:32px 36px;max-width:480px;width:90%;position:relative;max-height:88vh;overflow-y:auto;}
+.ov-card h2{font-size:21px;font-weight:800;margin-bottom:5px;}
+.ov-card .sub{color:var(--text-dim);font-size:12.5px;margin-bottom:22px;}
+.ov-close{position:absolute;top:14px;right:16px;background:transparent;border:none;color:var(--text-dim);font-size:22px;cursor:pointer;line-height:1;}
+.sup-btn{display:flex;align-items:center;gap:11px;padding:13px 16px;border-radius:12px;border:1px solid var(--border);background:var(--panel);color:var(--text);text-decoration:none;font-weight:700;font-size:13.5px;margin-bottom:9px;transition:.15s;}
+.sup-btn:hover{border-color:var(--accent);color:var(--accent);}
+.sup-btn .ic{font-size:21px;flex-shrink:0;}
+.sup-btn .sd{font-size:11px;font-weight:400;color:var(--text-dim);margin-top:1px;}
+.badge{display:inline-block;background:var(--accent);color:#fff;padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:800;margin-left:7px;vertical-align:middle;}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:14px 0;}
+.about-stat{background:var(--panel);border-radius:10px;padding:11px 13px;}
+.about-stat .num{font-size:21px;font-weight:800;color:var(--accent);}
+.about-stat .lbl{font-size:10.5px;color:var(--text-dim);margin-top:1px;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+@media(max-width:768px){
+  body{overflow:hidden;}
+  .app-shell{flex-direction:column;}
+  .nav-rail{width:100%;height:54px;flex-direction:row;padding:0 7px;border-right:none;border-bottom:1px solid var(--border);gap:2px;}
+  .rail-btn{width:44px;height:44px;font-size:17px;}
+  .rail-tip{display:none;}
+  .ctrl-btn{margin-bottom:0;margin-left:5px;width:40px;height:40px;}
+  .tool-sidebar{width:100%;height:auto;}
+  .tool-list{display:flex;overflow-x:auto;padding:5px;flex-direction:row;}
+  .tool-item{white-space:nowrap;width:auto;margin-bottom:0;margin-right:3px;flex-shrink:0;}
+  .workspace{height:calc(100vh - 114px);overflow-y:auto;}
+  .editor-grid{display:block;overflow-y:visible;}
+  .pane{height:390px;border-bottom:4px solid var(--border);}
 }
 </style>
 </head>
 <body class="dark">
-<div class="app-shell">
-    <nav class="nav-rail">
-        <div class="rail-group">
-            <button class="rail-btn active" onclick="setCat('data')"     title="Data">📦</button>
-            <button class="rail-btn"        onclick="setCat('security')" title="Security">🔐</button>
-            <button class="rail-btn"        onclick="setCat('utils')"    title="Utils">🛠️</button>
-        </div>
-        <div class="rail-spacer"></div>
-        <button id="langBtn"  class="control-btn" onclick="toggleLang()">EN</button>
-        <button class="control-btn" onclick="document.body.classList.toggle('light')">🌓</button>
-    </nav>
 
-    <aside class="tool-sidebar">
-        <div class="sidebar-title" id="lbl-tools">TOOLS</div>
-        <div id="toolList" class="tool-list"></div>
-    </aside>
-
-    <main class="workspace">
-        <header class="workspace-header">
-            <div class="header-title">
-                <h1 id="toolName">JSON Format</h1>
-                <p id="toolDesc">---</p>
-            </div>
-            <button class="btn-run" id="lbl-run" onclick="execute()">RUN</button>
-        </header>
-
-        <div class="editor-grid">
-            <div class="pane pane-inputs">
-                <div class="pane-header" id="lbl-input">INPUT</div>
-                <textarea id="input" spellcheck="false" placeholder="Paste data here..."></textarea>
-                <div id="input2-row">
-                    <div class="pane-header" id="lbl-input2">INPUT 2</div>
-                    <textarea id="input2" spellcheck="false" placeholder="Second input..."></textarea>
-                </div>
-            </div>
-
-            <div class="pane">
-                <div class="pane-header">
-                    <span id="lbl-output">OUTPUT</span>
-                    <button class="btn-mini-copy" id="lbl-copy" onclick="copyResult()">COPY</button>
-                </div>
-                <div id="imageResult" class="image-center"></div>
-                <div id="diffResult"  style="display:none;overflow:auto;flex:1;padding:12px 0;font-family:'JetBrains Mono',monospace;font-size:13px;"></div>
-                <div id="htmlResult"  style="display:none;overflow:auto;flex:1;padding:20px;"></div>
-                <pre id="outputPre"><code id="outputText" class="hljs"></code></pre>
-            </div>
-        </div>
-    </main>
+<!-- About -->
+<div class="overlay" id="aboutOverlay" onclick="if(event.target===this)closeOv('aboutOverlay')">
+<div class="ov-card">
+  <button class="ov-close" onclick="closeOv('aboutOverlay')">×</button>
+  <h2>DevTools <span class="badge" id="toolCountBadge">?</span></h2>
+  <p class="sub">ブラウザで動く、完全無料の開発者向けツール集です。</p>
+  <div class="about-grid">
+    <div class="about-stat"><div class="num" id="statTools">0</div><div class="lbl">ツール数</div></div>
+    <div class="about-stat"><div class="num" id="statCats">0</div><div class="lbl">カテゴリ数</div></div>
+    <div class="about-stat"><div class="num">100%</div><div class="lbl">ブラウザ完結</div></div>
+    <div class="about-stat"><div class="num">無料</div><div class="lbl">永続無料</div></div>
+  </div>
+  <p style="font-size:12.5px;color:var(--text-dim);line-height:1.75;">すべての処理はあなたのブラウザ内で完結します。データがサーバーに送信されることは一切ありません。<br><br>小学校を卒業したばかりの開発者が制作しました 🎓</p>
+  <hr style="border:none;border-top:1px solid var(--border);margin:18px 0;">
+  <p style="font-size:10.5px;color:var(--text-dim);">Built with ❤️ · Vanilla JS · No frameworks · No tracking · Privacy first</p>
 </div>
+</div>
+
+<!-- Support -->
+<div class="overlay" id="supportOverlay" onclick="if(event.target===this)closeOv('supportOverlay')">
+<div class="ov-card">
+  <button class="ov-close" onclick="closeOv('supportOverlay')">×</button>
+  <h2>☕ 支援する</h2>
+  <p class="sub">DevToolsは完全無料で公開しています。気に入っていただけたら支援をご検討ください！</p>
+  <a class="sup-btn" href="https://www.buymeacoffee.com/" target="_blank" rel="noopener">
+    <span class="ic">☕</span><div><div>Buy Me a Coffee</div><div class="sd">コーヒー1杯で開発を応援できます</div></div>
+  </a>
+  <a class="sup-btn" href="https://ko-fi.com/" target="_blank" rel="noopener">
+    <span class="ic">💙</span><div><div>Ko-fi</div><div class="sd">月額支援・一回限りどちらも可能</div></div>
+  </a>
+  <a class="sup-btn" href="https://github.com/" target="_blank" rel="noopener">
+    <span class="ic">⭐</span><div><div>GitHub でスターを付ける</div><div class="sd">スターだけでも大きな励みになります</div></div>
+  </a>
+  <a class="sup-btn" href="https://twitter.com/intent/tweet?text=DevTools+%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%81%BF%E3%81%9F%EF%BC%81" target="_blank" rel="noopener">
+    <span class="ic">𝕏</span><div><div>SNSでシェア</div><div class="sd">広めてもらえると嬉しいです</div></div>
+  </a>
+  <p style="font-size:10.5px;color:var(--text-dim);margin-top:14px;text-align:center;">支援は任意です。ツールは常に無料でご利用いただけます 🙏</p>
+</div>
+</div>
+
+<div class="app-shell">
+<nav class="nav-rail">
+  <button class="rail-btn active" onclick="setCat('data')">📦<span class="rail-tip">Data</span></button>
+  <button class="rail-btn" onclick="setCat('security')">🔐<span class="rail-tip">Security</span></button>
+  <button class="rail-btn" onclick="setCat('utils')">🛠️<span class="rail-tip">Utils</span></button>
+  <button class="rail-btn" onclick="setCat('text')">📝<span class="rail-tip">Text</span></button>
+  <button class="rail-btn" onclick="setCat('math')">🔢<span class="rail-tip">Math</span></button>
+  <button class="rail-btn" onclick="setCat('network')">🌐<span class="rail-tip">Network</span></button>
+  <div class="rail-spacer"></div>
+  <button class="ctrl-btn" onclick="openOv('aboutOverlay')" title="About">ℹ️</button>
+  <button class="ctrl-btn" onclick="openOv('supportOverlay')" title="支援">☕</button>
+  <button class="ctrl-btn" id="langBtn" onclick="toggleLang()">EN</button>
+  <button class="ctrl-btn" onclick="document.body.classList.toggle('light')">🌓</button>
+</nav>
+<aside class="tool-sidebar">
+  <div class="sidebar-title" id="lbl-tools">TOOLS</div>
+  <div id="toolList" class="tool-list"></div>
+</aside>
+<main class="workspace">
+  <header class="workspace-header">
+    <div class="header-title"><h1 id="toolName">JSON Format</h1><p id="toolDesc">---</p></div>
+    <div class="header-actions">
+      <button class="btn-mini" id="lbl-copy" onclick="copyResult()">COPY</button>
+      <button class="btn-run" id="lbl-run" onclick="execute()">RUN</button>
+    </div>
+  </header>
+  <div class="editor-grid">
+    <div class="pane">
+      <div class="pane-header" id="lbl-input">INPUT</div>
+      <textarea id="input" spellcheck="false" placeholder="Paste data here..."></textarea>
+      <div id="input2-row">
+        <div class="pane-header" id="lbl-input2">INPUT 2</div>
+        <textarea id="input2" spellcheck="false" placeholder="Second input..."></textarea>
+      </div>
+    </div>
+    <div class="pane">
+      <div class="pane-header"><span id="lbl-output">OUTPUT</span></div>
+      <div id="imageResult" class="image-center"></div>
+      <div id="diffResult"></div>
+      <div id="htmlResult"></div>
+      <div id="specialResult"></div>
+      <pre id="outputPre"><code id="outputText" class="hljs"></code></pre>
+    </div>
+  </div>
+</main>
+</div>
+
 <script>
-const ALL_TOOLS = [
-    { id: 'json',      cat: 'data',     en: 'JSON Format',    ja: 'JSON整形',       ed: 'Prettify JSON data',           jd: 'JSONを整形・検証します' },
-    { id: 'json-min',  cat: 'data',     en: 'JSON Minify',    ja: 'JSON圧縮',       ed: 'Minify JSON string',           jd: 'JSONを1行に圧縮します' },
-    { id: 'json-diff', cat: 'data',     en: 'JSON Diff',      ja: 'JSON比較',       ed: 'Compare two JSON objects',     jd: '2つのJSONの差分を表示' },
-    { id: 'jsonpath',  cat: 'data',     en: 'JSONPath',       ja: 'JSONPath抽出',   ed: 'Extract with JSONPath (line 1 = path, rest = JSON)', jd: '1行目にパス、残りにJSONを入力' },
-    { id: 'sql',       cat: 'data',     en: 'SQL Format',     ja: 'SQL整形',        ed: 'Format SQL query',             jd: 'SQLクエリを整形します' },
-    { id: 'yaml',      cat: 'data',     en: 'YAML ↔ JSON',   ja: 'YAML変換',       ed: 'Convert YAML/JSON',            jd: 'YAMLとJSONを相互変換' },
-    { id: 'csv-json',  cat: 'data',     en: 'CSV ↔ JSON',    ja: 'CSV変換',        ed: 'Convert CSV to/from JSON',     jd: 'CSVとJSONを相互変換' },
-    { id: 'xml',       cat: 'data',     en: 'XML Format',     ja: 'XML整形',        ed: 'Prettify XML data',            jd: 'XMLを整形します' },
-    { id: 'b64e',      cat: 'security', en: 'Base64 Enc',     ja: 'B64エンコード',  ed: 'Text to Base64',               jd: 'Base64にエンコード' },
-    { id: 'b64d',      cat: 'security', en: 'Base64 Dec',     ja: 'B64デコード',    ed: 'Base64 to Text',               jd: 'Base64をデコード' },
-    { id: 'sha256',    cat: 'security', en: 'SHA-256',        ja: 'SHA-256',        ed: 'Generate SHA-256 hash',        jd: 'SHA-256ハッシュを計算' },
-    { id: 'md5',       cat: 'security', en: 'MD5',            ja: 'MD5',            ed: 'Generate MD5 hash',            jd: 'MD5ハッシュを計算' },
-    { id: 'sha1',      cat: 'security', en: 'SHA-1',          ja: 'SHA-1',          ed: 'Generate SHA-1 hash',          jd: 'SHA-1ハッシュを計算' },
-    { id: 'jwt',       cat: 'security', en: 'JWT Decode',     ja: 'JWTデコード',    ed: 'Decode JWT payload',           jd: 'JWTのペイロードを解析' },
-    { id: 'jwt-gen',   cat: 'security', en: 'JWT Gen',        ja: 'JWT生成',        ed: 'Generate JWT (HS256) — payload JSON / secret', jd: 'ペイロードJSON / シークレット' },
-    { id: 'url-enc',   cat: 'security', en: 'URL Encode',     ja: 'URLエンコード',  ed: 'Encode URL characters',        jd: 'URL文字をエンコード' },
-    { id: 'url-dec',   cat: 'security', en: 'URL Decode',     ja: 'URLデコード',    ed: 'Decode URL characters',        jd: 'URL文字をデコード' },
-    { id: 'html-enc',  cat: 'security', en: 'HTML Escape',    ja: 'HTMLエスケープ', ed: 'Escape HTML entities',         jd: 'HTMLエンティティに変換' },
-    { id: 'html-dec',  cat: 'security', en: 'HTML Unescape',  ja: 'HTMLアンエスケ', ed: 'Unescape HTML entities',       jd: 'HTMLエンティティを戻す' },
-    { id: 'aes-enc',   cat: 'security', en: 'AES Encrypt',    ja: 'AES暗号化',      ed: 'AES-256 encrypt — text / password', jd: 'テキスト / パスワード' },
-    { id: 'aes-dec',   cat: 'security', en: 'AES Decrypt',    ja: 'AES復号',        ed: 'AES-256 decrypt — cipher / password', jd: '暗号文 / パスワード' },
-    { id: 'qr',        cat: 'utils',    en: 'QR Code',        ja: 'QR作成',         ed: 'Generate QR image',            jd: 'QRコードを生成します' },
-    { id: 'uuid',      cat: 'utils',    en: 'UUID Gen',       ja: 'UUID生成',       ed: 'Create 5× v4 UUIDs',           jd: 'UUID v4を5個生成します' },
-    { id: 'epoch',     cat: 'utils',    en: 'Unix Time',      ja: 'エポック変換',   ed: 'Unix ↔ Date',                 jd: 'Unix時間と日時を変換' },
-    { id: 'color',     cat: 'utils',    en: 'Color Convert',  ja: 'カラー変換',     ed: 'HEX / RGB / HSL convert',     jd: 'カラーコードを相互変換' },
-    { id: 'textstats', cat: 'utils',    en: 'Text Stats',     ja: 'テキスト統計',   ed: 'Count chars, words, lines',    jd: '文字数・単語数・行数を集計' },
-    { id: 'markdown',  cat: 'utils',    en: 'Markdown',       ja: 'MDプレビュー',   ed: 'Preview Markdown as HTML',     jd: 'MarkdownをHTMLでプレビュー' },
-    { id: 'diff',      cat: 'utils',    en: 'Text Diff',      ja: 'テキスト比較',   ed: 'Compare two text blocks',      jd: '2つのテキストの差分を表示' },
-    { id: 'regex',     cat: 'utils',    en: 'Regex Test',     ja: 'Regexテスト',    ed: 'Test regex — pattern / text',  jd: 'パターン / テキスト' },
-    { id: 'lorem',     cat: 'utils',    en: 'Lorem Ipsum',    ja: 'Lorem生成',      ed: 'Generate N paragraphs (enter a number)', jd: '段落数を入力（数字）' },
-    { id: 'baseconv',  cat: 'utils',    en: 'Base Convert',   ja: '進数変換',       ed: 'Convert bases — "FF 16" or "255 10"', jd: '"FF 16" や "255 10" と入力' },
-    { id: 'cron',      cat: 'utils',    en: 'CRON Parse',     ja: 'CRON解析',       ed: 'Explain a CRON expression',    jd: 'CRON式を人間語で説明' },
+const ALL_TOOLS=[
+ {id:'json',cat:'data',en:'JSON Format',ja:'JSON整形',ed:'Prettify JSON',jd:'JSONを整形・検証します'},
+ {id:'json-min',cat:'data',en:'JSON Minify',ja:'JSON圧縮',ed:'Minify JSON to one line',jd:'JSONを1行に圧縮します'},
+ {id:'json-diff',cat:'data',en:'JSON Diff',ja:'JSON比較',ed:'Compare two JSON objects',jd:'2つのJSONの差分を表示'},
+ {id:'jsonpath',cat:'data',en:'JSONPath',ja:'JSONPath',ed:'Line 1=path, rest=JSON',jd:'1行目=パス、残り=JSON'},
+ {id:'sql',cat:'data',en:'SQL Format',ja:'SQL整形',ed:'Format SQL queries',jd:'SQLクエリを整形します'},
+ {id:'yaml',cat:'data',en:'YAML↔JSON',ja:'YAML変換',ed:'Convert YAML/JSON',jd:'YAMLとJSONを相互変換'},
+ {id:'csv-json',cat:'data',en:'CSV↔JSON',ja:'CSV変換',ed:'Convert CSV to/from JSON',jd:'CSVとJSONを相互変換'},
+ {id:'xml',cat:'data',en:'XML Format',ja:'XML整形',ed:'Prettify XML',jd:'XMLを整形します'},
+ {id:'json-keys',cat:'data',en:'JSON Keys',ja:'JSONキー一覧',ed:'List all keys in JSON',jd:'JSONの全キーを一覧表示'},
+ {id:'json-flat',cat:'data',en:'JSON Flatten',ja:'JSONフラット化',ed:'Flatten nested JSON to dot-keys',jd:'ネストをドット形式でフラット化'},
+ {id:'b64e',cat:'security',en:'Base64 Enc',ja:'B64エンコード',ed:'Text → Base64',jd:'Base64にエンコード'},
+ {id:'b64d',cat:'security',en:'Base64 Dec',ja:'B64デコード',ed:'Base64 → Text',jd:'Base64をデコード'},
+ {id:'sha256',cat:'security',en:'SHA-256',ja:'SHA-256',ed:'Generate SHA-256 hash',jd:'SHA-256ハッシュを計算'},
+ {id:'md5',cat:'security',en:'MD5',ja:'MD5',ed:'Generate MD5 hash',jd:'MD5ハッシュを計算'},
+ {id:'sha1',cat:'security',en:'SHA-1',ja:'SHA-1',ed:'Generate SHA-1 hash',jd:'SHA-1ハッシュを計算'},
+ {id:'sha512',cat:'security',en:'SHA-512',ja:'SHA-512',ed:'Generate SHA-512 hash',jd:'SHA-512ハッシュを計算'},
+ {id:'hmac',cat:'security',en:'HMAC-SHA256',ja:'HMAC-SHA256',ed:'TEXT / KEY',jd:'テキスト / キー を入力'},
+ {id:'jwt',cat:'security',en:'JWT Decode',ja:'JWTデコード',ed:'Decode JWT payload',jd:'JWTのペイロードを解析'},
+ {id:'jwt-gen',cat:'security',en:'JWT Gen',ja:'JWT生成',ed:'PAYLOAD JSON / SECRET',jd:'ペイロードJSON / シークレット'},
+ {id:'url-enc',cat:'security',en:'URL Encode',ja:'URLエンコード',ed:'Encode URI component',jd:'URL文字をエンコード'},
+ {id:'url-dec',cat:'security',en:'URL Decode',ja:'URLデコード',ed:'Decode URI component',jd:'URL文字をデコード'},
+ {id:'html-enc',cat:'security',en:'HTML Escape',ja:'HTMLエスケープ',ed:'Escape HTML entities',jd:'HTMLエンティティに変換'},
+ {id:'html-dec',cat:'security',en:'HTML Unescape',ja:'HTMLアンエスケ',ed:'Unescape HTML entities',jd:'HTMLエンティティを戻す'},
+ {id:'aes-enc',cat:'security',en:'AES Encrypt',ja:'AES暗号化',ed:'TEXT / PASSWORD',jd:'テキスト / パスワード'},
+ {id:'aes-dec',cat:'security',en:'AES Decrypt',ja:'AES復号',ed:'CIPHER / PASSWORD',jd:'暗号文 / パスワード'},
+ {id:'bcrypt-h',cat:'security',en:'PBKDF2 Hash',ja:'PBKDF2ハッシュ',ed:'Hash password with PBKDF2-SHA256',jd:'PBKDF2でパスワードをハッシュ化'},
+ {id:'qr',cat:'utils',en:'QR Code',ja:'QR作成',ed:'Generate QR code image',jd:'QRコードを生成します'},
+ {id:'uuid',cat:'utils',en:'UUID Gen',ja:'UUID生成',ed:'Generate 5× UUID v4',jd:'UUID v4を5個生成します'},
+ {id:'nanoid',cat:'utils',en:'NanoID',ja:'NanoID',ed:'Generate compact random IDs',jd:'コンパクトなランダムIDを生成'},
+ {id:'epoch',cat:'utils',en:'Unix Time',ja:'エポック変換',ed:'Unix timestamp ↔ Date',jd:'Unix時間と日時を変換'},
+ {id:'color',cat:'utils',en:'Color Convert',ja:'カラー変換',ed:'HEX / RGB / HSL convert',jd:'カラーコードを相互変換'},
+ {id:'textstats',cat:'utils',en:'Text Stats',ja:'テキスト統計',ed:'Count chars, words, lines…',jd:'文字数・単語数・行数を集計'},
+ {id:'markdown',cat:'utils',en:'Markdown',ja:'MDプレビュー',ed:'Preview Markdown as HTML',jd:'MarkdownをHTMLでプレビュー'},
+ {id:'diff',cat:'utils',en:'Text Diff',ja:'テキスト比較',ed:'TEXT A / TEXT B',jd:'テキスト A / テキスト B'},
+ {id:'regex',cat:'utils',en:'Regex Test',ja:'Regexテスト',ed:'PATTERN / TEXT',jd:'パターン / テキスト'},
+ {id:'lorem',cat:'utils',en:'Lorem Ipsum',ja:'Lorem生成',ed:'Enter number of paragraphs',jd:'段落数を入力（数字）'},
+ {id:'baseconv',cat:'utils',en:'Base Convert',ja:'進数変換',ed:'"FF 16" or "255 10"',jd:'"FF 16" や "255 10" と入力'},
+ {id:'cron',cat:'utils',en:'CRON Parse',ja:'CRON解析',ed:'Explain a CRON expression',jd:'CRON式を人間語で説明'},
+ {id:'ts-format',cat:'utils',en:'Timestamp Fmt',ja:'時刻フォーマット',ed:'Format any timestamp',jd:'タイムスタンプをフォーマット'},
+ {id:'url-parse',cat:'utils',en:'URL Parse',ja:'URL解析',ed:'Break down a full URL',jd:'URLを各部分に分解します'},
+ {id:'case',cat:'text',en:'Case Convert',ja:'大文字変換',ed:'UPPER/lower/Title/camel/snake…',jd:'各種ケース変換'},
+ {id:'reverse',cat:'text',en:'Reverse',ja:'文字逆順',ed:'Reverse characters or lines',jd:'文字・行を逆順にします'},
+ {id:'dedup',cat:'text',en:'Deduplicate',ja:'重複削除',ed:'Remove duplicate lines',jd:'重複行を削除します'},
+ {id:'sort-lines',cat:'text',en:'Sort Lines',ja:'行ソート',ed:'Sort lines A→Z or Z→A',jd:'行をソートします'},
+ {id:'slug',cat:'text',en:'Slugify',ja:'スラッグ化',ed:'Convert text to URL slug',jd:'テキストをURLスラッグに変換'},
+ {id:'rot13',cat:'text',en:'ROT13',ja:'ROT13',ed:'Apply ROT13 cipher',jd:'ROT13暗号を適用します'},
+ {id:'caesar',cat:'text',en:'Caesar Cipher',ja:'シーザー暗号',ed:'Line 1=shift, rest=text',jd:'1行目=シフト数、残り=テキスト'},
+ {id:'strip-emoji',cat:'text',en:'Strip Emoji',ja:'絵文字除去',ed:'Remove all emoji from text',jd:'絵文字を全て削除します'},
+ {id:'extract-url',cat:'text',en:'Extract URLs',ja:'URL抽出',ed:'Extract all URLs from text',jd:'テキストからURLを全て抽出'},
+ {id:'extract-email',cat:'text',en:'Extract Emails',ja:'メール抽出',ed:'Extract all email addresses',jd:'メールアドレスを全て抽出'},
+ {id:'wrap',cat:'text',en:'Word Wrap',ja:'行折り返し',ed:'Line 1=width, rest=text',jd:'1行目=文字数、残り=テキスト'},
+ {id:'esc-js',cat:'text',en:'JS String Esc',ja:'JS文字列エスケ',ed:'Escape a string for JavaScript',jd:'JS用に文字列をエスケープ'},
+ {id:'csv-col',cat:'text',en:'CSV Column',ja:'CSV列抽出',ed:'Line 1=column index (0-based)',jd:'1行目=列番号（0始まり）'},
+ {id:'calc',cat:'math',en:'Calculator',ja:'計算機',ed:'Evaluate math expression',jd:'数式を評価します（JS式）'},
+ {id:'stats',cat:'math',en:'Statistics',ja:'統計計算',ed:'Numbers separated by commas',jd:'カンマ区切りで数字を入力'},
+ {id:'prime',cat:'math',en:'Prime Check',ja:'素数判定',ed:'Check if a number is prime',jd:'素数かどうか判定します'},
+ {id:'fib',cat:'math',en:'Fibonacci',ja:'フィボナッチ',ed:'Enter N to get first N numbers',jd:'N番目までのフィボナッチ数列'},
+ {id:'factor',cat:'math',en:'Factorize',ja:'素因数分解',ed:'Prime factorization',jd:'素因数分解をします'},
+ {id:'gcd-lcm',cat:'math',en:'GCD / LCM',ja:'最大公約数/最小公倍数',ed:'Two numbers, comma-separated',jd:'カンマ区切りで2つの数字'},
+ {id:'unit-conv',cat:'math',en:'Unit Convert',ja:'単位変換',ed:'"100 km to miles" etc.',jd:'"100 km to miles" など'},
+ {id:'matrix',cat:'math',en:'Matrix Calc',ja:'行列計算',ed:'Two matrices separated by ---',jd:'--- で区切った2つの行列'},
+ {id:'percent',cat:'math',en:'Percentage',ja:'パーセント計算',ed:'"30 of 150" / "150 * 20%"',jd:'"30 of 150" / "150 * 20%"'},
+ {id:'ua-parse',cat:'network',en:'User-Agent',ja:'UA解析',ed:'Parse a User-Agent string',jd:'User-Agentを解析します'},
+ {id:'http-status',cat:'network',en:'HTTP Status',ja:'HTTPステータス',ed:'Enter an HTTP status code',jd:'HTTPステータスコードを説明'},
+ {id:'mime',cat:'network',en:'MIME Type',ja:'MIME判定',ed:'Enter file extension or MIME type',jd:'拡張子またはMIMEタイプを入力'},
+ {id:'ip-info',cat:'network',en:'IP Analyze',ja:'IP解析',ed:'Analyze an IPv4 / IPv6 address',jd:'IPv4/IPv6アドレスを解析'},
+ {id:'headers',cat:'network',en:'HTTP Headers',ja:'ヘッダー解析',ed:'Paste raw HTTP headers',jd:'生のHTTPヘッダーを解析'},
+ {id:'curl-parse',cat:'network',en:'cURL Parser',ja:'cURL解析',ed:'Paste a cURL command',jd:'cURLコマンドを分解して解説'},
+ {id:'jwt-exp',cat:'network',en:'JWT Expiry',ja:'JWT有効期限',ed:'Check if a JWT token is expired',jd:'JWTトークンの有効期限を確認'},
 ];
 
-const DUAL_TOOLS = ['json-diff','diff','regex','aes-enc','aes-dec','jwt-gen'];
-let lang = localStorage.getItem('p_lang') || 'en';
-let curCat = 'data';
-let curTool = 'json';
+const DUAL=['json-diff','diff','regex','aes-enc','aes-dec','jwt-gen','hmac'];
+const CATS=['data','security','utils','text','math','network'];
+let lang=localStorage.getItem('p_lang')||'en';
+let curCat='data',curTool='json';
 
-// ===== Helpers =====
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-function computeLCS(a,b){
-    const m=a.length,n=b.length,dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));
-    for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);
-    const res=[];let i=m,j=n;
-    while(i>0&&j>0){if(a[i-1]===b[j-1]){res.unshift(a[i-1]);i--;j--;}else if(dp[i-1][j]>dp[i][j-1])i--;else j--;}
-    return res;
-}
-function computeDiff(a,b){
-    const aL=a.split('\n'),bL=b.split('\n'),lcs=computeLCS(aL,bL);
-    let html='<div class="diff-wrap">',ai=0,bi=0,li=0;
-    while(ai<aL.length||bi<bL.length){
-        if(ai<aL.length&&bi<bL.length&&li<lcs.length&&aL[ai]===lcs[li]&&bL[bi]===lcs[li]){
-            html+=`<div class="diff-line diff-eq"><span class="diff-ln"> </span>${esc(aL[ai])}</div>`;ai++;bi++;li++;
-        }else if(bi<bL.length&&(li>=lcs.length||bL[bi]!==lcs[li])){
-            html+=`<div class="diff-line diff-add"><span class="diff-ln">+</span>${esc(bL[bi])}</div>`;bi++;
-        }else{
-            html+=`<div class="diff-line diff-del"><span class="diff-ln">−</span>${esc(aL[ai])}</div>`;ai++;
-        }
-    }
-    return html+'</div>';
-}
-
-function jsonDiff(a,b,path=''){
-    const lines=[];
-    if(typeof a!==typeof b||Array.isArray(a)!==Array.isArray(b)){lines.push(`~ ${path}: ${JSON.stringify(a)} → ${JSON.stringify(b)}`);return lines;}
-    if(typeof a!=='object'||a===null){if(a!==b)lines.push(`~ ${path}: ${JSON.stringify(a)} → ${JSON.stringify(b)}`);return lines;}
-    const keys=new Set([...Object.keys(a||{}),...Object.keys(b||{})]);
-    for(const k of keys){const p=path?`${path}.${k}`:k;if(!(k in a))lines.push(`+ ${p}: ${JSON.stringify(b[k])}`);else if(!(k in b))lines.push(`- ${p}: ${JSON.stringify(a[k])}`);else lines.push(...jsonDiff(a[k],b[k],p));}
-    return lines;
-}
-
-function evalJSONPath(obj,path){
-    const results=[];
-    function r(node,parts){
-        if(!parts.length){results.push(node);return;}
-        const[head,...rest]=parts;
-        if(head==='$'){r(node,rest);return;}
-        if(head==='..'){r(node,rest);if(typeof node==='object'&&node!==null)for(const v of Object.values(node))r(v,['..', ...rest]);return;}
-        if(head==='*'){if(typeof node==='object'&&node!==null)for(const v of Object.values(node))r(v,rest);return;}
-        const idx=parseInt(head);
-        if(!isNaN(idx)&&Array.isArray(node)){r(node[idx],rest);return;}
-        if(typeof node==='object'&&node!==null&&head in node)r(node[head],rest);
-    }
-    const parts=path.replace(/\[(\d+|\*)\]/g,'.$1').split('.').filter(Boolean);
-    r(obj,['$',...parts.filter(p=>p!=='$')]);
-    return results;
-}
-
-function csvToJson(csv){
-    const lines=csv.trim().split('\n');
-    const headers=lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,''));
-    return lines.slice(1).map(line=>{const vals=line.split(',').map(v=>v.trim().replace(/^"|"$/g,''));const obj={};headers.forEach((h,i)=>obj[h]=vals[i]??'');return obj;});
-}
-function jsonToCsv(arr){
-    if(!arr.length)return'';
-    const h=Object.keys(arr[0]);
-    return[h.join(','),...arr.map(o=>h.map(k=>`"${String(o[k]??'').replace(/"/g,'""')}"`).join(','))].join('\n');
-}
-
-function formatXml(xml){
-    let d=0;
-    return xml.replace(/>\s*</g,'><').split(/(<[^>]+>)/).filter(Boolean).map(n=>{
-        if(n.match(/^<\//))d--;
-        const ind='    '.repeat(Math.max(0,d));
-        if(n.match(/^<[^/][^>]*[^/]>$/)&&!n.match(/^<[^>]+\/>$/))d++;
-        return ind+n;
-    }).join('\n');
-}
-
-const LOREM_WORDS='lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum'.split(' ');
-function generateLorem(n=5){
-    return Array.from({length:Math.min(n,20)},()=>{
-        const len=40+Math.floor(Math.random()*40);
-        const w=Array.from({length:len},()=>LOREM_WORDS[Math.floor(Math.random()*LOREM_WORDS.length)]);
-        w[0]=w[0][0].toUpperCase()+w[0].slice(1);
-        return w.join(' ')+'.';
-    }).join('\n\n');
-}
-
+function computeLCS(a,b){const m=a.length,n=b.length,dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);const res=[];let i=m,j=n;while(i>0&&j>0){if(a[i-1]===b[j-1]){res.unshift(a[i-1]);i--;j--;}else if(dp[i-1][j]>dp[i][j-1])i--;else j--;}return res;}
+function computeDiff(a,b){const aL=a.split('\n'),bL=b.split('\n'),lcs=computeLCS(aL,bL);let html='<div>',ai=0,bi=0,li=0;while(ai<aL.length||bi<bL.length){if(ai<aL.length&&bi<bL.length&&li<lcs.length&&aL[ai]===lcs[li]&&bL[bi]===lcs[li]){html+=`<div class="diff-line diff-eq"><span class="diff-ln"> </span>${esc(aL[ai])}</div>`;ai++;bi++;li++;}else if(bi<bL.length&&(li>=lcs.length||bL[bi]!==lcs[li])){html+=`<div class="diff-line diff-add"><span class="diff-ln">+</span>${esc(bL[bi])}</div>`;bi++;}else{html+=`<div class="diff-line diff-del"><span class="diff-ln">−</span>${esc(aL[ai])}</div>`;ai++;}}return html+'</div>';}
+function jsonDiff(a,b,path=''){const lines=[];if(typeof a!==typeof b||Array.isArray(a)!==Array.isArray(b)){lines.push(`~ ${path}: ${JSON.stringify(a)} → ${JSON.stringify(b)}`);return lines;}if(typeof a!=='object'||a===null){if(a!==b)lines.push(`~ ${path}: ${JSON.stringify(a)} → ${JSON.stringify(b)}`);return lines;}const keys=new Set([...Object.keys(a||{}),...Object.keys(b||{})]);for(const k of keys){const p=path?`${path}.${k}`:k;if(!(k in a))lines.push(`+ ${p}: ${JSON.stringify(b[k])}`);else if(!(k in b))lines.push(`- ${p}: ${JSON.stringify(a[k])}`);else lines.push(...jsonDiff(a[k],b[k],p));}return lines;}
+function evalJSONPath(obj,path){const results=[];function r(node,parts){if(!parts.length){results.push(node);return;}const[head,...rest]=parts;if(head==='$'){r(node,rest);return;}if(head==='..'){r(node,rest);if(typeof node==='object'&&node!==null)for(const v of Object.values(node))r(v,['..', ...rest]);return;}if(head==='*'){if(typeof node==='object'&&node!==null)for(const v of Object.values(node))r(v,rest);return;}const idx=parseInt(head);if(!isNaN(idx)&&Array.isArray(node)){r(node[idx],rest);return;}if(typeof node==='object'&&node!==null&&head in node)r(node[head],rest);}const parts=path.replace(/\[(\d+|\*)\]/g,'.$1').split('.').filter(Boolean);r(obj,['$',...parts.filter(p=>p!=='$')]);return results;}
+function flattenJson(obj,prefix='',res={}){for(const[k,v]of Object.entries(obj)){const key=prefix?`${prefix}.${k}`:k;if(v&&typeof v==='object'&&!Array.isArray(v))flattenJson(v,key,res);else res[key]=v;}return res;}
+function listKeys(obj,prefix='',res=[]){for(const[k,v]of Object.entries(obj)){const key=prefix?`${prefix}.${k}`:k;res.push(key);if(v&&typeof v==='object'&&!Array.isArray(v))listKeys(v,key,res);}return res;}
+function csvToJson(csv){const lines=csv.trim().split('\n');const headers=lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,''));return lines.slice(1).map(line=>{const vals=line.split(',').map(v=>v.trim().replace(/^"|"$/g,''));const obj={};headers.forEach((h,i)=>obj[h]=vals[i]??'');return obj;});}
+function jsonToCsv(arr){if(!arr.length)return'';const h=Object.keys(arr[0]);return[h.join(','),...arr.map(o=>h.map(k=>`"${String(o[k]??'').replace(/"/g,'""')}"`).join(','))].join('\n');}
+function formatXml(xml){let d=0;return xml.replace(/>\s*</g,'><').split(/(<[^>]+>)/).filter(Boolean).map(n=>{if(n.match(/^<\//))d--;const ind='    '.repeat(Math.max(0,d));if(n.match(/^<[^/][^>]*[^/]>$/)&&!n.match(/^<[^>]+\/>$/))d++;return ind+n;}).join('\n');}
+const LOREM_W='lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure reprehenderit voluptate velit esse cillum eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident culpa officia deserunt mollit anim id est laborum'.split(' ');
+function lorem(n=5){return Array.from({length:Math.min(n,20)},()=>{const len=40+Math.floor(Math.random()*40);const w=Array.from({length:len},()=>LOREM_W[Math.floor(Math.random()*LOREM_W.length)]);w[0]=w[0][0].toUpperCase()+w[0].slice(1);return w.join(' ')+'.';}).join('\n\n');}
 function hexToRgb(hex){hex=hex.replace(/^#/,'');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return{r:(n>>16)&255,g:(n>>8)&255,b:n&255};}
 function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b);let h,s,l=(max+min)/2;if(max===min){h=s=0;}else{const d=max-min;s=l>0.5?d/(2-max-min):d/(max+min);switch(max){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;case b:h=(r-g)/d+4;break;}h/=6;}return{h:Math.round(h*360),s:Math.round(s*100),l:Math.round(l*100)};}
-function convertColor(input){
-    input=input.trim();let r,g,b;
-    if(/^#?[0-9a-fA-F]{3,6}$/.test(input)){const rgb=hexToRgb(input.startsWith('#')?input:'#'+input);r=rgb.r;g=rgb.g;b=rgb.b;}
-    else if(/^rgb/i.test(input)){const m=input.match(/(\d+),\s*(\d+),\s*(\d+)/);r=+m[1];g=+m[2];b=+m[3];}
-    else if(/^hsl/i.test(input)){
-        const m=input.match(/(\d+),\s*(\d+)%?,\s*(\d+)%?/);
-        const h=+m[1]/360,s=+m[2]/100,l=+m[3]/100;
-        if(s===0){r=g=b=Math.round(l*255);}
-        else{const q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q,h2r=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};r=Math.round(h2r(p,q,h+1/3)*255);g=Math.round(h2r(p,q,h)*255);b=Math.round(h2r(p,q,h-1/3)*255);}
-    }else throw new Error('Unsupported format. Use #HEX, rgb(r,g,b), or hsl(h,s%,l%)');
-    const hex='#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
-    const hsl=rgbToHsl(r,g,b);
-    return`HEX  : ${hex}\nRGB  : rgb(${r}, ${g}, ${b})\nHSL  : hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)\nRGBA : rgba(${r}, ${g}, ${b}, 1.0)`;
-}
-
+function convertColor(input){input=input.trim();let r,g,b;if(/^#?[0-9a-fA-F]{3,6}$/.test(input)){const rgb=hexToRgb(input.startsWith('#')?input:'#'+input);r=rgb.r;g=rgb.g;b=rgb.b;}else if(/^rgb/i.test(input)){const m=input.match(/(\d+)[,\s]+(\d+)[,\s]+(\d+)/);r=+m[1];g=+m[2];b=+m[3];}else if(/^hsl/i.test(input)){const m=input.match(/(\d+)[,\s]+(\d+)%?[,\s]+(\d+)%?/);const h=+m[1]/360,s=+m[2]/100,l=+m[3]/100;if(s===0){r=g=b=Math.round(l*255);}else{const q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q,h2r=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};r=Math.round(h2r(p,q,h+1/3)*255);g=Math.round(h2r(p,q,h)*255);b=Math.round(h2r(p,q,h-1/3)*255);}}else throw new Error('Unsupported. Use #HEX, rgb(r,g,b), hsl(h,s%,l%)');const hex='#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');const hsl=rgbToHsl(r,g,b);return{text:`HEX  : ${hex}\nRGB  : rgb(${r}, ${g}, ${b})\nHSL  : hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)\nRGBA : rgba(${r}, ${g}, ${b}, 1.0)`,hex};}
 function b64url(s){return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
-async function generateJWT(payloadStr,secret){
-    const header=b64url(JSON.stringify({alg:'HS256',typ:'JWT'}));
-    const payload=b64url(payloadStr);
-    const data=`${header}.${payload}`;
-    const enc=new TextEncoder();
-    const key=await crypto.subtle.importKey('raw',enc.encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);
-    const sig=await crypto.subtle.sign('HMAC',key,enc.encode(data));
-    return`${data}.${b64url(String.fromCharCode(...new Uint8Array(sig)))}`;
-}
-
+async function generateJWT(payloadStr,secret){const header=b64url(JSON.stringify({alg:'HS256',typ:'JWT'}));const payload=b64url(payloadStr);const data=`${header}.${payload}`;const enc=new TextEncoder();const key=await crypto.subtle.importKey('raw',enc.encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);const sig=await crypto.subtle.sign('HMAC',key,enc.encode(data));return`${data}.${b64url(String.fromCharCode(...new Uint8Array(sig)))}`;}
 const DOW=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const MON=['','January','February','March','April','May','June','July','August','September','October','November','December'];
-function parseCF(v,names){if(v==='*')return null;if(v.startsWith('*/'))return`every ${v.slice(2)} units`;if(v.includes(','))return v.split(',').map(x=>names?names[+x]||x:x).join(', ');if(v.includes('-')){const[a,b]=v.split('-');return`${a} to ${b}`;}return names?(names[+v]||v):v;}
-function explainCron(expr){
-    const p=expr.trim().split(/\s+/);
-    if(p.length!==5)return'Invalid CRON expression (needs 5 fields)';
-    const[min,hr,dom,mon,dow]=p;
-    let out='Runs ';
-    if(min==='*'&&hr==='*')out+='every minute';
-    else if(min==='*')out+=`every minute of hour ${parseCF(hr,null)}`;
-    else if(hr==='*')out+=`at minute ${parseCF(min,null)} of every hour`;
-    else out+=`at ${hr.padStart(2,'0')}:${min.padStart(2,'0')}`;
-    if(dom!=='*')out+=`, on day ${parseCF(dom,null)} of month`;
-    if(mon!=='*')out+=`, in ${parseCF(mon,MON)}`;
-    if(dow!=='*')out+=`, on ${parseCF(dow,DOW)}`;
-    out+='.\n\nFields:\n';
-    out+=`  Minute:        ${min}\n  Hour:          ${hr}\n  Day of month:  ${dom}\n  Month:         ${mon}\n  Day of week:   ${dow}`;
-    return out;
-}
+function parseCF(v,names){if(v==='*')return null;if(v.startsWith('*/'))return`every ${v.slice(2)} units`;if(v.includes(','))return v.split(',').map(x=>names?names[+x]||x:x).join(', ');if(v.includes('-')){const[a,b]=v.split('-');return`${a}–${b}`;}return names?(names[+v]||v):v;}
+function explainCron(expr){const p=expr.trim().split(/\s+/);if(p.length!==5)return'Invalid CRON (needs 5 fields)';const[min,hr,dom,mon,dow]=p;let out='Runs ';if(min==='*'&&hr==='*')out+='every minute';else if(min==='*')out+=`every minute of hour ${parseCF(hr,null)}`;else if(hr==='*')out+=`at minute ${parseCF(min,null)} of every hour`;else out+=`at ${hr.padStart(2,'0')}:${min.padStart(2,'0')}`;if(dom!=='*')out+=`, day ${parseCF(dom,null)}`;if(mon!=='*')out+=`, in ${parseCF(mon,MON)}`;if(dow!=='*')out+=`, on ${parseCF(dow,DOW)}`;out+='.\n\nFields:\n';out+=`  Minute:       ${min}\n  Hour:         ${hr}\n  Day-of-month: ${dom}\n  Month:        ${mon}\n  Day-of-week:  ${dow}`;return out;}
+function fmtTimestamp(input){const v=String(input).trim();const d=isNaN(v)?new Date(v):new Date(+v*(v.length<=10?1000:1));if(isNaN(d))throw new Error('Invalid date/timestamp');const pad=n=>String(n).padStart(2,'0');return[`ISO 8601:  ${d.toISOString()}`,`UTC:       ${d.toUTCString()}`,`Local:     ${d.toLocaleString()}`,`Date:      ${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`,`Time:      ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`,`Unix(ms):  ${d.getTime()}`,`Unix(s):   ${Math.floor(d.getTime()/1000)}`,`Day:       ${DOW[d.getDay()]}`,].join('\n');}
+function parseURL(raw){const u=new URL(raw.trim());const params={};u.searchParams.forEach((v,k)=>params[k]=v);return[`Protocol:  ${u.protocol}`,`Host:      ${u.host}`,`Hostname:  ${u.hostname}`,`Port:      ${u.port||'(default)'}`,`Pathname:  ${u.pathname}`,`Search:    ${u.search||'(none)'}`,`Hash:      ${u.hash||'(none)'}`,`Origin:    ${u.origin}`,Object.keys(params).length?'\nQuery params:\n'+Object.entries(params).map(([k,v])=>`  ${k} = ${v}`).join('\n'):''].filter(Boolean).join('\n');}
+function calcStats(nums){const n=nums.length;const mean=nums.reduce((a,b)=>a+b,0)/n;const sorted=[...nums].sort((a,b)=>a-b);const median=n%2===0?(sorted[n/2-1]+sorted[n/2])/2:sorted[Math.floor(n/2)];const variance=nums.reduce((a,b)=>a+(b-mean)**2,0)/n;const sd=Math.sqrt(variance);const mode=Object.entries(nums.reduce((a,v)=>(a[v]=(a[v]||0)+1,a),{})).sort((a,b)=>b[1]-a[1])[0][0];return[`Count:      ${n}`,`Sum:        ${nums.reduce((a,b)=>a+b,0)}`,`Mean:       ${mean.toFixed(6)}`,`Median:     ${median}`,`Mode:       ${mode}`,`Min:        ${sorted[0]}`,`Max:        ${sorted[n-1]}`,`Range:      ${sorted[n-1]-sorted[0]}`,`Variance:   ${variance.toFixed(6)}`,`Std Dev:    ${sd.toFixed(6)}`].join('\n');}
+function isPrime(n){if(n<2)return false;if(n<4)return true;if(n%2===0||n%3===0)return false;for(let i=5;i*i<=n;i+=6)if(n%i===0||n%(i+2)===0)return false;return true;}
+function primeFactors(n){const f=[];let d=2;while(n>1){while(n%d===0){f.push(d);n/=d;}d++;}return f;}
+function gcd(a,b){while(b){[a,b]=[b,a%b];}return a;}
+function lcm(a,b){return a/gcd(a,b)*b;}
+function parseMat(str){return str.trim().split('\n').map(r=>r.trim().split(/[\s,]+/).map(Number));}
+function matStr(m){return m.map(r=>'[ '+r.map(v=>String(v).padStart(7)).join('  ')+' ]').join('\n');}
+function matMul(a,b){const rows=a.length,cols=b[0].length,inner=b.length;return Array.from({length:rows},(_,i)=>Array.from({length:cols},(_,j)=>Array.from({length:inner},(_,k)=>a[i][k]*b[k][j]).reduce((s,v)=>s+v,0)));}
+function matAdd(a,b){return a.map((r,i)=>r.map((v,j)=>v+b[i][j]));}
+function unitConvert(input){const conv={'km to miles':v=>v*0.621371,'miles to km':v=>v/0.621371,'km to m':v=>v*1000,'m to km':v=>v/1000,'m to cm':v=>v*100,'cm to m':v=>v/100,'cm to mm':v=>v*10,'mm to cm':v=>v/10,'feet to m':v=>v*0.3048,'m to feet':v=>v/0.3048,'inches to cm':v=>v*2.54,'cm to inches':v=>v/2.54,'yards to m':v=>v*0.9144,'m to yards':v=>v/0.9144,'kg to lb':v=>v*2.20462,'lb to kg':v=>v/2.20462,'kg to g':v=>v*1000,'g to kg':v=>v/1000,'g to mg':v=>v*1000,'mg to g':v=>v/1000,'oz to g':v=>v*28.3495,'g to oz':v=>v/28.3495,'c to f':v=>v*9/5+32,'f to c':v=>(v-32)*5/9,'c to k':v=>v+273.15,'k to c':v=>v-273.15,'f to k':v=>(v-32)*5/9+273.15,'k to f':v=>(v-273.15)*9/5+32,'kb to mb':v=>v/1024,'mb to kb':v=>v*1024,'mb to gb':v=>v/1024,'gb to mb':v=>v*1024,'gb to tb':v=>v/1024,'tb to gb':v=>v*1024,'bytes to kb':v=>v/1024,'kb to bytes':v=>v*1024,'kph to mph':v=>v*0.621371,'mph to kph':v=>v/0.621371,'m/s to kph':v=>v*3.6,'kph to m/s':v=>v/3.6};const m=input.toLowerCase().match(/^([\d.]+)\s+(.+?)\s+to\s+(.+)$/);if(!m)throw new Error('Format: "100 km to miles"');const[,num,from,to]=m;const key=`${from.trim()} to ${to.trim()}`;if(!conv[key])throw new Error(`Unknown: "${key}"\nTry: km, miles, m, feet, inches, yards, cm, mm, kg, lb, g, mg, oz, c, f, k, kb, mb, gb, tb, bytes, kph, mph, m/s`);return`${num} ${from} = ${conv[key](parseFloat(num)).toFixed(6)} ${to}`;}
+function slugify(s){return s.toLowerCase().trim().replace(/[^\w\s-]/g,'').replace(/[\s_-]+/g,'-').replace(/^-+|-+$/g,'');}
+function rot13(s){return s.replace(/[a-zA-Z]/g,c=>{const b=c<='Z'?65:97;return String.fromCharCode((c.charCodeAt(0)-b+13)%26+b);});}
+function caesar(s,shift){return s.replace(/[a-zA-Z]/g,c=>{const b=c<='Z'?65:97;return String.fromCharCode((c.charCodeAt(0)-b+((shift%26)+26))%26+b);});}
+function wrapText(text,width){return text.split('\n').map(line=>{const words=line.split(' ');const lines=[];let cur='';for(const w of words){if((cur+' '+w).trim().length>width&&cur){lines.push(cur);cur=w;}else cur=(cur+' '+w).trim();}if(cur)lines.push(cur);return lines.join('\n');}).join('\n');}
+const NANO_CHARS='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
+function nanoid(size=21){return Array.from(crypto.getRandomValues(new Uint8Array(size)),b=>NANO_CHARS[b%64]).join('');}
+const HTTP_STATUS={100:'Continue',101:'Switching Protocols',200:'OK',201:'Created',202:'Accepted',204:'No Content',206:'Partial Content',301:'Moved Permanently',302:'Found',304:'Not Modified',307:'Temporary Redirect',308:'Permanent Redirect',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',405:'Method Not Allowed',408:'Request Timeout',409:'Conflict',410:'Gone',413:'Payload Too Large',422:'Unprocessable Entity',429:'Too Many Requests',500:'Internal Server Error',501:'Not Implemented',502:'Bad Gateway',503:'Service Unavailable',504:'Gateway Timeout'};
+const HTTP_DESC={200:'The request succeeded.',201:'A new resource was created.',204:'No content to send.',301:'URL has permanently moved.',302:'Temporary redirect.',304:'Use cached version.',400:'Server cannot process the request due to client error.',401:'Authentication is required.',403:'Client does not have access rights.',404:'The server cannot find the requested resource.',405:'Request method is not supported.',408:'Server timed out.',429:'Too many requests.',500:'Server encountered an unexpected condition.',502:'Invalid response from upstream.',503:'Server not ready.',504:'No timely response from upstream.'};
+const MIME_MAP={html:'text/html',htm:'text/html',css:'text/css',js:'text/javascript',mjs:'text/javascript',json:'application/json',xml:'application/xml',csv:'text/csv',txt:'text/plain',md:'text/markdown',jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',gif:'image/gif',webp:'image/webp',svg:'image/svg+xml',ico:'image/x-icon',avif:'image/avif',mp4:'video/mp4',webm:'video/webm',mov:'video/quicktime',avi:'video/x-msvideo',mp3:'audio/mpeg',ogg:'audio/ogg',wav:'audio/wav',flac:'audio/flac',aac:'audio/aac',pdf:'application/pdf',zip:'application/zip',gz:'application/gzip',tar:'application/x-tar',woff:'font/woff',woff2:'font/woff2',ttf:'font/ttf',otf:'font/otf',wasm:'application/wasm'};
+const MIME_REV=Object.fromEntries(Object.entries(MIME_MAP).map(([k,v])=>[v,k]));
+function parseUA(ua){const browser=ua.match(/(?:Chrome|Firefox|Safari|Edge|OPR|Opera|MSIE|Trident)[\s/]?([\d.]+)?/g)||[];const os=ua.match(/\(([^)]+)\)/)?.[1]||'Unknown';const mobile=/Mobile|Android|iPhone|iPad/.test(ua);const bot=/bot|crawl|spider|slurp/i.test(ua);return[`Raw:     ${ua}`,`OS:      ${os}`,`Browser: ${browser.join(', ')||'Unknown'}`,`Mobile:  ${mobile?'Yes':'No'}`,`Bot:     ${bot?'Yes':'No'}`].join('\n');}
+function analyzeIP(ip){ip=ip.trim();const v4=/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(ip);if(v4){const[,a,b,c,d]=[...v4].map(Number);if([a,b,c,d].some(x=>x>255))throw new Error('Invalid IPv4');let type='Public';if(a===10||(a===172&&b>=16&&b<=31)||(a===192&&b===168))type='Private (RFC1918)';if(a===127)type='Loopback';if(a===169&&b===254)type='Link-local';if(a===0)type='This network';if(a>=224&&a<=239)type='Multicast';if(a>=240)type='Reserved';const bin=[a,b,c,d].map(n=>n.toString(2).padStart(8,'0')).join('.');return[`Version:  IPv4`,`Address:  ${ip}`,`Type:     ${type}`,`Binary:   ${bin}`,`Class:    ${a<128?'A':a<192?'B':a<224?'C':'D/E'}`].join('\n');}if(ip.includes(':')){let type='Global Unicast';if(ip.startsWith('::1'))type='Loopback';else if(ip.toLowerCase().startsWith('fe80'))type='Link-local';else if(/^f[cd]/i.test(ip))type='Unique Local';else if(ip.toLowerCase().startsWith('ff'))type='Multicast';return[`Version:  IPv6`,`Address:  ${ip}`,`Type:     ${type}`].join('\n');}throw new Error('Invalid IP address');}
+function parseHeaders(raw){const lines=raw.trim().split('\n');const notes={'content-type':'Describes the media type of the resource','authorization':'Contains credentials for authentication','cache-control':'Directives for caching mechanisms','content-length':'Size of the body in bytes','x-forwarded-for':'IP addresses the request was forwarded from','set-cookie':'Instructs client to store a cookie','access-control-allow-origin':'CORS allowed origin'};return lines.map(line=>{const idx=line.indexOf(':');if(idx<0)return line;const key=line.slice(0,idx).trim();const val=line.slice(idx+1).trim();const note=notes[key.toLowerCase()]||'';return`${key}: ${val}${note?`\n  ↳ ${note}`:''}`}).join('\n');}
+function parseCurl(cmd){cmd=cmd.trim();const url=cmd.match(/curl\s+(?:['"](https?[^'"]+)['"]|(https?:\S+))/);const method=cmd.match(/-X\s+(\w+)/)?.[1]||'GET';const headers=[...cmd.matchAll(/-H\s+['"]([^'"]+)['"]/g)].map(m=>m[1]);const data=cmd.match(/(?:--data|-d)\s+['"]([^'"]+)['"]/)?.[1];const user=cmd.match(/(?:-u|--user)\s+['"]?([^'" ]+)/)?.[1];const lines=[`Method:  ${method}`,`URL:     ${url?url[1]||url[2]:'(not found)'}`];if(headers.length)lines.push(`Headers:\n${headers.map(h=>'  '+h).join('\n')}`);if(data)lines.push(`Body:    ${data}`);if(user)lines.push(`Auth:    ${user}`);return lines.join('\n');}
+function jwtExpiry(token){const p=token.trim().split('.');if(p.length!==3)throw new Error('Invalid JWT');const payload=JSON.parse(atob(p[1]));const now=Math.floor(Date.now()/1000);const lines=[];if(payload.exp){const exp=new Date(payload.exp*1000);const expired=payload.exp<now;lines.push(`exp:     ${payload.exp} (${exp.toLocaleString()})`);lines.push(`Status:  ${expired?'❌ EXPIRED':'✅ Valid'}`);if(!expired)lines.push(`Expires: in ${Math.round((payload.exp-now)/60)} minutes`);else lines.push(`Expired: ${Math.round((now-payload.exp)/60)} minutes ago`);}else{lines.push('No exp claim — token has no expiry.');}if(payload.iat)lines.push(`iat:     ${payload.iat} (${new Date(payload.iat*1000).toLocaleString()})`);if(payload.iss)lines.push(`iss:     ${payload.iss}`);if(payload.sub)lines.push(`sub:     ${payload.sub}`);return lines.join('\n');}
+async function bcryptHash(password){const salt=crypto.getRandomValues(new Uint8Array(16));const enc=new TextEncoder();const key=await crypto.subtle.importKey('raw',enc.encode(password),{name:'PBKDF2'},false,['deriveBits']);const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt,iterations:100000,hash:'SHA-256'},key,256);const hashHex=[...new Uint8Array(bits)].map(b=>b.toString(16).padStart(2,'0')).join('');const saltHex=[...salt].map(b=>b.toString(16).padStart(2,'0')).join('');return`$pbkdf2-sha256$100000$${saltHex}$${hashHex}\n\n(Note: PBKDF2-SHA256 — Web Crypto does not support native bcrypt)`;}
+function calcPercent(input){input=input.trim();let m;if(m=input.match(/^([\d.]+)\s+of\s+([\d.]+)$/i)){return`${m[1]} / ${m[2]} = ${((+m[1]/+m[2])*100).toFixed(4)}%`;}if(m=input.match(/^([\d.]+)\s*\*\s*([\d.]+)%$/i)){return`${m[1]} × ${m[2]}% = ${(+m[1]*+m[2]/100).toFixed(4)}`;}if(m=input.match(/^([\d.]+)%\s+of\s+([\d.]+)$/i)){return`${m[1]}% of ${m[2]} = ${(+m[1]/100*+m[2]).toFixed(4)}`;}if(m=input.match(/^([\d.]+)\s+to\s+([\d.]+)$/i)){return`${m[1]} → ${m[2]}: change = ${(((+m[2]-+m[1])/+m[1])*100).toFixed(4)}%`;}throw new Error('Format: "30 of 150" / "150 * 20%" / "20% of 150" / "100 to 150"');}
 
-// ===== UI =====
+/* ── UI ── */
 function render(){
-    const isEn=lang==='en';
-    document.getElementById('lbl-run').innerText   =isEn?'RUN':'実行';
-    document.getElementById('lbl-copy').innerText  =isEn?'COPY':'コピー';
-    document.getElementById('lbl-output').innerText=isEn?'OUTPUT':'出力';
-    document.getElementById('lbl-tools').innerText =isEn?'TOOLS':'ツール';
-    document.getElementById('langBtn').innerText   =lang.toUpperCase();
-
-    const list=document.getElementById('toolList');
-    list.innerHTML='';
-    ALL_TOOLS.filter(t=>t.cat===curCat).forEach(t=>{
-        const btn=document.createElement('button');
-        btn.className=`tool-item${curTool===t.id?' active':''}`;
-        btn.innerText=isEn?t.en:t.ja;
-        btn.onclick=()=>{curTool=t.id;render();};
-        list.appendChild(btn);
-    });
-
-    const active=ALL_TOOLS.find(t=>t.id===curTool);
-    document.getElementById('toolName').innerText=isEn?active.en:active.ja;
-    document.getElementById('toolDesc').innerText=isEn?active.ed:active.jd;
-    document.getElementById('input').value=localStorage.getItem('last_'+curTool)||'';
-
-    const dual=DUAL_TOOLS.includes(curTool);
-    const i2row=document.getElementById('input2-row');
-    i2row.style.display=dual?'flex':'none';
-    if(dual){
-        document.getElementById('input2').value=localStorage.getItem('last2_'+curTool)||'';
-        const lblMap={
-            'json-diff':['JSON A','JSON B'],
-            'diff':      [isEn?'TEXT A':'テキスト A', isEn?'TEXT B':'テキスト B'],
-            'regex':     [isEn?'PATTERN':'パターン',  isEn?'TEXT':'テキスト'],
-            'aes-enc':   [isEn?'TEXT':'テキスト',     isEn?'PASSWORD':'パスワード'],
-            'aes-dec':   [isEn?'CIPHER':'暗号文',     isEn?'PASSWORD':'パスワード'],
-            'jwt-gen':   [isEn?'PAYLOAD JSON':'ペイロード JSON', isEn?'SECRET':'シークレット'],
-        };
-        document.getElementById('lbl-input').innerText =(lblMap[curTool]||['INPUT','INPUT 2'])[0];
-        document.getElementById('lbl-input2').innerText=(lblMap[curTool]||['INPUT','INPUT 2'])[1];
-    }else{
-        document.getElementById('lbl-input').innerText=isEn?'INPUT':'入力';
-    }
-    clearOutput();
+  const isEn=lang==='en';
+  document.getElementById('lbl-run').innerText=isEn?'RUN':'実行';
+  document.getElementById('lbl-copy').innerText=isEn?'COPY':'コピー';
+  document.getElementById('lbl-output').innerText=isEn?'OUTPUT':'出力';
+  document.getElementById('lbl-tools').innerText=isEn?'TOOLS':'ツール';
+  document.getElementById('langBtn').innerText=lang.toUpperCase();
+  const list=document.getElementById('toolList');
+  list.innerHTML='';
+  ALL_TOOLS.filter(t=>t.cat===curCat).forEach(t=>{
+    const btn=document.createElement('button');
+    btn.className='tool-item'+(curTool===t.id?' active':'');
+    btn.innerText=isEn?t.en:t.ja;
+    btn.title=isEn?t.ed:t.jd;
+    btn.onclick=()=>{curTool=t.id;render();};
+    list.appendChild(btn);
+  });
+  const active=ALL_TOOLS.find(t=>t.id===curTool);
+  document.getElementById('toolName').innerText=isEn?active.en:active.ja;
+  document.getElementById('toolDesc').innerText=isEn?active.ed:active.jd;
+  document.getElementById('input').value=localStorage.getItem('last_'+curTool)||'';
+  const dual=DUAL.includes(curTool);
+  const i2r=document.getElementById('input2-row');
+  i2r.style.display=dual?'flex':'none';
+  if(dual){
+    document.getElementById('input2').value=localStorage.getItem('last2_'+curTool)||'';
+    const lm={'json-diff':['JSON A','JSON B'],'diff':['TEXT A','TEXT B'],'regex':['PATTERN','TEXT'],'aes-enc':['TEXT','PASSWORD'],'aes-dec':['CIPHER','PASSWORD'],'jwt-gen':['PAYLOAD JSON','SECRET'],'hmac':['TEXT','KEY']};
+    document.getElementById('lbl-input').innerText=(lm[curTool]||['INPUT','INPUT 2'])[0];
+    document.getElementById('lbl-input2').innerText=(lm[curTool]||['INPUT','INPUT 2'])[1];
+  }else{document.getElementById('lbl-input').innerText=isEn?'INPUT':'入力';}
+  clearOutput();
 }
-
 function clearOutput(){
-    document.getElementById('outputText').innerText='';
-    document.getElementById('imageResult').style.display='none';
-    document.getElementById('diffResult').style.display='none';
-    document.getElementById('htmlResult').style.display='none';
-    document.getElementById('outputPre').style.display='block';
+  document.getElementById('outputText').innerText='';
+  document.getElementById('imageResult').style.display='none';
+  document.getElementById('diffResult').style.display='none';
+  document.getElementById('htmlResult').style.display='none';
+  document.getElementById('specialResult').style.display='none';
+  document.getElementById('outputPre').style.display='block';
 }
-
-function setCat(cat){
-    curCat=cat;
-    curTool=ALL_TOOLS.find(t=>t.cat===cat).id;
-    document.querySelectorAll('.rail-btn').forEach((b,i)=>b.classList.toggle('active',['data','security','utils'][i]===cat));
-    render();
-}
+function setCat(cat){curCat=cat;curTool=ALL_TOOLS.find(t=>t.cat===cat).id;document.querySelectorAll('.rail-btn').forEach((b,i)=>b.classList.toggle('active',CATS[i]===cat));render();}
 function toggleLang(){lang=lang==='en'?'ja':'en';localStorage.setItem('p_lang',lang);render();}
+function openOv(id){document.getElementById(id).classList.add('open');}
+function closeOv(id){document.getElementById(id).classList.remove('open');}
 
+/* ── Execute ── */
 async function execute(){
-    const val =document.getElementById('input').value;
-    const val2=document.getElementById('input2').value;
-    const txt =document.getElementById('outputText');
-    const img =document.getElementById('imageResult');
-    const pre =document.getElementById('outputPre');
-    const diffDiv=document.getElementById('diffResult');
-    const htmlDiv=document.getElementById('htmlResult');
-    txt.innerText='';img.style.display='none';pre.style.display='block';diffDiv.style.display='none';htmlDiv.style.display='none';
-    if(!val&&!['uuid','lorem'].includes(curTool))return;
-    localStorage.setItem('last_'+curTool,val);
-    if(DUAL_TOOLS.includes(curTool))localStorage.setItem('last2_'+curTool,val2);
-    try{
-        let r='';
-        if(curTool==='json')     r=JSON.stringify(JSON.parse(val),null,4);
-        if(curTool==='json-min') r=JSON.stringify(JSON.parse(val));
-        if(curTool==='json-diff'){const d=jsonDiff(JSON.parse(val),JSON.parse(val2));r=d.length?d.join('\n'):'✓ No differences found';}
-        if(curTool==='jsonpath'){const[path,...rest]=val.split('\n');r=JSON.stringify(evalJSONPath(JSON.parse(rest.join('\n')),path.trim()),null,2);}
-        if(curTool==='sql')      r=sqlFormatter.format(val,{language:'sql',tabWidth:4,keywordCase:'upper'});
-        if(curTool==='yaml'){try{r=JSON.stringify(jsyaml.load(val),null,4);}catch{r=jsyaml.dump(JSON.parse(val));}}
-        if(curTool==='csv-json'){try{r=JSON.stringify(csvToJson(val),null,2);}catch{r=jsonToCsv(JSON.parse(val));}}
-        if(curTool==='xml')      r=formatXml(val);
-        if(curTool==='b64e')     r=btoa(unescape(encodeURIComponent(val)));
-        if(curTool==='b64d')     r=decodeURIComponent(escape(atob(val)));
-        if(curTool==='sha256')   r=CryptoJS.SHA256(val).toString();
-        if(curTool==='md5')      r=CryptoJS.MD5(val).toString();
-        if(curTool==='sha1')     r=CryptoJS.SHA1(val).toString();
-        if(curTool==='jwt'){const p=val.split('.');r='// Header\n'+JSON.stringify(JSON.parse(atob(p[0])),null,2)+'\n\n// Payload\n'+JSON.stringify(JSON.parse(atob(p[1])),null,2);}
-        if(curTool==='jwt-gen')  r=await generateJWT(val,val2||'secret');
-        if(curTool==='url-enc')  r=encodeURIComponent(val);
-        if(curTool==='url-dec')  r=decodeURIComponent(val);
-        if(curTool==='html-enc') r=val.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
-        if(curTool==='html-dec'){const p=document.createElement('p');p.innerHTML=val;r=p.textContent;}
-        if(curTool==='aes-enc')  r=CryptoJS.AES.encrypt(val,val2||'devtools').toString();
-        if(curTool==='aes-dec')  r=CryptoJS.AES.decrypt(val,val2||'devtools').toString(CryptoJS.enc.Utf8);
-        if(curTool==='qr'){const q=qrcode(0,'M');q.addData(val);q.make();img.innerHTML=q.createImgTag(6);img.style.display='block';pre.style.display='none';return;}
-        if(curTool==='uuid')     r=Array.from({length:5},()=>crypto.randomUUID()).join('\n');
-        if(curTool==='epoch')    r=isNaN(val)?Math.floor(new Date(val).getTime()/1000):new Date(val*1000).toLocaleString();
-        if(curTool==='color')    r=convertColor(val);
-        if(curTool==='textstats'){
-            const w=val.trim()?val.trim().split(/\s+/).length:0,c=val.length,cn=val.replace(/\s/g,'').length,l=val.split('\n').length,s=(val.match(/[.!?]+/g)||[]).length,pa=val.split(/\n\s*\n/).filter(Boolean).length;
-            r=`Characters (with spaces):    ${c}\nCharacters (without spaces):  ${cn}\nWords:                        ${w}\nLines:                        ${l}\nSentences:                    ${s}\nParagraphs:                   ${pa}\nAvg word length:              ${w?(cn/w).toFixed(1):0} chars\nReading time (~200wpm):       ${Math.max(1,Math.ceil(w/200))} min`;
-        }
-        if(curTool==='markdown'){
-            htmlDiv.innerHTML='<div class="md-preview">'+val.replace(/^### (.+)$/gm,'<h3>$1</h3>').replace(/^## (.+)$/gm,'<h2>$1</h2>').replace(/^# (.+)$/gm,'<h1>$1</h1>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/`(.+?)`/g,'<code>$1</code>').replace(/\[(.+?)\]\((.+?)\)/g,'<a href="$2" target="_blank">$1</a>').replace(/^[-*] (.+)$/gm,'<li>$1</li>').replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')+'</div>';
-            htmlDiv.style.display='block';pre.style.display='none';return;
-        }
-        if(curTool==='diff'){diffDiv.innerHTML=computeDiff(val,val2);diffDiv.style.display='block';pre.style.display='none';return;}
-        if(curTool==='regex'){
-            const flags='gm',regex=new RegExp(val,flags),matches=[...val2.matchAll(regex)];
-            if(!matches.length){r='No matches found.';}
-            else{r=`${matches.length} match(es) found:\n\n`;matches.forEach((m,i)=>{r+=`Match ${i+1}: "${m[0]}" at index ${m.index}`;if(m.length>1)r+=`\n  Groups: ${m.slice(1).map((g,j)=>`$${j+1}="${g??'undefined'}"`).join(', ')}`;r+='\n';});r+='\nHighlighted:\n'+val2.replace(regex,m=>`【${m}】`);}
-        }
-        if(curTool==='lorem')   r=generateLorem(parseInt(val)||5);
-        if(curTool==='baseconv'){const[ns,fb]=val.trim().split(/\s+/);const base=parseInt(fb)||10;const n=parseInt(ns,base);if(isNaN(n))throw new Error('Invalid number or base');r=`Decimal (10): ${n}\nBinary   (2): ${n.toString(2)}\nOctal    (8): ${n.toString(8)}\nHex     (16): ${n.toString(16).toUpperCase()}`;}
-        if(curTool==='cron')    r=explainCron(val);
-        txt.innerText=r;
-        if(r){try{hljs.highlightElement(txt);}catch(_){}}
-    }catch(e){txt.innerText='Error: '+e.message;}
+  const val=document.getElementById('input').value;
+  const val2=document.getElementById('input2').value;
+  const txt=document.getElementById('outputText');
+  const img=document.getElementById('imageResult');
+  const pre=document.getElementById('outputPre');
+  const dif=document.getElementById('diffResult');
+  const htm=document.getElementById('htmlResult');
+  const spe=document.getElementById('specialResult');
+  txt.innerText='';img.style.display='none';pre.style.display='block';dif.style.display='none';htm.style.display='none';spe.style.display='none';
+  if(!val&&!['uuid','nanoid','lorem'].includes(curTool))return;
+  localStorage.setItem('last_'+curTool,val);
+  if(DUAL.includes(curTool))localStorage.setItem('last2_'+curTool,val2);
+  try{
+    let r='';
+    if(curTool==='json')r=JSON.stringify(JSON.parse(val),null,4);
+    if(curTool==='json-min')r=JSON.stringify(JSON.parse(val));
+    if(curTool==='json-diff'){const d=jsonDiff(JSON.parse(val),JSON.parse(val2));r=d.length?d.join('\n'):'✓ No differences found';}
+    if(curTool==='jsonpath'){const[path,...rest]=val.split('\n');r=JSON.stringify(evalJSONPath(JSON.parse(rest.join('\n')),path.trim()),null,2);}
+    if(curTool==='sql')r=sqlFormatter.format(val,{language:'sql',tabWidth:4,keywordCase:'upper'});
+    if(curTool==='yaml'){try{r=JSON.stringify(jsyaml.load(val),null,4);}catch{r=jsyaml.dump(JSON.parse(val));}}
+    if(curTool==='csv-json'){try{r=JSON.stringify(csvToJson(val),null,2);}catch{r=jsonToCsv(JSON.parse(val));}}
+    if(curTool==='xml')r=formatXml(val);
+    if(curTool==='json-keys')r=listKeys(JSON.parse(val)).join('\n');
+    if(curTool==='json-flat')r=JSON.stringify(flattenJson(JSON.parse(val)),null,2);
+    if(curTool==='b64e')r=btoa(unescape(encodeURIComponent(val)));
+    if(curTool==='b64d')r=decodeURIComponent(escape(atob(val)));
+    if(curTool==='sha256')r=CryptoJS.SHA256(val).toString();
+    if(curTool==='md5')r=CryptoJS.MD5(val).toString();
+    if(curTool==='sha1')r=CryptoJS.SHA1(val).toString();
+    if(curTool==='sha512')r=CryptoJS.SHA512(val).toString();
+    if(curTool==='hmac')r=CryptoJS.HmacSHA256(val,val2||'').toString();
+    if(curTool==='jwt'){const p=val.trim().split('.');r='// Header\n'+JSON.stringify(JSON.parse(atob(p[0])),null,2)+'\n\n// Payload\n'+JSON.stringify(JSON.parse(atob(p[1])),null,2);}
+    if(curTool==='jwt-gen')r=await generateJWT(val,val2||'secret');
+    if(curTool==='url-enc')r=encodeURIComponent(val);
+    if(curTool==='url-dec')r=decodeURIComponent(val);
+    if(curTool==='html-enc')r=val.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+    if(curTool==='html-dec'){const p=document.createElement('p');p.innerHTML=val;r=p.textContent;}
+    if(curTool==='aes-enc')r=CryptoJS.AES.encrypt(val,val2||'devtools').toString();
+    if(curTool==='aes-dec')r=CryptoJS.AES.decrypt(val,val2||'devtools').toString(CryptoJS.enc.Utf8);
+    if(curTool==='bcrypt-h')r=await bcryptHash(val);
+    if(curTool==='qr'){const q=qrcode(0,'M');q.addData(val);q.make();img.innerHTML=q.createImgTag(5);img.style.display='block';pre.style.display='none';return;}
+    if(curTool==='uuid')r=Array.from({length:5},()=>crypto.randomUUID()).join('\n');
+    if(curTool==='nanoid')r=Array.from({length:5},()=>nanoid()).join('\n');
+    if(curTool==='epoch'){const v=val.trim();r=isNaN(v)?`Unix(s): ${Math.floor(new Date(v).getTime()/1000)}\n\n${fmtTimestamp(v)}`:new Date(+v*(val.length<=10?1000:1)).toLocaleString()+'\n\n'+fmtTimestamp(v);}
+    if(curTool==='color'){const c=convertColor(val);spe.innerHTML=`<div style="background:${c.hex};height:54px;margin:12px;border-radius:10px;border:1px solid var(--border)"></div>`;spe.style.display='block';r=c.text;}
+    if(curTool==='textstats'){const w=val.trim()?val.trim().split(/\s+/).length:0,c=val.length,cn=val.replace(/\s/g,'').length,l=val.split('\n').length,s=(val.match(/[.!?]+/g)||[]).length,pa=val.split(/\n\s*\n/).filter(Boolean).length;r=`Characters (w/ spaces):    ${c}\nCharacters (w/o spaces):   ${cn}\nWords:                     ${w}\nLines:                     ${l}\nSentences:                 ${s}\nParagraphs:                ${pa}\nAvg word length:           ${w?(cn/w).toFixed(1):0} chars\nReading time (~200wpm):    ${Math.max(1,Math.ceil(w/200))} min`;}
+    if(curTool==='markdown'){htm.innerHTML='<div class="md-preview">'+val.replace(/^### (.+)$/gm,'<h3>$1</h3>').replace(/^## (.+)$/gm,'<h2>$1</h2>').replace(/^# (.+)$/gm,'<h1>$1</h1>').replace(/^> (.+)$/gm,'<blockquote>$1</blockquote>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/`(.+?)`/g,'<code>$1</code>').replace(/\[(.+?)\]\((.+?)\)/g,'<a href="$2" target="_blank">$1</a>').replace(/^[-*] (.+)$/gm,'<li>$1</li>').replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')+'</div>';htm.style.display='block';pre.style.display='none';return;}
+    if(curTool==='diff'){dif.innerHTML=computeDiff(val,val2);dif.style.display='block';pre.style.display='none';return;}
+    if(curTool==='regex'){const flags='gm',regex=new RegExp(val,flags),matches=[...val2.matchAll(regex)];if(!matches.length){r='No matches found.';}else{r=`${matches.length} match(es):\n\n`;matches.forEach((m,i)=>{r+=`Match ${i+1}: "${m[0]}" @ index ${m.index}`;if(m.length>1)r+=`\n  Groups: ${m.slice(1).map((g,j)=>`$${j+1}="${g??'undefined'}"`).join(', ')}`;r+='\n';});r+='\nHighlighted:\n'+val2.replace(regex,m=>`【${m}】`);}}
+    if(curTool==='lorem')r=lorem(parseInt(val)||5);
+    if(curTool==='baseconv'){const[ns,fb]=val.trim().split(/\s+/);const base=parseInt(fb)||10;const n=parseInt(ns,base);if(isNaN(n))throw new Error('Invalid');r=`Decimal (10): ${n}\nBinary   (2): ${n.toString(2)}\nOctal    (8): ${n.toString(8)}\nHex     (16): ${n.toString(16).toUpperCase()}`;}
+    if(curTool==='cron')r=explainCron(val);
+    if(curTool==='ts-format')r=fmtTimestamp(val);
+    if(curTool==='url-parse')r=parseURL(val);
+    if(curTool==='case'){const s=val;r=[`UPPER:      ${s.toUpperCase()}`,`lower:      ${s.toLowerCase()}`,`Title:      ${s.replace(/\w\S*/g,t=>t[0].toUpperCase()+t.slice(1).toLowerCase())}`,`camelCase:  ${s.toLowerCase().replace(/[^a-z0-9]+(.)/g,(_,c)=>c.toUpperCase())}`,`PascalCase: ${s.replace(/(?:^|\s|[-_])(\w)/g,(_,c)=>c.toUpperCase()).replace(/\s/g,'')}`,`snake_case: ${s.toLowerCase().replace(/[\s\-]+/g,'_')}`,`kebab-case: ${s.toLowerCase().replace(/[\s_]+/g,'-')}`,`CONST_CASE: ${s.toUpperCase().replace(/[\s\-]+/g,'_')}`].join('\n');}
+    if(curTool==='reverse'){r=val.split('\n').map(l=>l.split('').reverse().join('')).join('\n');}
+    if(curTool==='dedup')r=[...new Set(val.split('\n'))].join('\n');
+    if(curTool==='sort-lines')r=val.split('\n').sort((a,b)=>a.localeCompare(b)).join('\n');
+    if(curTool==='slug')r=slugify(val);
+    if(curTool==='rot13')r=rot13(val);
+    if(curTool==='caesar'){const[shiftStr,...rest]=val.split('\n');const shift=parseInt(shiftStr);if(isNaN(shift))throw new Error('Line 1 must be a number');r=caesar(rest.join('\n'),shift);}
+    if(curTool==='strip-emoji')r=val.replace(/\p{Emoji}/gu,'').replace(/\s{2,}/g,' ').trim();
+    if(curTool==='extract-url')r=([...val.matchAll(/https?:\/\/[^\s"'<>]+/g)].map(m=>m[0]).join('\n'))||'No URLs found';
+    if(curTool==='extract-email')r=([...val.matchAll(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g)].map(m=>m[0]).join('\n'))||'No emails found';
+    if(curTool==='wrap'){const[wStr,...rest]=val.split('\n');const width=parseInt(wStr)||80;r=wrapText(rest.join('\n'),width);}
+    if(curTool==='esc-js')r=JSON.stringify(val);
+    if(curTool==='csv-col'){const[idxStr,...rest]=val.split('\n');const idx=parseInt(idxStr)||0;r=rest.map(l=>l.split(',')[idx]??'').join('\n');}
+    if(curTool==='calc'){r=String(Function('"use strict";return ('+val+')')());}
+    if(curTool==='stats'){const nums=val.split(/[\s,]+/).map(Number).filter(x=>!isNaN(x));if(!nums.length)throw new Error('No valid numbers');r=calcStats(nums);}
+    if(curTool==='prime'){const n=parseInt(val);r=`${n} is ${isPrime(n)?'✅ prime':'❌ not prime'}.\n\nNearby primes: ${Array.from({length:30},(_,i)=>n+i).filter(isPrime).slice(0,5).join(', ')}`;}
+    if(curTool==='fib'){const n=Math.min(parseInt(val)||10,80);const fib=[0n,1n];while(fib.length<n)fib.push(fib[fib.length-1]+fib[fib.length-2]);r=fib.slice(0,n).map((v,i)=>`F(${i}) = ${v}`).join('\n');}
+    if(curTool==='factor'){const n=parseInt(val);const f=primeFactors(n);r=`${n} = ${f.join(' × ')}\n\nPrime factors: ${[...new Set(f)].join(', ')}\nTotal factors: ${f.length}`;}
+    if(curTool==='gcd-lcm'){const[a,b]=val.split(',').map(s=>parseInt(s.trim()));if(isNaN(a)||isNaN(b))throw new Error('Enter two numbers separated by comma');r=`GCD(${a}, ${b}) = ${gcd(a,b)}\nLCM(${a}, ${b}) = ${lcm(a,b)}`;}
+    if(curTool==='unit-conv')r=unitConvert(val);
+    if(curTool==='matrix'){const parts=val.split(/^---$/m);if(parts.length<2)throw new Error('Separate matrices with a line containing only ---');const[ma,mb]=[parseMat(parts[0]),parseMat(parts[1])];try{r='A × B =\n'+matStr(matMul(ma,mb));}catch{try{r='A + B =\n'+matStr(matAdd(ma,mb));}catch{r='Cannot multiply or add — check dimensions';}}r+='\n\nA:\n'+matStr(ma)+'\n\nB:\n'+matStr(mb);}
+    if(curTool==='percent')r=calcPercent(val);
+    if(curTool==='ua-parse')r=parseUA(val);
+    if(curTool==='http-status'){const code=parseInt(val);const name=HTTP_STATUS[code];if(!name)throw new Error('Unknown status code');r=`${code} ${name}\n\n${HTTP_DESC[code]||'No description available.'}\n\nCategory: ${code<200?'1xx Informational':code<300?'2xx Success':code<400?'3xx Redirection':code<500?'4xx Client Error':'5xx Server Error'}`;}
+    if(curTool==='mime'){const key=val.trim().toLowerCase().replace(/^\./,'');r=MIME_MAP[key]||MIME_REV[key]||`Unknown: ${val}`;}
+    if(curTool==='ip-info')r=analyzeIP(val);
+    if(curTool==='headers')r=parseHeaders(val);
+    if(curTool==='curl-parse')r=parseCurl(val);
+    if(curTool==='jwt-exp')r=jwtExpiry(val);
+    txt.innerText=r;
+    if(r){try{hljs.highlightElement(txt);}catch(_){}}
+  }catch(e){txt.innerText='Error: '+e.message;}
 }
 
-function copyResult(){
-    navigator.clipboard.writeText(document.getElementById('outputText').innerText||document.getElementById('htmlResult').innerText);
-}
+function copyResult(){navigator.clipboard.writeText(document.getElementById('outputText').innerText||document.getElementById('htmlResult').innerText);}
 
-render();
+(function init(){
+  const count=ALL_TOOLS.length;
+  document.getElementById('toolCountBadge').innerText=count;
+  document.getElementById('statTools').innerText=count;
+  document.getElementById('statCats').innerText=CATS.length;
+  render();
+})();
 </script>
 </body>
 </html>
