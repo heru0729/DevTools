@@ -41,6 +41,61 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .btn-run:hover{background:var(--accent2);}
 .btn-mini{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
 .btn-mini:hover{border-color:var(--accent);color:var(--accent);}
+.pct-mode-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.btn-fav{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:5px 10px;border-radius:6px;font-size:16px;cursor:pointer;transition:.15s;line-height:1;}
+.btn-fav:hover{border-color:#f59e0b;color:#f59e0b;}
+.btn-fav.active{background:#f59e0b22;border-color:#f59e0b;color:#f59e0b;}
+.fav-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text-dim);gap:10px;font-size:13px;}
+.fav-empty .fav-icon{font-size:40px;opacity:.4;}
+
+/* ── 専用UI: 計算機 ── */
+.calc-ui{display:flex;flex-direction:column;height:100%;padding:20px;gap:12px;overflow:auto;}
+.calc-input-wrap{position:relative;}
+.calc-input{width:100%;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:16px 20px;font-family:'JetBrains Mono',monospace;font-size:22px;border-radius:12px;outline:none;text-align:right;}
+.calc-input:focus{border-color:var(--accent);}
+.calc-result-big{background:var(--panel);border-radius:12px;padding:20px;font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:800;color:var(--accent);text-align:right;min-height:72px;word-break:break-all;}
+.calc-result-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.calc-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.calc-btn{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:14px;font-size:16px;font-weight:700;cursor:pointer;transition:.12s;font-family:inherit;}
+.calc-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+.calc-btn.op{color:var(--accent);}
+.calc-btn.eq{background:var(--accent);color:#fff;border-color:var(--accent);}
+.calc-btn.eq:hover{background:var(--accent2);}
+.calc-btn.wide{grid-column:span 2;}
+.calc-history{flex:1;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);}
+.calc-history-item{padding:4px 0;border-bottom:1px solid var(--border);}
+
+/* ── 専用UI: 1カラム（変換・統計） ── */
+.single-col{display:flex;flex-direction:column;height:100%;overflow:hidden;}
+.single-col textarea{flex:0 0 auto;height:120px;border-bottom:1px solid var(--border);}
+.single-col .output-area{flex:1;overflow:auto;padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:13px;white-space:pre-wrap;}
+.single-col .input2-area{flex:0 0 auto;height:80px;border-bottom:1px solid var(--border);}
+
+/* ── 専用UI: カードグリッド（stats/caseなど） ── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;padding:14px;}
+.stat-card{background:var(--panel);border-radius:10px;padding:12px 14px;}
+.stat-card .val{font-size:22px;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace;}
+.stat-card .lbl{font-size:10.5px;color:var(--text-dim);margin-top:3px;}
+
+/* ── 専用UI: ユニット変換（大きな数値表示） ── */
+.conv-ui{display:flex;flex-direction:column;height:100%;padding:18px;gap:14px;overflow:auto;}
+.conv-result{background:var(--panel);border-radius:14px;padding:22px 24px;font-size:28px;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace;text-align:center;min-height:80px;display:flex;align-items:center;justify-content:center;}
+.conv-hint{font-size:11.5px;color:var(--text-dim);text-align:center;}
+
+/* ── 専用UI: パーセント・税計算 ── */
+.pct-ui{display:flex;flex-direction:column;height:100%;padding:18px;gap:12px;overflow:auto;}
+.pct-row{display:flex;gap:10px;align-items:center;}
+.pct-label{font-size:12px;color:var(--text-dim);width:80px;flex-shrink:0;}
+.pct-inp{flex:1;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:9px;font-family:'JetBrains Mono',monospace;font-size:15px;outline:none;}
+.pct-inp:focus{border-color:var(--accent);}
+.pct-result{background:var(--panel);border-radius:12px;padding:16px 20px;}
+.pct-result .res-val{font-size:26px;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace;}
+.pct-result .res-lbl{font-size:11px;color:var(--text-dim);margin-top:4px;}
+
+/* ── 専用UI: カラー ── */
+.color-ui{display:flex;flex-direction:column;height:100%;overflow:auto;}
+.color-swatch-large{height:100px;border-radius:0;transition:.3s;flex-shrink:0;}
+.color-values{padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:13px;flex:1;}
 .editor-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;background:var(--border);gap:1px;overflow:hidden;}
 .pane{background:var(--bg);display:flex;flex-direction:column;overflow:hidden;}
 .pane-header{padding:8px 15px;font-size:10px;font-weight:800;color:var(--text-dim);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;letter-spacing:.05em;}
@@ -151,6 +206,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <button class="rail-btn" onclick="setCat('dev')">⚙️<span class="rail-tip">Dev</span></button>
   <button class="rail-btn" onclick="setCat('ai')">🤖<span class="rail-tip">AI</span></button>
   <button class="rail-btn" onclick="setCat('time')">🕐<span class="rail-tip">Time</span></button>
+  <button class="rail-btn" id="favRailBtn" onclick="setCat('favorites')">⭐<span class="rail-tip">Favorites</span></button>
   <div class="rail-spacer"></div>
   <button class="ctrl-btn" onclick="openOv('aboutOverlay')">ℹ️</button>
   <button class="ctrl-btn" onclick="openOv('supportOverlay')">☕</button>
@@ -165,11 +221,13 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <header class="workspace-header">
     <div class="header-title"><h1 id="toolName">JSON Format</h1><p id="toolDesc">---</p></div>
     <div class="header-actions">
+      <button class="btn-fav" id="favBtn" onclick="toggleFav()" title="Add to favorites">☆</button>
       <button class="btn-mini" id="lbl-copy" onclick="copyResult()">COPY</button>
       <button class="btn-run" id="lbl-run" onclick="execute()">RUN</button>
     </div>
   </header>
-  <div class="editor-grid">
+  <!-- 通常の2カラムエディタ -->
+  <div class="editor-grid" id="editorGrid">
     <div class="pane">
       <div class="pane-header" id="lbl-input">INPUT</div>
       <textarea id="input" spellcheck="false" placeholder="Paste data here..."></textarea>
@@ -186,6 +244,97 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
       <div id="specialResult"></div>
       <pre id="outputPre"><code id="outputText" class="hljs"></code></pre>
     </div>
+  </div>
+
+  <!-- 専用UI: 計算機 -->
+  <div id="ui-calc" class="calc-ui" style="display:none;">
+    <div>
+      <div class="calc-result-label">EXPRESSION</div>
+      <input class="calc-input" id="calcInput" placeholder="0" oninput="calcLive()" onkeydown="calcKey(event)">
+    </div>
+    <div>
+      <div class="calc-result-label">RESULT</div>
+      <div class="calc-result-big" id="calcResult">—</div>
+    </div>
+    <div class="calc-btns">
+      <button class="calc-btn op" onclick="calcAppend('(')">( )</button>
+      <button class="calc-btn op" onclick="calcClear()">C</button>
+      <button class="calc-btn op" onclick="calcDel()">⌫</button>
+      <button class="calc-btn op" onclick="calcAppend('/')">÷</button>
+      <button class="calc-btn" onclick="calcAppend('7')">7</button>
+      <button class="calc-btn" onclick="calcAppend('8')">8</button>
+      <button class="calc-btn" onclick="calcAppend('9')">9</button>
+      <button class="calc-btn op" onclick="calcAppend('*')">×</button>
+      <button class="calc-btn" onclick="calcAppend('4')">4</button>
+      <button class="calc-btn" onclick="calcAppend('5')">5</button>
+      <button class="calc-btn" onclick="calcAppend('6')">6</button>
+      <button class="calc-btn op" onclick="calcAppend('-')">−</button>
+      <button class="calc-btn" onclick="calcAppend('1')">1</button>
+      <button class="calc-btn" onclick="calcAppend('2')">2</button>
+      <button class="calc-btn" onclick="calcAppend('3')">3</button>
+      <button class="calc-btn op" onclick="calcAppend('+')">+</button>
+      <button class="calc-btn" onclick="calcAppend('0')">0</button>
+      <button class="calc-btn" onclick="calcAppend('.')">.</button>
+      <button class="calc-btn op" onclick="calcAppend('%')">%</button>
+      <button class="calc-btn eq" onclick="calcEval()">=</button>
+    </div>
+    <div id="calcHistory" class="calc-history"></div>
+  </div>
+
+  <!-- 専用UI: 単位変換 -->
+  <div id="ui-conv" class="conv-ui" style="display:none;">
+    <div class="conv-hint" id="convHint">"100 km to miles" のように入力してください</div>
+    <input class="calc-input" id="convInput" placeholder='例: 100 km to miles' oninput="convLive()" style="font-size:16px;text-align:left;">
+    <div class="conv-result" id="convResult">—</div>
+    <div style="font-size:11.5px;color:var(--text-dim);line-height:1.8;">
+      対応: km/miles/m/feet/inches/cm/mm/yards · kg/lb/g/mg/oz · c/f/k · kb/mb/gb/tb/bytes · kph/mph/m/s
+    </div>
+  </div>
+
+  <!-- 専用UI: パーセント -->
+  <div id="ui-pct" class="pct-ui" style="display:none;">
+    <div style="font-size:12px;color:var(--text-dim);margin-bottom:4px;">計算したいものを選んでください：</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <button class="btn-mini pct-mode-btn active" data-mode="percent" onclick="setPctMode('percent')">AのBに対する割合</button>
+      <button class="btn-mini pct-mode-btn" data-mode="ofpct" onclick="setPctMode('ofpct')">AのB%</button>
+      <button class="btn-mini pct-mode-btn" data-mode="change" onclick="setPctMode('change')">変化率</button>
+      <button class="btn-mini pct-mode-btn" data-mode="tax" onclick="setPctMode('tax')">税込計算</button>
+    </div>
+    <div id="pctFields" style="display:flex;flex-direction:column;gap:10px;"></div>
+    <div class="pct-result" id="pctResult" style="display:none;">
+      <div class="res-val" id="pctVal"></div>
+      <div class="res-lbl" id="pctLbl"></div>
+    </div>
+  </div>
+
+  <!-- 専用UI: 乱数 -->
+  <div id="ui-random" class="conv-ui" style="display:none;">
+    <div class="conv-hint">最小値と最大値を入力してください</div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <input class="calc-input pct-inp" id="randMin" placeholder="最小 (例: 1)" style="font-size:18px;text-align:center;" value="1">
+      <span style="font-size:18px;color:var(--text-dim);">〜</span>
+      <input class="calc-input pct-inp" id="randMax" placeholder="最大 (例: 100)" style="font-size:18px;text-align:center;" value="100">
+    </div>
+    <div class="conv-result" id="randResult" style="font-size:56px;">—</div>
+    <button class="btn-run" onclick="doRandom()" style="align-self:center;padding:12px 40px;font-size:15px;">🎲 Generate</button>
+  </div>
+
+  <!-- 専用UI: カラー変換 -->
+  <div id="ui-color" class="color-ui" style="display:none;">
+    <div class="color-swatch-large" id="colorSwatch"></div>
+    <div style="padding:14px 16px 4px;">
+      <input class="calc-input pct-inp" id="colorInput" placeholder="#818cf8 または rgb(129,140,248) または hsl(234,89%,74%)" oninput="colorLive()" style="font-size:13px;text-align:left;width:100%;">
+    </div>
+    <div class="color-values" id="colorValues" style="white-space:pre-wrap;"></div>
+  </div>
+
+  <!-- 専用UI: 統計 -->
+  <div id="ui-stats" style="display:none;flex-direction:column;height:100%;overflow:hidden;">
+    <div class="pane" style="height:auto;flex:0 0 auto;border-bottom:1px solid var(--border);">
+      <div class="pane-header">NUMBERS (comma or space separated)</div>
+      <textarea id="statsInput" spellcheck="false" placeholder="1, 2, 3, 4, 5..." style="height:80px;flex:none;" oninput="statsLive()"></textarea>
+    </div>
+    <div id="statsCards" style="flex:1;overflow:auto;padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;"></div>
   </div>
 </main>
 </div>
@@ -329,9 +478,36 @@ const ALL_TOOLS=[
 ];
 
 const DUAL=['json-diff','diff','regex','aes-enc','aes-dec','jwt-gen','hmac','xor','contrast','semver2','embedding-sim','date-diff'];
-const CATS=['data','security','utils','text','math','network','design','dev','ai','time'];
+const CATS=['data','security','utils','text','math','network','design','dev','ai','time','favorites'];
 let lang=localStorage.getItem('p_lang')||'en';
 let curCat='data',curTool='json';
+let favorites=JSON.parse(localStorage.getItem('dt_favorites')||'[]');
+
+function saveFavorites(){localStorage.setItem('dt_favorites',JSON.stringify(favorites));}
+function isFav(id){return favorites.includes(id);}
+function toggleFav(){
+  if(curCat==='favorites')return;
+  if(isFav(curTool)){favorites=favorites.filter(f=>f!==curTool);}
+  else{favorites.push(curTool);}
+  saveFavorites();
+  updateFavBtn();
+  // update rail badge
+  updateFavBadge();
+}
+function updateFavBtn(){
+  const btn=document.getElementById('favBtn');
+  if(!btn)return;
+  if(curCat==='favorites'){btn.style.display='none';return;}
+  btn.style.display='';
+  btn.classList.toggle('active',isFav(curTool));
+  btn.innerText=isFav(curTool)?'★':'☆';
+  btn.title=isFav(curTool)?'Remove from favorites':'Add to favorites';
+}
+function updateFavBadge(){
+  const rail=document.getElementById('favRailBtn');
+  if(!rail)return;
+  rail.classList.toggle('active',curCat==='favorites');
+}
 
 const I18N={
   en:{
@@ -345,6 +521,7 @@ const I18N={
     'sup-share-title':'Share on X','sup-share-sd':'Spread the word!',
     'share-text':'https://devtools.f5.si is the best!!\n#DevTools #Tools',
     'sup-footer':'Support is optional. DevTools will always be free 🙏',
+    'fav-empty':'No favorites yet. Click ☆ on any tool to add it here.',
   },
   ja:{
     tools:'ツール',input:'入力',output:'出力',run:'実行',copy:'コピー',
@@ -357,6 +534,7 @@ const I18N={
     'sup-share-title':'SNSでシェア','sup-share-sd':'広めてもらえると嬉しいです',
     'share-text':'https://devtools.f5.si is the best!!\n#DevTools #Tools',
     'sup-footer':'支援は任意です。ツールは常に無料でご利用いただけます 🙏',
+    'fav-empty':'まだお気に入りがありません。ツールの ☆ をクリックして追加できます。',
   }
 };
 const t=k=>I18N[lang][k]||I18N.en[k]||k;
@@ -498,6 +676,11 @@ function render(){
     document.getElementById('lbl-input2').innerText=(lm[curTool]||['INPUT','INPUT 2'])[1];
   }else{document.getElementById('lbl-input').innerText=isEn?'INPUT':'入力';}
   clearOutput();
+  updateFavBtn();
+  updateFavBadge();
+  showUI(curTool);
+  // 専用UIの初期化
+  if(curTool==='pct'||curTool==='percent'||curTool==='tax'){renderPctFields();}
 }
 function clearOutput(){
   document.getElementById('outputText').innerText='';
@@ -507,7 +690,69 @@ function clearOutput(){
   document.getElementById('specialResult').style.display='none';
   document.getElementById('outputPre').style.display='block';
 }
-function setCat(cat){curCat=cat;curTool=ALL_TOOLS.find(t=>t.cat===cat).id;document.querySelectorAll('.rail-btn').forEach((b,i)=>b.classList.toggle('active',CATS[i]===cat));render();}
+function setCat(cat){
+  curCat=cat;
+  if(cat==='favorites'){
+    // お気に入りの最初のツールを選択、なければそのまま
+    if(favorites.length>0){
+      curTool=favorites[0];
+    }
+    document.querySelectorAll('.rail-btn').forEach((b,i)=>b.classList.toggle('active',CATS[i]===cat));
+    renderFavorites();
+    return;
+  }
+  curTool=ALL_TOOLS.find(t=>t.cat===cat).id;
+  document.querySelectorAll('.rail-btn').forEach((b,i)=>b.classList.toggle('active',CATS[i]===cat));
+  render();
+}
+function renderFavorites(){
+  const isEn=lang==='en';
+  document.getElementById('lbl-run').innerText=isEn?'RUN':'実行';
+  document.getElementById('lbl-copy').innerText=isEn?'COPY':'コピー';
+  document.getElementById('lbl-output').innerText=isEn?'OUTPUT':'出力';
+  document.getElementById('lbl-tools').innerText=isEn?'⭐ Favorites':'⭐ お気に入り';
+  document.getElementById('langBtn').innerText=lang.toUpperCase();
+  document.getElementById('favBtn').style.display='none';
+  const list=document.getElementById('toolList');
+  list.innerHTML='';
+  if(favorites.length===0){
+    list.innerHTML='<div style="padding:14px 12px;font-size:11px;color:var(--text-dim);line-height:1.6;">'+(isEn?'No favorites yet.<br>Click ☆ on any tool to add it here.':'まだお気に入りがありません。<br>ツールの ☆ をクリックして追加できます。')+'</div>';
+    document.getElementById('toolName').innerText=isEn?'Favorites':'お気に入り';
+    document.getElementById('toolDesc').innerText=isEn?'Your starred tools appear here':'スターをつけたツールがここに表示されます';
+    document.getElementById('input').value='';
+    clearOutput();
+    return;
+  }
+  favorites.forEach(id=>{
+    const tool=ALL_TOOLS.find(t=>t.id===id);
+    if(!tool)return;
+    const btn=document.createElement('button');
+    btn.className='tool-item'+(curTool===id?' active':'');
+    btn.innerText=(isEn?tool.en:tool.ja);
+    btn.title=isEn?tool.ed:tool.jd;
+    btn.onclick=()=>{curTool=id;renderFavorites();};
+    list.appendChild(btn);
+  });
+  if(favorites.length>0&&favorites.includes(curTool)){
+    const active=ALL_TOOLS.find(t=>t.id===curTool);
+    if(active){
+      document.getElementById('toolName').innerText=(isEn?active.en:active.ja)+' ★';
+      document.getElementById('toolDesc').innerText=isEn?active.ed:active.jd;
+      document.getElementById('input').value=localStorage.getItem('last_'+curTool)||'';
+    }
+  }
+  const dual=DUAL.includes(curTool);
+  const i2r=document.getElementById('input2-row');
+  i2r.style.display=dual?'flex':'none';
+  if(dual){
+    document.getElementById('input2').value=localStorage.getItem('last2_'+curTool)||'';
+    const lm={'json-diff':['JSON A','JSON B'],'diff':['TEXT A','TEXT B'],'regex':['PATTERN','TEXT'],'aes-enc':['TEXT','PASSWORD'],'aes-dec':['CIPHER','PASSWORD'],'jwt-gen':['PAYLOAD JSON','SECRET'],'hmac':['TEXT','KEY'],'xor':['TEXT','KEY'],'contrast':['FG COLOR','BG COLOR'],'semver2':['VERSION A','VERSION B'],'embedding-sim':['VECTOR A (comma-sep)','VECTOR B (comma-sep)'],'date-diff':['DATE A','DATE B']};
+    document.getElementById('lbl-input').innerText=(lm[curTool]||['INPUT','INPUT 2'])[0];
+    document.getElementById('lbl-input2').innerText=(lm[curTool]||['INPUT','INPUT 2'])[1];
+  }else{document.getElementById('lbl-input').innerText=isEn?'INPUT':'入力';}
+  clearOutput();
+  updateFavBadge();
+}
 function toggleLang(){lang=lang==='en'?'ja':'en';localStorage.setItem('p_lang',lang);render();}
 function openOv(id){document.getElementById(id).classList.add('open');}
 function closeOv(id){document.getElementById(id).classList.remove('open');}
@@ -614,7 +859,42 @@ async function execute(){
     if(curTool==='random'){const[mn,mx]=val.trim().split(/\s+/).map(Number);r=String(Math.floor(Math.random()*(mx-mn+1))+mn);}
     if(curTool==='angle'){const m=val.trim().match(/^([\d.]+)\s*(deg|rad)?$/i);if(!m)throw new Error('e.g. "90 deg" or "1.57 rad"');const v=parseFloat(m[1]),unit=(m[2]||'deg').toLowerCase();const deg=unit==='rad'?v*180/Math.PI:v;const rad=unit==='rad'?v:v*Math.PI/180;r=`Degrees: ${deg.toFixed(6)}\nRadians: ${rad.toFixed(6)}\nGradians: ${(deg*10/9).toFixed(6)}`;}
     if(curTool==='bitwise'){const m=val.match(/^(\d+)\s+(AND|OR|XOR|NOT|LSHIFT|RSHIFT)\s*(\d*)$/i);if(!m)throw new Error('"a OP b" — AND OR XOR NOT LSHIFT RSHIFT');const[,a,op,b]=[...m].map((x,i)=>i>1&&i<4?x:+x);const ops={AND:()=>a&b,OR:()=>a|b,XOR:()=>a^b,NOT:()=>~a,LSHIFT:()=>a<<b,RSHIFT:()=>a>>b};const res=ops[op.toUpperCase()]();r=`Result: ${res}\nBinary: ${res.toString(2)}\nHex:    0x${res.toString(16).toUpperCase()}`;}
-    if(curTool==='roman'){const v=val.trim();if(/^\d+$/.test(v)){const n=parseInt(v);const vals=[1000,900,500,400,100,90,50,40,10,9,5,4,1];const syms=['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];let res='',rem=n;for(let i=0;i<vals.length;i++)while(rem>=vals[i]){res+=syms[i];rem-=vals[i];}r=res;}else{const rom={M:1000,D:500,C:100,L:50,X:10,V:5,I:1};let res=0;for(let i=0;i<v.length;i++){const cur=rom[v[i].toUpperCase()],nxt=rom[v[i+1]?.toUpperCase()];res+=nxt>cur?-cur:cur;}r=String(res);}}
+    if(curTool==='roman'){
+      const v=val.trim();
+      // Unicode special roman numerals (Ⅰ〜Ⅿ, 1-12 and L,C,D,M)
+      const UNI_UP=['Ⅰ','Ⅱ','Ⅲ','Ⅳ','Ⅴ','Ⅵ','Ⅶ','Ⅷ','Ⅸ','Ⅹ','Ⅺ','Ⅻ'];
+      const UNI_LO=['ⅰ','ⅱ','ⅲ','ⅳ','ⅴ','ⅵ','ⅶ','ⅷ','ⅸ','ⅹ','ⅺ','ⅻ'];
+      const UNI_EXTRA={50:['Ⅼ','ⅼ'],100:['Ⅽ','ⅽ'],500:['Ⅾ','ⅾ'],1000:['Ⅿ','ⅿ']};
+      if(/^\d+$/.test(v)){
+        const n=parseInt(v);
+        // ASCII roman
+        const vals=[1000,900,500,400,100,90,50,40,10,9,5,4,1];
+        const syms=['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];
+        let ascii='',rem=n;
+        for(let i=0;i<vals.length;i++)while(rem>=vals[i]){ascii+=syms[i];rem-=vals[i];}
+        // Unicode single-char (1–12 only, or L/C/D/M for exact matches)
+        let uniUp='',uniLo='';
+        if(n>=1&&n<=12){uniUp=UNI_UP[n-1];uniLo=UNI_LO[n-1];}
+        else if(UNI_EXTRA[n]){uniUp=UNI_EXTRA[n][0];uniLo=UNI_EXTRA[n][1];}
+        else{uniUp='(no single Unicode char for '+n+')';uniLo='(no single Unicode char for '+n+')';}
+        r=`ASCII (uppercase): ${ascii}\nASCII (lowercase): ${ascii.toLowerCase()}\n\nUnicode uppercase: ${uniUp}\nUnicode lowercase: ${uniLo}\n\nUnicode reference:\nⅠ Ⅱ Ⅲ Ⅳ Ⅴ Ⅵ Ⅶ Ⅷ Ⅸ Ⅹ Ⅺ Ⅻ Ⅼ Ⅽ Ⅾ Ⅿ\nⅰ ⅱ ⅲ ⅳ ⅴ ⅵ ⅶ ⅷ ⅸ ⅹ ⅺ ⅻ ⅼ ⅽ ⅾ ⅿ`;
+      }else{
+        // Roman → Arabic
+        const rom={M:1000,D:500,C:100,L:50,X:10,V:5,I:1};
+        // also handle unicode roman numerals as input
+        const unicodeMap={'Ⅰ':1,'Ⅱ':2,'Ⅲ':3,'Ⅳ':4,'Ⅴ':5,'Ⅵ':6,'Ⅶ':7,'Ⅷ':8,'Ⅸ':9,'Ⅹ':10,'Ⅺ':11,'Ⅻ':12,'Ⅼ':50,'Ⅽ':100,'Ⅾ':500,'Ⅿ':1000,'ⅰ':1,'ⅱ':2,'ⅲ':3,'ⅳ':4,'ⅴ':5,'ⅵ':6,'ⅶ':7,'ⅷ':8,'ⅸ':9,'ⅹ':10,'ⅺ':11,'ⅻ':12,'ⅼ':50,'ⅽ':100,'ⅾ':500,'ⅿ':1000};
+        if(unicodeMap[v]!==undefined){r=String(unicodeMap[v]);}
+        else{
+          let res=0;
+          const upper=v.toUpperCase();
+          for(let i=0;i<upper.length;i++){
+            const cur=rom[upper[i]],nxt=rom[upper[i+1]];
+            res+=nxt>cur?-cur:cur;
+          }
+          r=String(res);
+        }
+      }
+    }
     if(curTool==='tax'){const[amount,rate]=val.trim().split(/\s+/).map(Number);if(isNaN(amount)||isNaN(rate))throw new Error('"amount rate" e.g. "1000 0.1"');const tax=amount*rate;r=`Original: ${amount}\nTax (${(rate*100).toFixed(1)}%): ${tax.toFixed(2)}\nTotal: ${(amount+tax).toFixed(2)}`;}
     // NETWORK
     if(curTool==='ua-parse')r=parseUA(val);
@@ -667,7 +947,171 @@ async function execute(){
   }catch(e){txt.innerText='Error: '+e.message;}
 }
 
-function copyResult(){navigator.clipboard.writeText(document.getElementById('outputText').innerText||document.getElementById('htmlResult').innerText);}
+/* ── 専用UI判定 ── */
+const SPECIAL_UI={
+  'calc':'ui-calc',
+  'unit-conv':'ui-conv',
+  'percent':'ui-pct',
+  'tax':'ui-pct',
+  'random':'ui-random',
+  'color':'ui-color',
+  'stats':'ui-stats',
+};
+const ALL_UIS=['editorGrid','ui-calc','ui-conv','ui-pct','ui-random','ui-color','ui-stats'];
+function showUI(toolId){
+  const target=SPECIAL_UI[toolId]||'editorGrid';
+  ALL_UIS.forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.style.display=(id===target)?(id==='ui-stats'?'flex':'block'):'none';
+  });
+  // editorGridはgridで表示
+  if(target==='editorGrid')document.getElementById('editorGrid').style.display='grid';
+  // RUN/COPYボタンの表示制御
+  const hasSpecial=!!SPECIAL_UI[toolId];
+  document.getElementById('lbl-run').style.display=hasSpecial?'none':'';
+  document.getElementById('lbl-copy').style.display='';
+}
+
+/* ── 計算機専用UI ── */
+let calcHistoryArr=[];
+function calcAppend(c){
+  const inp=document.getElementById('calcInput');
+  if(c==='('){
+    // トグル: 直前が数字なら'('→')'
+    const v=inp.value;
+    const opens=(v.match(/\(/g)||[]).length,closes=(v.match(/\)/g)||[]).length;
+    inp.value+=opens>closes?')':'(';
+  }else{inp.value+=c;}
+  calcLive();
+}
+function calcClear(){document.getElementById('calcInput').value='';document.getElementById('calcResult').innerText='—';}
+function calcDel(){const inp=document.getElementById('calcInput');inp.value=inp.value.slice(0,-1);calcLive();}
+function calcLive(){
+  const expr=document.getElementById('calcInput').value;
+  if(!expr){document.getElementById('calcResult').innerText='—';return;}
+  try{
+    const r=Function('"use strict";return ('+expr+')')();
+    document.getElementById('calcResult').innerText=r;
+  }catch{document.getElementById('calcResult').innerText='...';}
+}
+function calcEval(){
+  const expr=document.getElementById('calcInput').value;
+  if(!expr)return;
+  try{
+    const r=Function('"use strict";return ('+expr+')')();
+    calcHistoryArr.unshift(`${expr} = ${r}`);
+    if(calcHistoryArr.length>20)calcHistoryArr.pop();
+    document.getElementById('calcHistory').innerHTML=calcHistoryArr.map(h=>`<div class="calc-history-item">${esc(h)}</div>`).join('');
+    document.getElementById('calcInput').value=String(r);
+    document.getElementById('calcResult').innerText=r;
+  }catch(e){document.getElementById('calcResult').innerText='Error';}
+}
+function calcKey(e){if(e.key==='Enter')calcEval();}
+
+/* ── 単位変換専用UI ── */
+function convLive(){
+  const v=document.getElementById('convInput').value;
+  const res=document.getElementById('convResult');
+  if(!v){res.innerText='—';return;}
+  try{res.innerText=unitConvert(v);}
+  catch(e){res.innerText=e.message;}
+}
+
+/* ── パーセント専用UI ── */
+let pctMode='percent';
+const PCT_MODES={
+  percent:{labels:['数値 A','全体 B'],hint:'A ÷ B × 100 = ?%',calc:(a,b)=>`${a} / ${b} = ${((a/b)*100).toFixed(4)}%`},
+  ofpct:{labels:['元の数値','割合 (%)'],hint:'A × B% = ?',calc:(a,b)=>`${a} × ${b}% = ${(a*b/100).toFixed(4)}`},
+  change:{labels:['変化前','変化後'],hint:'変化率 = (B-A)/A × 100%',calc:(a,b)=>`変化率: ${(((b-a)/a)*100).toFixed(4)}%`},
+  tax:{labels:['税抜き金額','税率 (例: 0.1)'],hint:'税込 = 金額 × (1 + 税率)',calc:(a,b)=>{const tax=a*b;return`税抜き: ${a}\n税額 (${(b*100).toFixed(1)}%): ${tax.toFixed(2)}\n税込み: ${(a+tax).toFixed(2)}`;}},
+};
+function setPctMode(mode){
+  pctMode=mode;
+  document.querySelectorAll('.pct-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+  renderPctFields();
+}
+function renderPctFields(){
+  const m=PCT_MODES[pctMode];
+  const f=document.getElementById('pctFields');
+  f.innerHTML=m.labels.map((l,i)=>`<div class="pct-row"><span class="pct-label">${l}</span><input class="pct-inp" id="pctA${i}" placeholder="0" type="number" oninput="pctCalc()"></div>`).join('');
+  document.getElementById('pctResult').style.display='none';
+  document.querySelector('.conv-hint#convHint')&&(document.querySelector('.conv-hint#convHint').innerText=m.hint);
+}
+function pctCalc(){
+  const a=parseFloat(document.getElementById('pctA0')?.value);
+  const b=parseFloat(document.getElementById('pctA1')?.value);
+  const res=document.getElementById('pctResult');
+  if(isNaN(a)||isNaN(b)){res.style.display='none';return;}
+  try{
+    const r=PCT_MODES[pctMode].calc(a,b);
+    document.getElementById('pctVal').innerText=r;
+    document.getElementById('pctLbl').innerText=PCT_MODES[pctMode].hint;
+    res.style.display='block';
+  }catch(e){document.getElementById('pctVal').innerText='Error: '+e.message;res.style.display='block';}
+}
+
+/* ── 乱数専用UI ── */
+function doRandom(){
+  const mn=parseInt(document.getElementById('randMin').value)||1;
+  const mx=parseInt(document.getElementById('randMax').value)||100;
+  const r=Math.floor(Math.random()*(mx-mn+1))+mn;
+  const el=document.getElementById('randResult');
+  el.style.opacity='0';
+  setTimeout(()=>{el.innerText=r;el.style.opacity='1';},80);
+}
+document.addEventListener('keydown',e=>{if(curTool==='random'&&e.key==='Enter')doRandom();});
+
+/* ── カラー変換専用UI ── */
+function colorLive(){
+  const v=document.getElementById('colorInput').value;
+  if(!v)return;
+  try{
+    const c=convertColor(v);
+    document.getElementById('colorSwatch').style.background=c.hex;
+    document.getElementById('colorValues').innerText=c.text;
+  }catch(e){document.getElementById('colorValues').innerText='Error: '+e.message;}
+}
+
+/* ── 統計専用UI ── */
+function statsLive(){
+  const v=document.getElementById('statsInput').value;
+  const nums=v.split(/[\s,]+/).map(Number).filter(x=>!isNaN(x)&&v.trim());
+  const cards=document.getElementById('statsCards');
+  if(!nums.length){cards.innerHTML='';return;}
+  const mean=nums.reduce((a,b)=>a+b,0)/nums.length;
+  const sorted=[...nums].sort((a,b)=>a-b);
+  const n=nums.length;
+  const med=n%2===0?(sorted[n/2-1]+sorted[n/2])/2:sorted[Math.floor(n/2)];
+  const variance=nums.reduce((a,b)=>a+(b-mean)**2,0)/n;
+  const sd=Math.sqrt(variance);
+  const mode=Object.entries(nums.reduce((a,v)=>(a[v]=(a[v]||0)+1,a),{})).sort((a,b)=>b[1]-a[1])[0][0];
+  const stats=[
+    {lbl:'Count',val:n},
+    {lbl:'Sum',val:nums.reduce((a,b)=>a+b,0)},
+    {lbl:'Mean',val:mean.toFixed(4)},
+    {lbl:'Median',val:med},
+    {lbl:'Mode',val:mode},
+    {lbl:'Min',val:sorted[0]},
+    {lbl:'Max',val:sorted[n-1]},
+    {lbl:'Range',val:sorted[n-1]-sorted[0]},
+    {lbl:'Std Dev',val:sd.toFixed(4)},
+    {lbl:'Variance',val:variance.toFixed(4)},
+  ];
+  cards.innerHTML=stats.map(s=>`<div class="stat-card"><div class="val">${s.val}</div><div class="lbl">${s.lbl}</div></div>`).join('');
+}
+
+/* ── copyResult拡張（専用UIも対応） ── */
+function copyResult(){
+  const text=
+    document.getElementById('outputText').innerText||
+    document.getElementById('htmlResult').innerText||
+    document.getElementById('calcResult')?.innerText||
+    document.getElementById('convResult')?.innerText||
+    document.getElementById('colorValues')?.innerText||
+    '';
+  navigator.clipboard.writeText(text);
+}
 
 (function init(){
   const count=ALL_TOOLS.length;
