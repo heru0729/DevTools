@@ -976,6 +976,47 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
     <div id="spacingBars" style="flex:1;overflow:auto;display:flex;flex-direction:column;gap:6px;"></div>
   </div>
 
+  <!-- 専用UI: ローマ数字 -->
+  <div id="ui-roman" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:14px;">
+    <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap;">
+      <div style="flex:1;min-width:180px;">
+        <div class="calc-result-label">アラビア数字 → ローマ数字</div>
+        <input id="romanArabic" class="calc-input" type="number" min="1" max="3999" placeholder="1〜3999"
+          oninput="romanFromArabic()" style="font-size:20px;text-align:center;margin-top:4px;">
+      </div>
+      <div style="flex:1;min-width:180px;">
+        <div class="calc-result-label">ローマ数字 → アラビア数字</div>
+        <input id="romanRoman" class="calc-input" placeholder="XIV" oninput="romanFromRoman()"
+          style="font-size:20px;text-align:center;margin-top:4px;font-family:'JetBrains Mono',monospace;">
+      </div>
+    </div>
+    <!-- 変換結果 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="pct-result" id="romanResultA" style="display:none;text-align:center;">
+        <div class="calc-result-label" style="margin-bottom:6px;">ASCII</div>
+        <div id="romanAsciiUp" style="font-size:28px;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace;letter-spacing:2px;"></div>
+        <div id="romanAsciiLo" style="font-size:16px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;letter-spacing:2px;margin-top:4px;"></div>
+        <button class="btn-mini" id="romanCopyAscii" style="margin-top:8px;">COPY</button>
+      </div>
+      <div class="pct-result" id="romanResultU" style="display:none;text-align:center;">
+        <div class="calc-result-label" style="margin-bottom:6px;">Unicode</div>
+        <div id="romanUniUp" style="font-size:28px;font-weight:800;color:var(--accent2);font-family:serif;letter-spacing:4px;"></div>
+        <div id="romanUniLo" style="font-size:16px;color:var(--text-dim);font-family:serif;letter-spacing:4px;margin-top:4px;"></div>
+        <button class="btn-mini" id="romanCopyUni" style="margin-top:8px;">COPY</button>
+      </div>
+    </div>
+    <!-- ローマ数字→アラビア結果 -->
+    <div class="pct-result" id="romanResultR" style="display:none;text-align:center;">
+      <div class="res-val" id="romanResultRVal" style="font-size:36px;"></div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:4px;">アラビア数字</div>
+    </div>
+    <!-- Unicode一覧テーブル -->
+    <div style="background:var(--panel);border-radius:12px;padding:14px;">
+      <div style="font-size:10.5px;font-weight:800;color:var(--text-dim);margin-bottom:10px;">Unicode ローマ数字一覧 (クリックでコピー)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;" id="romanUniTable"></div>
+    </div>
+  </div>
+
 </main>
 </div>
 
@@ -1498,7 +1539,15 @@ async function execute(){
     if(curTool==='baseconv'){const[ns,fb]=val.trim().split(/\s+/);const base=parseInt(fb)||10;const n=parseInt(ns,base);if(isNaN(n))throw new Error('Invalid');r=`Decimal (10): ${n}\nBinary   (2): ${n.toString(2)}\nOctal    (8): ${n.toString(8)}\nHex     (16): ${n.toString(16).toUpperCase()}`;}
     if(curTool==='cron')r=explainCron(val);
     if(curTool==='url-parse')r=parseURL(val);
-    if(curTool==='html-preview'){htm.innerHTML=val;htm.style.display='block';pre.style.display='none';return;}
+    if(curTool==='html-preview'){
+      htm.innerHTML='';
+      const ifr=document.createElement('iframe');
+      ifr.sandbox='allow-scripts';
+      ifr.style.cssText='width:100%;height:100%;border:none;border-radius:4px;background:#fff;';
+      ifr.srcdoc=val;
+      htm.appendChild(ifr);
+      htm.style.display='block';pre.style.display='none';return;
+    }
     if(curTool==='semver')r=parseSemver(val);
     // TEXT
     if(curTool==='case'){const s=val;r=[`UPPER:      ${s.toUpperCase()}`,`lower:      ${s.toLowerCase()}`,`Title:      ${s.replace(/\w\S*/g,t=>t[0].toUpperCase()+t.slice(1).toLowerCase())}`,`camelCase:  ${s.toLowerCase().replace(/[^a-z0-9]+(.)/g,(_,c)=>c.toUpperCase())}`,`PascalCase: ${s.replace(/(?:^|\s|[-_])(\w)/g,(_,c)=>c.toUpperCase()).replace(/\s/g,'')}`,`snake_case: ${s.toLowerCase().replace(/[\s\-]+/g,'_')}`,`kebab-case: ${s.toLowerCase().replace(/[\s_]+/g,'-')}`,`CONST_CASE: ${s.toUpperCase().replace(/[\s\-]+/g,'_')}`].join('\n');}
@@ -1539,51 +1588,7 @@ async function execute(){
     if(curTool==='random'){const[mn,mx]=val.trim().split(/\s+/).map(Number);r=String(Math.floor(Math.random()*(mx-mn+1))+mn);}
     if(curTool==='angle'){const m=val.trim().match(/^([\d.]+)\s*(deg|rad)?$/i);if(!m)throw new Error('e.g. "90 deg" or "1.57 rad"');const v=parseFloat(m[1]),unit=(m[2]||'deg').toLowerCase();const deg=unit==='rad'?v*180/Math.PI:v;const rad=unit==='rad'?v:v*Math.PI/180;r=`Degrees: ${deg.toFixed(6)}\nRadians: ${rad.toFixed(6)}\nGradians: ${(deg*10/9).toFixed(6)}`;}
     if(curTool==='bitwise'){const m=val.match(/^(\d+)\s+(AND|OR|XOR|NOT|LSHIFT|RSHIFT)\s*(\d*)$/i);if(!m)throw new Error('"a OP b" — AND OR XOR NOT LSHIFT RSHIFT');const[,a,op,b]=[...m].map((x,i)=>i>1&&i<4?x:+x);const ops={AND:()=>a&b,OR:()=>a|b,XOR:()=>a^b,NOT:()=>~a,LSHIFT:()=>a<<b,RSHIFT:()=>a>>b};const res=ops[op.toUpperCase()]();r=`Result: ${res}\nBinary: ${res.toString(2)}\nHex:    0x${res.toString(16).toUpperCase()}`;}
-    if(curTool==='roman'){
-      const v=val.trim();
-      // Unicode special roman numerals (Ⅰ〜Ⅿ, 1-12 and L,C,D,M)
-      const UNI_UP=['Ⅰ','Ⅱ','Ⅲ','Ⅳ','Ⅴ','Ⅵ','Ⅶ','Ⅷ','Ⅸ','Ⅹ','Ⅺ','Ⅻ'];
-      const UNI_LO=['ⅰ','ⅱ','ⅲ','ⅳ','ⅴ','ⅵ','ⅶ','ⅷ','ⅸ','ⅹ','ⅺ','ⅻ'];
-      const UNI_EXTRA={50:['Ⅼ','ⅼ'],100:['Ⅽ','ⅽ'],500:['Ⅾ','ⅾ'],1000:['Ⅿ','ⅿ']};
-      if(/^\d+$/.test(v)){
-        const n=parseInt(v);
-        // 通常のローマ数字は 1〜3999 まで
-        let ascii='',uniUp='',uniLo='';
-        if(n<1){
-          r=e_('roman_positive');
-        } else if(n>3999){
-          // 3999超えは表記不可（上線記法は環境依存のため）
-          ascii=e_('roman_range');
-          r=ascii;
-        } else {
-          // ASCII roman (1–3999)
-          const vals=[1000,900,500,400,100,90,50,40,10,9,5,4,1];
-          const syms=['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];
-          let rem=n;
-          for(let i=0;i<vals.length;i++)while(rem>=vals[i]){ascii+=syms[i];rem-=vals[i];}
-          // Unicode single-char (1–12 only, or L/C/D/M for exact matches)
-          if(n>=1&&n<=12){uniUp=UNI_UP[n-1];uniLo=UNI_LO[n-1];}
-          else if(UNI_EXTRA[n]){uniUp=UNI_EXTRA[n][0];uniLo=UNI_EXTRA[n][1];}
-          else{uniUp='(この数値に対応するUnicode専用文字はありません)';uniLo='(この数値に対応するUnicode専用文字はありません)';}
-          r=`ASCII (uppercase): ${ascii}\nASCII (lowercase): ${ascii.toLowerCase()}\n\nUnicode uppercase: ${uniUp}\nUnicode lowercase: ${uniLo}`;
-        }
-      }else{
-        // Roman → Arabic
-        const rom={M:1000,D:500,C:100,L:50,X:10,V:5,I:1};
-        // also handle unicode roman numerals as input
-        const unicodeMap={'Ⅰ':1,'Ⅱ':2,'Ⅲ':3,'Ⅳ':4,'Ⅴ':5,'Ⅵ':6,'Ⅶ':7,'Ⅷ':8,'Ⅸ':9,'Ⅹ':10,'Ⅺ':11,'Ⅻ':12,'Ⅼ':50,'Ⅽ':100,'Ⅾ':500,'Ⅿ':1000,'ⅰ':1,'ⅱ':2,'ⅲ':3,'ⅳ':4,'ⅴ':5,'ⅵ':6,'ⅶ':7,'ⅷ':8,'ⅸ':9,'ⅹ':10,'ⅺ':11,'ⅻ':12,'ⅼ':50,'ⅽ':100,'ⅾ':500,'ⅿ':1000};
-        if(unicodeMap[v]!==undefined){r=String(unicodeMap[v]);}
-        else{
-          let res=0;
-          const upper=v.toUpperCase();
-          for(let i=0;i<upper.length;i++){
-            const cur=rom[upper[i]],nxt=rom[upper[i+1]];
-            res+=nxt>cur?-cur:cur;
-          }
-          r=String(res);
-        }
-      }
-    }
+    if(curTool==='roman'){romanFromArabic();return;}
     if(curTool==='tax'){const[amount,rate]=val.trim().split(/\s+/).map(Number);if(isNaN(amount)||isNaN(rate))throw new Error('"amount rate" e.g. "1000 0.1"');const tax=amount*rate;r=`Original: ${amount}\nTax (${(rate*100).toFixed(1)}%): ${tax.toFixed(2)}\nTotal: ${(amount+tax).toFixed(2)}`;}
     // NETWORK
     if(curTool==='ua-parse')r=parseUA(val);
@@ -1605,7 +1610,15 @@ async function execute(){
     if(curTool==='palette'){paletteLive();return;}
     if(curTool==='aspect'){const[w,h]=val.trim().split(/\s+/).map(Number);if(isNaN(w)||isNaN(h))throw new Error('e.g. "1920 1080"');const g=gcd(w,h);r=`${w}×${h}\nAspect ratio: ${w/g}:${h/g}\nDecimal: ${(w/h).toFixed(4)}\n\nCommon comparisons:\n  16:9  = ${Math.abs((w/h)-(16/9))<0.01?'✅ Match':'≈'+(16/9).toFixed(4)}\n  4:3   = ${Math.abs((w/h)-(4/3))<0.01?'✅ Match':'≈'+(4/3).toFixed(4)}\n  1:1   = ${Math.abs((w/h)-1)<0.01?'✅ Match':'≈'+1}`;}
     // DEV
-    if(curTool==='html-preview2'){htm.innerHTML=val;htm.style.display='block';pre.style.display='none';return;}
+    if(curTool==='html-preview2'){
+      htm.innerHTML='';
+      const ifr=document.createElement('iframe');
+      ifr.sandbox='allow-scripts';
+      ifr.style.cssText='width:100%;height:100%;border:none;border-radius:4px;background:#fff;';
+      ifr.srcdoc=val;
+      htm.appendChild(ifr);
+      htm.style.display='block';pre.style.display='none';return;
+    }
     if(curTool==='css-minify')r=cssMinify(val);
     if(curTool==='css-format')r=cssFormat(val);
     if(curTool==='char-codes')r=charCodes(val);
@@ -1650,14 +1663,14 @@ const SPECIAL_UI={
   'pass-gen':'ui-passgen','textstats':'ui-textstats','qr':'ui-qr',
   'epoch':'ui-epoch','lorem':'ui-lorem','palette':'ui-palette',
   'gradient':'ui-gradient','shadow':'ui-shadow','spacing':'ui-spacing',
-  'color':'ui-color',
+  'color':'ui-color','roman':'ui-roman',
 };
 const ALL_UIS=['editorGrid','ui-calc','ui-conv','ui-pct','ui-random','ui-color',
   'ui-stats','ui-gcdlcm','ui-prime','ui-caesar','ui-morse','ui-date',
   'ui-jsonpath','ui-tz','ui-baseconv','ui-urlparse','ui-regex','ui-fib',
   'ui-angle','ui-httpstatus','ui-bitwise','ui-uuid','ui-nanoid',
   'ui-passgen','ui-textstats','ui-qr','ui-epoch','ui-lorem',
-  'ui-palette','ui-gradient','ui-shadow','ui-spacing'];
+  'ui-palette','ui-gradient','ui-shadow','ui-spacing','ui-roman'];
 function showUI(toolId){
   const target=SPECIAL_UI[toolId]||'editorGrid';
   const flexUIs=['ui-stats','ui-gcdlcm','ui-caesar','ui-morse','ui-date',
@@ -1700,6 +1713,7 @@ function showUI(toolId){
   if(toolId==='gradient')gradLive();
   if(toolId==='shadow')shadowLive();
   if(toolId==='spacing')spacingLive();
+  if(toolId==='roman')initRoman();
 }
 
 /* ── 計算機専用UI ── */
@@ -2010,7 +2024,12 @@ function copyCaesarResult(){navigator.clipboard.writeText(document.getElementByI
 /* ── モールス信号専用UI ── */
 let morseMode='encode',morseMute=false,morseAudioCtx=null;
 let morseKeyPressTime=0,morseKeyTimer=null,morseKeyBuffer='',morseKeyDecodeBuffer='';
-function initMorse(){morseLangMode='en';setMorseLang('en');setMorseMode('encode');}
+function initMorse(){
+  morseMode='encode';
+  morseLangMode='en';
+  setMorseLang('en');
+  setMorseMode('encode');
+}
 function setMorseMode(m){
   morseMode=m;
   document.querySelectorAll('.morse-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));
@@ -2045,7 +2064,8 @@ function morseLive(){
   const cc=document.getElementById('morseCharCount');
   if(!out)return;
   if(cc)cc.innerText=inp.length?`${inp.length}文字`:'';
-  if(morseMode==='encode'){
+  const mode=morseMode||'encode';
+  if(mode==='encode'){
     if(lbl)lbl.innerText=morseLangMode==='ja'?'入力 (和文)':'入力 (英文)';
     out.innerText=morseEncode(inp);
   }else{
@@ -2818,6 +2838,106 @@ function spacingLive(){
 }
 
 /* ── その他ボタン用CSS追加 ── */
+
+/* ── ローマ数字専用UI ── */
+const ROMAN_UNI_LIST=[
+  ['Ⅰ','ⅰ',1],['Ⅱ','ⅱ',2],['Ⅲ','ⅲ',3],['Ⅳ','ⅳ',4],['Ⅴ','ⅴ',5],
+  ['Ⅵ','ⅵ',6],['Ⅶ','ⅶ',7],['Ⅷ','ⅷ',8],['Ⅸ','ⅸ',9],['Ⅹ','ⅹ',10],
+  ['Ⅺ','ⅺ',11],['Ⅻ','ⅻ',12],['Ⅼ','ⅼ',50],['Ⅽ','ⅽ',100],['Ⅾ','ⅾ',500],['Ⅿ','ⅿ',1000],
+];
+function toRomanASCII(n){
+  const vals=[1000,900,500,400,100,90,50,40,10,9,5,4,1];
+  const syms=['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];
+  let r='',rem=n;
+  for(let i=0;i<vals.length;i++)while(rem>=vals[i]){r+=syms[i];rem-=vals[i];}
+  return r;
+}
+function fromRomanASCII(s){
+  // Unicode単一文字対応
+  const uniMap=Object.fromEntries(ROMAN_UNI_LIST.flatMap(([u,l,n])=>[[u,n],[l,n]]));
+  if(uniMap[s.trim()]!==undefined)return uniMap[s.trim()];
+  const rom={M:1000,D:500,C:100,L:50,X:10,V:5,I:1};
+  let res=0;const u=s.toUpperCase().trim();
+  for(let i=0;i<u.length;i++){
+    const cur=rom[u[i]],nxt=rom[u[i+1]];
+    if(!cur)return null;
+    res+=nxt>cur?-cur:cur;
+  }
+  return res;
+}
+function initRoman(){
+  // Unicode一覧テーブルを生成
+  const tbl=document.getElementById('romanUniTable');
+  if(tbl&&!tbl.children.length){
+    tbl.innerHTML=ROMAN_UNI_LIST.map(([up,lo,n])=>`
+      <div onclick="navigator.clipboard.writeText('${up}')" title="${n} — クリックで大文字コピー"
+        style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;
+               cursor:pointer;text-align:center;transition:.12s;min-width:60px;"
+        onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="font-size:20px;font-family:serif;">${up}</div>
+        <div style="font-size:14px;color:var(--text-dim);font-family:serif;">${lo}</div>
+        <div style="font-size:10px;color:var(--text-dim);margin-top:2px;font-family:'JetBrains Mono',monospace;">${n}</div>
+      </div>`).join('');
+  }
+}
+function romanFromArabic(){
+  const n=parseInt(document.getElementById('romanArabic')?.value);
+  const rA=document.getElementById('romanResultA');
+  const rU=document.getElementById('romanResultU');
+  const rR=document.getElementById('romanResultR');
+  if(rR)rR.style.display='none';
+  if(isNaN(n)||n<1){if(rA)rA.style.display='none';if(rU)rU.style.display='none';return;}
+  if(n>3999){
+    document.getElementById('romanAsciiUp').innerText='';
+    document.getElementById('romanAsciiLo').innerText='範囲外 (1〜3999)';
+    document.getElementById('romanAsciiLo').style.color='var(--del)';
+    if(rA)rA.style.display='block';
+    if(rU)rU.style.display='none';
+    return;
+  }
+  const ascii=toRomanASCII(n);
+  document.getElementById('romanAsciiUp').innerText=ascii;
+  document.getElementById('romanAsciiLo').innerText=ascii.toLowerCase();
+  document.getElementById('romanAsciiLo').style.color='var(--text-dim)';
+  document.getElementById('romanCopyAscii').onclick=()=>navigator.clipboard.writeText(ascii);
+  if(rA)rA.style.display='block';
+  // Unicode対応チェック
+  const uni=ROMAN_UNI_LIST.find(([,, v])=>v===n);
+  if(uni){
+    document.getElementById('romanUniUp').innerText=uni[0];
+    document.getElementById('romanUniLo').innerText=uni[1];
+    document.getElementById('romanCopyUni').onclick=()=>navigator.clipboard.writeText(uni[0]);
+    if(rU)rU.style.display='block';
+  }else{
+    document.getElementById('romanUniUp').innerText='—';
+    document.getElementById('romanUniLo').innerText='(この値のUnicode単一文字はなし)';
+    if(rU)rU.style.display='block';
+  }
+}
+function romanFromRoman(){
+  const v=document.getElementById('romanRoman')?.value||'';
+  const rA=document.getElementById('romanResultA');
+  const rU=document.getElementById('romanResultU');
+  const rR=document.getElementById('romanResultR');
+  if(rA)rA.style.display='none';
+  if(rU)rU.style.display='none';
+  if(!v.trim()){if(rR)rR.style.display='none';return;}
+  const n=fromRomanASCII(v);
+  const rv=document.getElementById('romanResultRVal');
+  if(n===null||isNaN(n)){
+    if(rv)rv.innerText='無効な入力';
+    if(rR)rR.style.display='block';
+    return;
+  }
+  if(rv)rv.innerText=String(n);
+  if(rR)rR.style.display='block';
+  // 逆変換でASCIIとUnicodeも表示
+  if(n>=1&&n<=3999){
+    const ascii=toRomanASCII(n);
+    document.getElementById('romanArabic').value=n;
+    romanFromArabic();
+  }
+}
 
 /* ── copyResult拡張（専用UIも対応） ── */
 function copyResult(){
