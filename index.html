@@ -42,6 +42,19 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .btn-mini{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
 .btn-mini:hover{border-color:var(--accent);color:var(--accent);}
 .pct-mode-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.conv-sel{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:9px;font-family:inherit;font-size:13px;outline:none;cursor:pointer;}
+.conv-sel:focus{border-color:var(--accent);}
+.caesar-dir.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.morse-mode-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.date-mode-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.date-field-row{display:flex;flex-direction:column;gap:4px;}
+.date-field-row label{font-size:10.5px;font-weight:800;color:var(--text-dim);text-transform:uppercase;}
+.date-field-row input[type=date],.date-field-row input[type=datetime-local]{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:9px;font-family:inherit;font-size:14px;outline:none;width:100%;}
+.date-field-row input:focus{border-color:var(--accent);}
+.stats-inp{width:80px;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:14px;text-align:center;outline:none;}
+.stats-inp:focus{border-color:var(--accent);}
+.gcd-inp{width:90px;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:14px;text-align:center;outline:none;}
+.gcd-inp:focus{border-color:var(--accent);}
 .btn-fav{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:5px 10px;border-radius:6px;font-size:16px;cursor:pointer;transition:.15s;line-height:1;}
 .btn-fav:hover{border-color:#f59e0b;color:#f59e0b;}
 .btn-fav.active{background:#f59e0b22;border-color:#f59e0b;color:#f59e0b;}
@@ -229,8 +242,11 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <!-- 通常の2カラムエディタ -->
   <div class="editor-grid" id="editorGrid">
     <div class="pane">
-      <div class="pane-header" id="lbl-input">INPUT</div>
-      <textarea id="input" spellcheck="false" placeholder="Paste data here..."></textarea>
+      <div class="pane-header" id="lbl-input">
+        INPUT
+        <span id="charCounter" style="font-weight:400;color:var(--text-dim);font-size:10px;"></span>
+      </div>
+      <textarea id="input" spellcheck="false" placeholder="Paste data here..." oninput="updateCharCount()"></textarea>
       <div id="input2-row">
         <div class="pane-header" id="lbl-input2">INPUT 2</div>
         <textarea id="input2" spellcheck="false" placeholder="Second input..."></textarea>
@@ -250,7 +266,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <div id="ui-calc" class="calc-ui" style="display:none;">
     <div>
       <div class="calc-result-label">EXPRESSION</div>
-      <input class="calc-input" id="calcInput" placeholder="0" oninput="calcLive()" onkeydown="calcKey(event)">
+      <input class="calc-input" id="calcInput" placeholder="0" oninput="calcLive()" onkeydown="calcKey(event)" autofocus>
     </div>
     <div>
       <div class="calc-result-label">RESULT</div>
@@ -278,17 +294,44 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
       <button class="calc-btn op" onclick="calcAppend('%')">%</button>
       <button class="calc-btn eq" onclick="calcEval()">=</button>
     </div>
+    <div style="font-size:10.5px;color:var(--text-dim);text-align:center;">キーボードでも入力できます · Enterで計算</div>
     <div id="calcHistory" class="calc-history"></div>
   </div>
 
-  <!-- 専用UI: 単位変換 -->
+  <!-- 専用UI: 単位変換 (セレクト式) -->
   <div id="ui-conv" class="conv-ui" style="display:none;">
-    <div class="conv-hint" id="convHint">"100 km to miles" のように入力してください</div>
-    <input class="calc-input" id="convInput" placeholder='例: 100 km to miles' oninput="convLive()" style="font-size:16px;text-align:left;">
-    <div class="conv-result" id="convResult">—</div>
-    <div style="font-size:11.5px;color:var(--text-dim);line-height:1.8;">
-      対応: km/miles/m/feet/inches/cm/mm/yards · kg/lb/g/mg/oz · c/f/k · kb/mb/gb/tb/bytes · kph/mph/m/s
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:end;">
+      <div>
+        <div class="calc-result-label">値</div>
+        <input class="calc-input" id="convVal" placeholder="100" type="number" oninput="convSelectLive()" style="font-size:20px;text-align:center;">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;padding-bottom:2px;">
+        <select class="conv-sel" id="convCat" onchange="convUpdateUnits()">
+          <option value="length">長さ</option>
+          <option value="weight">重さ</option>
+          <option value="temp">温度</option>
+          <option value="data">データ容量</option>
+          <option value="speed">速度</option>
+          <option value="area">面積</option>
+          <option value="time_unit">時間</option>
+        </select>
+      </div>
+      <div>
+        <div class="calc-result-label">結果</div>
+        <div class="conv-result" id="convResult" style="font-size:20px;min-height:52px;border-radius:10px;">—</div>
+      </div>
     </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <div class="calc-result-label">変換元</div>
+        <select class="conv-sel" id="convFrom" onchange="convSelectLive()" style="width:100%;"></select>
+      </div>
+      <div>
+        <div class="calc-result-label">変換先</div>
+        <select class="conv-sel" id="convTo" onchange="convSelectLive()" style="width:100%;"></select>
+      </div>
+    </div>
+    <div id="convAllResults" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);white-space:pre-wrap;background:var(--panel);border-radius:10px;padding:12px;max-height:200px;overflow-y:auto;"></div>
   </div>
 
   <!-- 専用UI: パーセント -->
@@ -317,6 +360,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
     </div>
     <div class="conv-result" id="randResult" style="font-size:56px;">—</div>
     <button class="btn-run" onclick="doRandom()" style="align-self:center;padding:12px 40px;font-size:15px;">🎲 Generate</button>
+    <div style="font-size:10.5px;color:var(--text-dim);text-align:center;">Enterキーでも生成できます</div>
   </div>
 
   <!-- 専用UI: カラー変換 -->
@@ -328,14 +372,132 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
     <div class="color-values" id="colorValues" style="white-space:pre-wrap;"></div>
   </div>
 
-  <!-- 専用UI: 統計 -->
+  <!-- 専用UI: 統計 (複数入力欄) -->
   <div id="ui-stats" style="display:none;flex-direction:column;height:100%;overflow:hidden;">
-    <div class="pane" style="height:auto;flex:0 0 auto;border-bottom:1px solid var(--border);">
-      <div class="pane-header">NUMBERS (comma or space separated)</div>
-      <textarea id="statsInput" spellcheck="false" placeholder="1, 2, 3, 4, 5..." style="height:80px;flex:none;" oninput="statsLive()"></textarea>
+    <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;">
+      <span style="font-size:11px;font-weight:800;color:var(--text-dim);">NUMBERS</span>
+      <button class="btn-mini" onclick="statsAddRow()">+ 追加</button>
+      <button class="btn-mini" onclick="statsClear()">クリア</button>
+      <span style="font-size:10.5px;color:var(--text-dim);margin-left:auto;">一括入力: カンマ or 改行区切りでOK</span>
+    </div>
+    <div id="statsRows" style="padding:10px 14px;display:flex;flex-wrap:wrap;gap:8px;overflow-y:auto;max-height:160px;border-bottom:1px solid var(--border);">
     </div>
     <div id="statsCards" style="flex:1;overflow:auto;padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;"></div>
   </div>
+
+  <!-- 専用UI: GCD/LCM (複数入力欄) -->
+  <div id="ui-gcdlcm" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:14px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:11px;font-weight:800;color:var(--text-dim);">整数を入力</span>
+      <button class="btn-mini" onclick="gcdAddRow()">+ 追加</button>
+      <button class="btn-mini" onclick="gcdClear()">クリア</button>
+    </div>
+    <div id="gcdRows" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+    <div class="pct-result" id="gcdResult" style="display:none;">
+      <div class="res-val" id="gcdVal" style="font-size:22px;white-space:pre;"></div>
+    </div>
+  </div>
+
+  <!-- 専用UI: 素数判定 -->
+  <div id="ui-prime" class="conv-ui" style="display:none;gap:10px;">
+    <input class="calc-input" id="primeInput" placeholder="判定したい整数を入力" type="number" oninput="primeLive()" style="font-size:20px;text-align:center;">
+    <div id="primeResult" style="text-align:center;">
+      <div id="primeBig" style="font-size:64px;line-height:1.2;"></div>
+      <div id="primeSub" style="font-size:14px;color:var(--text-dim);margin-top:6px;"></div>
+    </div>
+    <div style="background:var(--panel);border-radius:10px;padding:14px;">
+      <div style="font-size:10.5px;font-weight:800;color:var(--text-dim);margin-bottom:8px;">周辺の素数</div>
+      <div id="primeNeighbors" style="font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.8;"></div>
+    </div>
+  </div>
+
+  <!-- 専用UI: シーザー暗号 -->
+  <div id="ui-caesar" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:14px;">
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+      <div style="flex:1;min-width:160px;">
+        <div class="calc-result-label">シフト数 (1〜25)</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button class="calc-btn op" onclick="caesarShiftAdj(-1)" style="width:40px;height:40px;flex-shrink:0;">−</button>
+          <input class="calc-input" id="caesarShift" type="number" min="1" max="25" value="3" oninput="caesarLive()" style="font-size:22px;text-align:center;flex:1;">
+          <button class="calc-btn op" onclick="caesarShiftAdj(1)" style="width:40px;height:40px;flex-shrink:0;">+</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-mini caesar-dir active" data-dir="enc" onclick="setCaesarDir('enc')">暗号化 →</button>
+        <button class="btn-mini caesar-dir" data-dir="dec" onclick="setCaesarDir('dec')">復号 ←</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1;">
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div class="calc-result-label">入力テキスト</div>
+        <textarea id="caesarInput" spellcheck="false" placeholder="テキストを入力..." oninput="caesarLive()" style="flex:1;min-height:120px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:12px;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;resize:none;"></textarea>
+        <div id="caesarCharCount" style="font-size:10.5px;color:var(--text-dim);"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div class="calc-result-label">出力</div>
+        <div id="caesarOutput" style="flex:1;min-height:120px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--accent);padding:12px;font-family:'JetBrains Mono',monospace;font-size:13px;white-space:pre-wrap;overflow:auto;"></div>
+        <button class="btn-mini" onclick="copyCaesarResult()" style="align-self:flex-start;">COPY</button>
+      </div>
+    </div>
+    <div style="background:var(--panel);border-radius:10px;padding:12px;">
+      <div style="font-size:10.5px;font-weight:800;color:var(--text-dim);margin-bottom:6px;">全シフト一覧 (ブルートフォース)</div>
+      <div id="caesarBrute" style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text-dim);max-height:140px;overflow-y:auto;white-space:pre;"></div>
+    </div>
+  </div>
+
+  <!-- 専用UI: モールス信号 -->
+  <div id="ui-morse" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:16px;gap:12px;">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <button class="btn-mini morse-mode-btn active" data-mode="encode" onclick="setMorseMode('encode')">テキスト → モールス</button>
+      <button class="btn-mini morse-mode-btn" data-mode="decode" onclick="setMorseMode('decode')">モールス → テキスト</button>
+      <button class="btn-mini morse-mode-btn" data-mode="key" onclick="setMorseMode('key')">⚡ モールスキー入力</button>
+      <div style="margin-left:auto;display:flex;gap:6px;align-items:center;">
+        <button class="btn-mini" id="morseToggleMute" onclick="toggleMorseMute()">🔊 音あり</button>
+        <span style="font-size:10px;color:var(--text-dim);" id="morseVolLabel"></span>
+      </div>
+    </div>
+    <!-- encode/decode mode -->
+    <div id="morseTextArea" style="display:flex;flex-direction:column;gap:10px;flex:1;">
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div class="calc-result-label" id="morseInputLabel">入力テキスト</div>
+        <textarea id="morseInput" spellcheck="false" placeholder="テキストを入力..." oninput="morseLive()" style="min-height:100px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:12px;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;resize:none;"></textarea>
+        <div id="morseCharCount" style="font-size:10.5px;color:var(--text-dim);"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="calc-result-label">出力</div>
+          <button class="btn-mini" onclick="playMorseOutput()">▶ 再生</button>
+          <button class="btn-mini" onclick="copyMorseResult()">COPY</button>
+        </div>
+        <div id="morseOutput" style="min-height:80px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--accent);padding:12px;font-family:'JetBrains Mono',monospace;font-size:13px;white-space:pre-wrap;overflow:auto;"></div>
+      </div>
+    </div>
+    <!-- key input mode -->
+    <div id="morseKeyArea" style="display:none;flex-direction:column;gap:10px;flex:1;">
+      <div style="background:var(--panel);border-radius:12px;padding:14px;font-size:12px;color:var(--text-dim);line-height:1.7;">
+        <strong style="color:var(--text);">スペースキーを押して音を鳴らしながら入力</strong><br>
+        短押し (.): タン　　長押し (−): ツー（500ms以上）<br>
+        文字区切り: 1秒離す　　単語区切り: 2秒以上離す
+      </div>
+      <div id="morseKeyDisplay" style="font-size:40px;text-align:center;padding:20px;background:var(--panel);border-radius:12px;font-family:'JetBrains Mono',monospace;min-height:80px;letter-spacing:4px;">—</div>
+      <div id="morseKeyDecoded" style="text-align:center;font-size:20px;font-weight:800;color:var(--accent);letter-spacing:4px;"></div>
+      <div style="display:flex;gap:8px;justify-content:center;">
+        <button class="btn-mini" onclick="morseKeyClear()">クリア</button>
+        <button class="btn-mini" onclick="copyMorseKey()">COPY</button>
+      </div>
+      <div id="morseKeyRaw" style="font-size:11px;color:var(--text-dim);text-align:center;font-family:'JetBrains Mono',monospace;"></div>
+    </div>
+  </div>
+
+  <!-- 専用UI: 日付系 (日付ピッカー) -->
+  <div id="ui-date" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:14px;">
+    <div id="dateSubMode" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+    <div id="dateFields" style="display:flex;flex-direction:column;gap:12px;"></div>
+    <div class="pct-result" id="dateResult" style="display:none;">
+      <div class="res-val" id="dateVal" style="font-size:18px;white-space:pre-line;font-family:'JetBrains Mono',monospace;"></div>
+    </div>
+  </div>
+
 </main>
 </div>
 
@@ -834,6 +996,11 @@ async function execute(){
     if(curTool==='rot13')r=rot13(val);
     if(curTool==='caesar'){const[shiftStr,...rest]=val.split('\n');const shift=parseInt(shiftStr);if(isNaN(shift))throw new Error('Line 1 must be a number');r=caesar(rest.join('\n'),shift);}
     if(curTool==='morse'){if(val.startsWith('.'))r=morseDecode(val.slice(1).trim());else r=morseEncode(val);}
+    // 専用UIがある場合はそちらで処理済みのためスキップ
+    if(curTool==='caesar'){caesarLive();return;}
+    if(curTool==='stats'){statsCalc();return;}
+    if(curTool==='gcd-lcm'){gcdCalcAll();return;}
+    if(curTool==='prime'){primeLive();return;}
     if(curTool==='strip-emoji')r=val.replace(/\p{Emoji}/gu,'').replace(/\s{2,}/g,' ').trim();
     if(curTool==='extract-url')r=([...val.matchAll(/https?:\/\/[^\s"'<>]+/g)].map(m=>m[0]).join('\n'))||'No URLs found';
     if(curTool==='extract-email')r=([...val.matchAll(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g)].map(m=>m[0]).join('\n'))||'No emails found';
@@ -965,21 +1132,38 @@ const SPECIAL_UI={
   'random':'ui-random',
   'color':'ui-color',
   'stats':'ui-stats',
+  'gcd-lcm':'ui-gcdlcm',
+  'prime':'ui-prime',
+  'caesar':'ui-caesar',
+  'morse':'ui-morse',
+  'ts-format':'ui-date',
+  'date-diff':'ui-date',
+  'date-add':'ui-date',
+  'weekday':'ui-date',
+  'iso-week':'ui-date',
+  'countdown':'ui-date',
 };
-const ALL_UIS=['editorGrid','ui-calc','ui-conv','ui-pct','ui-random','ui-color','ui-stats'];
+const ALL_UIS=['editorGrid','ui-calc','ui-conv','ui-pct','ui-random','ui-color','ui-stats','ui-gcdlcm','ui-prime','ui-caesar','ui-morse','ui-date'];
 function showUI(toolId){
   const target=SPECIAL_UI[toolId]||'editorGrid';
+  const flexUIs=['ui-stats','ui-gcdlcm','ui-caesar','ui-morse','ui-date'];
   ALL_UIS.forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
-    el.style.display=(id===target)?(id==='ui-stats'?'flex':'block'):'none';
+    if(id===target){
+      el.style.display=id==='editorGrid'?'grid':(flexUIs.includes(id)?'flex':'block');
+    }else{el.style.display='none';}
   });
-  // editorGridはgridで表示
-  if(target==='editorGrid')document.getElementById('editorGrid').style.display='grid';
-  // RUN/COPYボタンの表示制御
   const hasSpecial=!!SPECIAL_UI[toolId];
   document.getElementById('lbl-run').style.display=hasSpecial?'none':'';
   document.getElementById('lbl-copy').style.display='';
+  if(toolId==='caesar')initCaesar();
+  if(toolId==='morse')initMorse();
+  if(toolId==='unit-conv')convInitUnits();
+  if(toolId==='stats')initStats();
+  if(toolId==='gcd-lcm')initGcdLcm();
+  if(toolId==='prime'){setTimeout(()=>document.getElementById('primeInput')?.focus(),50);}
+  if(SPECIAL_UI[toolId]==='ui-date')initDateUI(toolId);
 }
 
 /* ── 計算機専用UI ── */
@@ -1018,13 +1202,85 @@ function calcEval(){
 }
 function calcKey(e){if(e.key==='Enter')calcEval();}
 
-/* ── 単位変換専用UI ── */
-function convLive(){
-  const v=document.getElementById('convInput').value;
+/* ── 単位変換専用UI (セレクト式) ── */
+const CONV_UNITS={
+  length:{label:'長さ',units:[['m','メートル'],['km','キロメートル'],['cm','センチメートル'],['mm','ミリメートル'],['miles','マイル'],['feet','フィート'],['inches','インチ'],['yards','ヤード'],['nm','ナノメートル'],['um','マイクロメートル']]},
+  weight:{label:'重さ',units:[['kg','キログラム'],['g','グラム'],['mg','ミリグラム'],['lb','ポンド'],['oz','オンス'],['t','トン'],['ug','マイクログラム']]},
+  temp:{label:'温度',units:[['c','摂氏 (°C)'],['f','華氏 (°F)'],['k','ケルビン (K)']]},
+  data:{label:'データ容量',units:[['bytes','バイト'],['kb','キロバイト'],['mb','メガバイト'],['gb','ギガバイト'],['tb','テラバイト'],['pb','ペタバイト'],['bits','ビット']]},
+  speed:{label:'速度',units:[['m/s','メートル/秒'],['km/h','キロメートル/時'],['mph','マイル/時'],['knots','ノット'],['ft/s','フィート/秒']]},
+  area:{label:'面積',units:[['m2','平方メートル'],['km2','平方キロメートル'],['cm2','平方センチメートル'],['ft2','平方フィート'],['in2','平方インチ'],['acres','エーカー'],['ha','ヘクタール']]},
+  time_unit:{label:'時間',units:[['s','秒'],['ms','ミリ秒'],['min','分'],['h','時間'],['d','日'],['w','週'],['month','月(30日)'],['year','年(365日)']]},
+};
+// 全単位を基準値(SI)に変換する係数
+const CONV_TO_BASE={
+  // length → m
+  m:1,km:1000,cm:0.01,mm:0.001,miles:1609.344,feet:0.3048,inches:0.0254,yards:0.9144,nm:1e-9,um:1e-6,
+  // weight → g
+  kg:1000,g:1,mg:0.001,lb:453.592,oz:28.3495,t:1e6,ug:1e-6,
+  // data → bytes
+  bytes:1,kb:1024,mb:1048576,gb:1073741824,tb:1099511627776,pb:1.126e15,bits:0.125,
+  // speed → m/s
+  'm/s':1,'km/h':1/3.6,mph:0.44704,knots:0.514444,'ft/s':0.3048,
+  // area → m²
+  m2:1,km2:1e6,cm2:1e-4,ft2:0.0929,in2:0.000645,acres:4046.86,ha:10000,
+  // time → s
+  s:1,ms:0.001,min:60,h:3600,d:86400,w:604800,month:2592000,year:31536000,
+};
+function convToBase(val,from,cat){
+  if(cat==='temp'){
+    if(from==='c')return val;
+    if(from==='f')return(val-32)*5/9;
+    if(from==='k')return val-273.15;
+  }
+  return val*CONV_TO_BASE[from];
+}
+function convFromBase(base,to,cat){
+  if(cat==='temp'){
+    if(to==='c')return base;
+    if(to==='f')return base*9/5+32;
+    if(to==='k')return base+273.15;
+  }
+  return base/CONV_TO_BASE[to];
+}
+function convInitUnits(){
+  const cat=document.getElementById('convCat')?.value||'length';
+  convUpdateUnits(cat);
+}
+function convUpdateUnits(cat){
+  cat=cat||document.getElementById('convCat').value;
+  const units=CONV_UNITS[cat].units;
+  ['convFrom','convTo'].forEach((id,i)=>{
+    const sel=document.getElementById(id);
+    if(!sel)return;
+    const prev=sel.value;
+    sel.innerHTML=units.map(([v,l])=>`<option value="${v}">${l} (${v})</option>`).join('');
+    // デフォルト: fromは0番目、toは1番目
+    if(i===1&&units[1])sel.value=units[1][0];
+    if(prev&&units.find(u=>u[0]===prev))sel.value=prev;
+  });
+  convSelectLive();
+}
+function convSelectLive(){
+  const val=parseFloat(document.getElementById('convVal')?.value);
+  const cat=document.getElementById('convCat')?.value;
+  const from=document.getElementById('convFrom')?.value;
+  const to=document.getElementById('convTo')?.value;
   const res=document.getElementById('convResult');
-  if(!v){res.innerText='—';return;}
-  try{res.innerText=unitConvert(v);}
-  catch(e){res.innerText=e.message;}
+  const allRes=document.getElementById('convAllResults');
+  if(!res||isNaN(val)){if(res)res.innerText='—';return;}
+  try{
+    const base=convToBase(val,from,cat);
+    const result=convFromBase(base,to,cat);
+    const fmt=n=>Math.abs(n)>=1e6||Math.abs(n)<0.0001?n.toExponential(4):parseFloat(n.toFixed(6));
+    res.innerText=`${fmt(result)} ${to}`;
+    // 全単位への変換も表示
+    const lines=CONV_UNITS[cat].units.map(([u,l])=>{
+      const r=convFromBase(base,u,cat);
+      return`${l.padEnd(18,' '}: ${fmt(r)} ${u}`;
+    });
+    allRes.innerText=lines.join('\n');
+  }catch(e){res.innerText='Error';}
 }
 
 /* ── パーセント専用UI ── */
@@ -1082,42 +1338,283 @@ function colorLive(){
   }catch(e){document.getElementById('colorValues').innerText='Error: '+e.message;}
 }
 
-/* ── 統計専用UI ── */
-function statsLive(){
-  const v=document.getElementById('statsInput').value;
-  const nums=v.split(/[\s,]+/).map(Number).filter(x=>!isNaN(x)&&v.trim());
+/* ── 文字数カウント（常時表示） ── */
+function updateCharCount(){
+  const val=document.getElementById('input').value;
+  const el=document.getElementById('charCounter');
+  if(!el)return;
+  el.innerText=val.length?`${val.length}文字 / ${val.split(/\s+/).filter(Boolean).length}語`:'';
+}
+
+/* ── リアルタイム変換（入力だけで変換） ── */
+const REALTIME_TOOLS=['b64e','b64d','b64url-e','b64url-d','url-enc','url-dec','html-enc','html-dec',
+  'sha256','md5','sha1','sha512','rot13','slug','strip-emoji','normalize','trim-lines',
+  'remove-blank','reverse','number-lines','esc-js','ts-format','url-parse','textstats',
+  'baseconv','token-est','extract-url','extract-email','extract-num','morse'];
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('input')?.addEventListener('input',()=>{
+    if(REALTIME_TOOLS.includes(curTool))execute();
+    updateCharCount();
+  });
+});
+
+/* ── 統計専用UI（複数入力欄） ── */
+let statsNums=[0,0,0];
+function initStats(){statsNums=[0,0,0];renderStatsRows();}
+function renderStatsRows(){
+  const rows=document.getElementById('statsRows');
+  if(!rows)return;
+  rows.innerHTML=statsNums.map((v,i)=>`<input class="stats-inp" type="number" value="${v||''}" oninput="statsUpdateVal(${i},this.value)" placeholder="${i+1}">`).join('');
+  statsCalc();
+}
+function statsUpdateVal(i,v){statsNums[i]=parseFloat(v)||0;statsCalc();}
+function statsAddRow(){statsNums.push(0);renderStatsRows();}
+function statsClear(){statsNums=[0,0,0];renderStatsRows();}
+function statsCalc(){
+  const all=Array.from(document.getElementById('statsRows')?.querySelectorAll('input')||[]).map(el=>parseFloat(el.value)).filter(x=>!isNaN(x));
   const cards=document.getElementById('statsCards');
-  if(!nums.length){cards.innerHTML='';return;}
-  const mean=nums.reduce((a,b)=>a+b,0)/nums.length;
-  const sorted=[...nums].sort((a,b)=>a-b);
-  const n=nums.length;
+  if(!cards||!all.length){if(cards)cards.innerHTML='';return;}
+  const n=all.length;
+  const mean=all.reduce((a,b)=>a+b,0)/n;
+  const sorted=[...all].sort((a,b)=>a-b);
   const med=n%2===0?(sorted[n/2-1]+sorted[n/2])/2:sorted[Math.floor(n/2)];
-  const variance=nums.reduce((a,b)=>a+(b-mean)**2,0)/n;
+  const variance=all.reduce((a,b)=>a+(b-mean)**2,0)/n;
   const sd=Math.sqrt(variance);
-  const mode=Object.entries(nums.reduce((a,v)=>(a[v]=(a[v]||0)+1,a),{})).sort((a,b)=>b[1]-a[1])[0][0];
+  const mode=Object.entries(all.reduce((a,v)=>(a[v]=(a[v]||0)+1,a),{})).sort((a,b)=>b[1]-a[1])[0][0];
   const stats=[
-    {lbl:'Count',val:n},
-    {lbl:'Sum',val:nums.reduce((a,b)=>a+b,0)},
-    {lbl:'Mean',val:mean.toFixed(4)},
-    {lbl:'Median',val:med},
-    {lbl:'Mode',val:mode},
-    {lbl:'Min',val:sorted[0]},
-    {lbl:'Max',val:sorted[n-1]},
-    {lbl:'Range',val:sorted[n-1]-sorted[0]},
-    {lbl:'Std Dev',val:sd.toFixed(4)},
-    {lbl:'Variance',val:variance.toFixed(4)},
+    {lbl:'個数',val:n},{lbl:'合計',val:all.reduce((a,b)=>a+b,0)},
+    {lbl:'平均',val:mean.toFixed(4)},{lbl:'中央値',val:med},
+    {lbl:'最頻値',val:mode},{lbl:'最小',val:sorted[0]},{lbl:'最大',val:sorted[n-1]},
+    {lbl:'範囲',val:sorted[n-1]-sorted[0]},{lbl:'標準偏差',val:sd.toFixed(4)},{lbl:'分散',val:variance.toFixed(4)},
   ];
   cards.innerHTML=stats.map(s=>`<div class="stat-card"><div class="val">${s.val}</div><div class="lbl">${s.lbl}</div></div>`).join('');
+}
+
+/* ── GCD/LCM専用UI ── */
+let gcdNums=[12,18,24];
+function initGcdLcm(){gcdNums=[12,18,24];renderGcdRows();}
+function renderGcdRows(){
+  const rows=document.getElementById('gcdRows');
+  if(!rows)return;
+  rows.innerHTML=gcdNums.map((v,i)=>`<input class="gcd-inp" type="number" value="${v||''}" oninput="gcdUpdateVal(${i},this.value)" placeholder="${i+1}">`).join('')+
+    `<button class="btn-mini" onclick="gcdAddRow()" style="align-self:center;">+</button>`;
+  gcdCalcAll();
+}
+function gcdUpdateVal(i,v){gcdNums[i]=parseInt(v)||0;gcdCalcAll();}
+function gcdAddRow(){gcdNums.push(0);renderGcdRows();}
+function gcdClear(){gcdNums=[0,0];renderGcdRows();}
+function gcdCalcAll(){
+  const nums=Array.from(document.getElementById('gcdRows')?.querySelectorAll('input')||[]).map(el=>parseInt(el.value)).filter(x=>!isNaN(x)&&x>0);
+  const res=document.getElementById('gcdResult');
+  const val=document.getElementById('gcdVal');
+  if(!res||nums.length<2){if(res)res.style.display='none';return;}
+  const g=nums.reduce(gcd);
+  const l=nums.reduce(lcm);
+  val.innerText=`GCD = ${g}\nLCM = ${l}`;
+  res.style.display='block';
+}
+
+/* ── 素数判定専用UI ── */
+function primeLive(){
+  const n=parseInt(document.getElementById('primeInput')?.value);
+  const big=document.getElementById('primeBig');
+  const sub=document.getElementById('primeSub');
+  const nb=document.getElementById('primeNeighbors');
+  if(!big)return;
+  if(isNaN(n)||n<2){big.innerText='';sub.innerText='';if(nb)nb.innerText='';return;}
+  const p=isPrime(n);
+  big.innerText=p?'✅':'❌';
+  sub.innerText=p?`${n} は素数です`:`${n} は素数ではありません`;
+  sub.style.color=p?'var(--add)':'var(--del)';
+  if(nb){
+    const prev=[],next=[];
+    for(let i=n-1;i>=2&&prev.length<5;i--)if(isPrime(i))prev.unshift(i);
+    for(let i=n+(p?1:0);next.length<5;i++)if(isPrime(i))next.push(i);
+    nb.innerText=`前の素数: ${prev.join(' → ')||'—'}\n${p?`▶ ${n} (素数)`:''}\n次の素数: ${next.join(' → ')}`;
+  }
+}
+
+/* ── シーザー暗号専用UI ── */
+let caesarDir='enc';
+function initCaesar(){caesarDir='enc';document.querySelectorAll('.caesar-dir').forEach(b=>b.classList.toggle('active',b.dataset.dir==='enc'));caesarLive();}
+function setCaesarDir(d){
+  caesarDir=d;
+  document.querySelectorAll('.caesar-dir').forEach(b=>b.classList.toggle('active',b.dataset.dir===d));
+  caesarLive();
+}
+function caesarShiftAdj(delta){
+  const inp=document.getElementById('caesarShift');
+  let v=(parseInt(inp.value)||0)+delta;
+  v=((v-1+25)%25)+1;
+  inp.value=v;caesarLive();
+}
+function caesarLive(){
+  const text=document.getElementById('caesarInput')?.value||'';
+  const shift=parseInt(document.getElementById('caesarShift')?.value)||3;
+  const out=document.getElementById('caesarOutput');
+  const brute=document.getElementById('caesarBrute');
+  const cc=document.getElementById('caesarCharCount');
+  if(!out)return;
+  const s=caesarDir==='enc'?shift:26-shift;
+  const result=caesar(text,s);
+  out.innerText=result;
+  if(cc)cc.innerText=text.length?`${text.length}文字`:'';
+  if(brute&&text){
+    brute.innerText=Array.from({length:25},(_,i)=>{
+      const r=caesar(text,i+1);
+      return`[${String(i+1).padStart(2,' ')}] ${r.slice(0,60)}${r.length>60?'…':''}`;
+    }).join('\n');
+  }else if(brute){brute.innerText='';}
+}
+function copyCaesarResult(){navigator.clipboard.writeText(document.getElementById('caesarOutput')?.innerText||'');}
+
+/* ── モールス信号専用UI ── */
+let morseMode='encode',morseMute=false,morseAudioCtx=null;
+let morseKeyPressTime=0,morseKeyTimer=null,morseKeyBuffer='',morseKeyDecodeBuffer='';
+function initMorse(){setMorseMode('encode');}
+function setMorseMode(m){
+  morseMode=m;
+  document.querySelectorAll('.morse-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));
+  const ta=document.getElementById('morseTextArea');
+  const ka=document.getElementById('morseKeyArea');
+  if(ta)ta.style.display=m==='key'?'none':'flex';
+  if(ka)ka.style.display=m==='key'?'flex':'none';
+  if(m==='key'){if(document.getElementById('morseKeyDisplay'))document.getElementById('morseKeyDisplay').innerText='—';morseKeyBuffer='';morseKeyDecodeBuffer='';}
+  else morseLive();
+}
+function toggleMorseMute(){
+  morseMute=!morseMute;
+  const btn=document.getElementById('morseToggleMute');
+  if(btn)btn.innerText=morseMute?'🔇 ミュート':'🔊 音あり';
+}
+function morseLive(){
+  const inp=document.getElementById('morseInput')?.value||'';
+  const out=document.getElementById('morseOutput');
+  const lbl=document.getElementById('morseInputLabel');
+  const cc=document.getElementById('morseCharCount');
+  if(!out)return;
+  if(cc)cc.innerText=inp.length?`${inp.length}文字`:'';
+  if(morseMode==='encode'){if(lbl)lbl.innerText='入力テキスト';out.innerText=morseEncode(inp);}
+  else{if(lbl)lbl.innerText='モールス符号（/ で単語区切り）';out.innerText=morseDecode(inp);}
+}
+function copyMorseResult(){navigator.clipboard.writeText(document.getElementById('morseOutput')?.innerText||'');}
+function playMorseOutput(){playMorseCode(document.getElementById('morseOutput')?.innerText||'');}
+function getMorseAudio(){if(!morseAudioCtx)morseAudioCtx=new(window.AudioContext||window.webkitAudioContext)();return morseAudioCtx;}
+function playMorseCode(code){
+  if(morseMute)return;
+  const ctx=getMorseAudio();
+  let t=ctx.currentTime+0.05;
+  const dot=0.08,dash=0.24,gap=0.08,cGap=0.24,wGap=0.56;
+  for(const tok of code.split(' ')){
+    if(tok==='/'){t+=wGap;continue;}
+    if(!tok){t+=cGap;continue;}
+    for(const c of tok){
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);o.frequency.value=600;g.gain.value=0.3;
+      o.start(t);const d=c==='.'?dot:dash;o.stop(t+d);t+=d+gap;
+    }t+=cGap;
+  }
+}
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'&&morseMode==='key'&&curTool==='morse'){
+    e.preventDefault();
+    if(morseKeyPressTime>0)return;
+    morseKeyPressTime=Date.now();
+    clearTimeout(morseKeyTimer);
+    if(!morseMute&&!window._mOsc){
+      try{const ctx=getMorseAudio();const o=ctx.createOscillator();const g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=600;g.gain.value=0.3;o.start();window._mOsc={o,g};}catch(_){}
+    }
+  }else if(e.key==='Enter'&&curTool==='random'){doRandom();}
+  else if(curTool==='calc'&&document.getElementById('ui-calc')?.style.display!=='none'){
+    const ci=document.getElementById('calcInput');
+    if(document.activeElement!==ci)ci?.focus();
+  }
+});
+document.addEventListener('keyup',e=>{
+  if(e.code==='Space'&&morseMode==='key'&&curTool==='morse'){
+    e.preventDefault();
+    const held=Date.now()-morseKeyPressTime;
+    morseKeyPressTime=0;
+    if(window._mOsc){try{window._mOsc.o.stop();}catch(_){}window._mOsc=null;}
+    const sym=held>=500?'-':'.';
+    morseKeyBuffer+=sym;
+    const disp=document.getElementById('morseKeyDisplay');
+    if(disp)disp.innerText=morseKeyBuffer||'—';
+    clearTimeout(morseKeyTimer);
+    morseKeyTimer=setTimeout(()=>{
+      if(morseKeyBuffer){
+        const ch=MORSE_DEC[morseKeyBuffer]||'?';
+        morseKeyDecodeBuffer+=ch;
+        const dec=document.getElementById('morseKeyDecoded');
+        const raw=document.getElementById('morseKeyRaw');
+        if(dec)dec.innerText=morseKeyDecodeBuffer;
+        if(raw)raw.innerText=(raw.innerText||'')+morseKeyBuffer+' ';
+        morseKeyBuffer='';
+        if(disp)disp.innerText='—';
+      }
+    },1000);
+  }
+});
+function morseKeyClear(){
+  morseKeyBuffer='';morseKeyDecodeBuffer='';
+  const d=document.getElementById('morseKeyDisplay');
+  const dec=document.getElementById('morseKeyDecoded');
+  const raw=document.getElementById('morseKeyRaw');
+  if(d)d.innerText='—';if(dec)dec.innerText='';if(raw)raw.innerText='';
+}
+function copyMorseKey(){navigator.clipboard.writeText(document.getElementById('morseKeyDecoded')?.innerText||'');}
+
+/* ── 日付系専用UI ── */
+const DATE_MODES={
+  'ts-format':{label:'タイムスタンプ変換',fields:[{id:'tsIn',label:'日時',type:'datetime-local'}],calc(f){const v=f.tsIn?.value;if(!v)return'';return fmtTimestamp(new Date(v).getTime());}},
+  'date-diff':{label:'日付の差分',fields:[{id:'ddA',label:'開始日',type:'date'},{id:'ddB',label:'終了日',type:'date'}],calc(f){const a=f.ddA?.value,b=f.ddB?.value;if(!a||!b)return'';return dateDiff(a,b);}},
+  'date-add':{label:'日付の加算',fields:[{id:'daBase',label:'基準日',type:'date'},{id:'daNum',label:'数値',type:'number',ph:'30'},{id:'daUnit',label:'単位',type:'select',opts:['days','hours','minutes','months','years']}],calc(f){const base=f.daBase?.value,n=f.daNum?.value,unit=f.daUnit?.value;if(!base||!n)return'';return dateAdd(`${base} ${n>0?'+':''}${n} ${unit}`);}},
+  'weekday':{label:'曜日確認',fields:[{id:'wdDate',label:'日付',type:'date'}],calc(f){const d=new Date(f.wdDate?.value);if(isNaN(d))return'';const days=['日','月','火','水','木','金','土'];return`${d.toLocaleDateString('ja-JP')} は ${days[d.getDay()]}曜日 (${DOW[d.getDay()]})`;}},
+  'iso-week':{label:'ISO週番号',fields:[{id:'iwDate',label:'日付',type:'date'}],calc(f){const v=f.iwDate?.value;if(!v)return'';return isoWeek(v);}},
+  'countdown':{label:'カウントダウン',fields:[{id:'cdDate',label:'目標日時',type:'datetime-local'}],calc(f){const v=f.cdDate?.value;if(!v)return'';return countdown(v);}},
+};
+let dateSubTool='ts-format';
+function initDateUI(toolId){
+  dateSubTool=toolId;
+  const sub=document.getElementById('dateSubMode');
+  if(sub)sub.innerHTML=Object.entries(DATE_MODES).map(([k,m])=>`<button class="btn-mini date-mode-btn${k===toolId?' active':''}" onclick="switchDateMode('${k}')">${m.label}</button>`).join('');
+  renderDateFields(toolId);
+}
+function switchDateMode(toolId){
+  dateSubTool=toolId;
+  document.querySelectorAll('.date-mode-btn').forEach(b=>{const m=DATE_MODES[toolId];b.classList.toggle('active',m&&b.innerText===m.label);});
+  renderDateFields(toolId);
+}
+function renderDateFields(toolId){
+  const mode=DATE_MODES[toolId];if(!mode)return;
+  const fields=document.getElementById('dateFields');const res=document.getElementById('dateResult');if(!fields)return;
+  fields.innerHTML=mode.fields.map(f=>{
+    if(f.type==='select')return`<div class="date-field-row"><label>${f.label}</label><select class="conv-sel" id="df_${f.id}" onchange="dateLive()" style="width:100%;">${(f.opts||[]).map(o=>`<option value="${o}">${o}</option>`).join('')}</select></div>`;
+    return`<div class="date-field-row"><label>${f.label}</label><input type="${f.type}" id="df_${f.id}" onchange="dateLive()" oninput="dateLive()" ${f.ph?`placeholder="${f.ph}"`:''} style="color-scheme:dark;"></div>`;
+  }).join('');
+  if(res)res.style.display='none';
+}
+function dateLive(){
+  const mode=DATE_MODES[dateSubTool];if(!mode)return;
+  const f={};mode.fields.forEach(field=>{const el=document.getElementById(`df_${field.id}`);if(el)f[field.id]=el;});
+  try{
+    const result=mode.calc(f);
+    const res=document.getElementById('dateResult');const val=document.getElementById('dateVal');
+    if(res&&val){val.innerText=result||'';res.style.display=result?'block':'none';}
+  }catch(e){const val=document.getElementById('dateVal');if(val)val.innerText='Error: '+e.message;document.getElementById('dateResult').style.display='block';}
 }
 
 /* ── copyResult拡張（専用UIも対応） ── */
 function copyResult(){
   const text=
-    document.getElementById('outputText').innerText||
-    document.getElementById('htmlResult').innerText||
+    document.getElementById('outputText')?.innerText||
+    document.getElementById('htmlResult')?.innerText||
     document.getElementById('calcResult')?.innerText||
     document.getElementById('convResult')?.innerText||
     document.getElementById('colorValues')?.innerText||
+    document.getElementById('caesarOutput')?.innerText||
+    document.getElementById('morseOutput')?.innerText||
+    document.getElementById('dateVal')?.innerText||
     '';
   navigator.clipboard.writeText(text);
 }
