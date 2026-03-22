@@ -46,6 +46,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .conv-sel:focus{border-color:var(--accent);}
 .caesar-dir.active{background:var(--accent);color:#fff;border-color:var(--accent);}
 .morse-mode-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.morse-lang-btn.active{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+.lorem-type-btn.active,.palette-type-btn.active,.grad-type-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
 .date-mode-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
 .date-field-row{display:flex;flex-direction:column;gap:4px;}
 .date-field-row label{font-size:10.5px;font-weight:800;color:var(--text-dim);text-transform:uppercase;}
@@ -468,46 +470,67 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   </div>
 
   <!-- 専用UI: モールス信号 -->
-  <div id="ui-morse" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:16px;gap:12px;">
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <button class="btn-mini morse-mode-btn active" data-mode="encode" onclick="setMorseMode('encode')">テキスト → モールス</button>
-      <button class="btn-mini morse-mode-btn" data-mode="decode" onclick="setMorseMode('decode')">モールス → テキスト</button>
-      <button class="btn-mini morse-mode-btn" data-mode="key" onclick="setMorseMode('key')">⚡ モールスキー入力</button>
+  <div id="ui-morse" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:16px;gap:10px;">
+    <!-- モード行 -->
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+      <button class="btn-mini morse-mode-btn active" data-mode="encode" onclick="setMorseMode('encode')">テキスト → 符号</button>
+      <button class="btn-mini morse-mode-btn" data-mode="decode" onclick="setMorseMode('decode')">符号 → テキスト</button>
+      <button class="btn-mini morse-mode-btn" data-mode="key" onclick="setMorseMode('key')">⚡ キー入力</button>
+      <div style="width:1px;height:18px;background:var(--border);margin:0 4px;"></div>
+      <!-- 和文/英文 切替 -->
+      <button class="btn-mini morse-lang-btn active" data-mlang="en" onclick="setMorseLang('en')">英文</button>
+      <button class="btn-mini morse-lang-btn" data-mlang="ja" onclick="setMorseLang('ja')">和文</button>
       <div style="margin-left:auto;display:flex;gap:6px;align-items:center;">
-        <button class="btn-mini" id="morseToggleMute" onclick="toggleMorseMute()">🔊 音あり</button>
-        <span style="font-size:10px;color:var(--text-dim);" id="morseVolLabel"></span>
+        <button class="btn-mini" id="morseToggleMute" onclick="toggleMorseMute()">🔊</button>
       </div>
     </div>
     <!-- encode/decode mode -->
-    <div id="morseTextArea" style="display:flex;flex-direction:column;gap:10px;flex:1;">
-      <div style="display:flex;flex-direction:column;gap:4px;">
-        <div class="calc-result-label" id="morseInputLabel">入力テキスト</div>
-        <textarea id="morseInput" spellcheck="false" placeholder="テキストを入力..." oninput="morseLive()" style="min-height:100px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:12px;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;resize:none;"></textarea>
-        <div id="morseCharCount" style="font-size:10.5px;color:var(--text-dim);"></div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:4px;">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div class="calc-result-label">出力</div>
-          <button class="btn-mini" onclick="playMorseOutput()">▶ 再生</button>
-          <button class="btn-mini" onclick="copyMorseResult()">COPY</button>
+    <div id="morseTextArea" style="display:flex;flex-direction:column;gap:8px;flex:1;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1;">
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="calc-result-label" id="morseInputLabel">入力</div>
+            <span id="morseCharCount" style="font-size:10px;color:var(--text-dim);"></span>
+          </div>
+          <textarea id="morseInput" spellcheck="false" oninput="morseLive()"
+            style="flex:1;min-height:140px;background:var(--panel);border:1px solid var(--border);border-radius:10px;
+                   color:var(--text);padding:12px;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;resize:none;"></textarea>
         </div>
-        <div id="morseOutput" style="min-height:80px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--accent);padding:12px;font-family:'JetBrains Mono',monospace;font-size:13px;white-space:pre-wrap;overflow:auto;"></div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="calc-result-label">出力</div>
+            <button class="btn-mini" id="morsePlayBtn" onclick="toggleMorsePlay()">▶ 再生</button>
+            <button class="btn-mini" onclick="copyMorseResult()">COPY</button>
+          </div>
+          <div id="morseOutput"
+            style="flex:1;min-height:140px;background:var(--panel);border:1px solid var(--border);border-radius:10px;
+                   color:var(--accent);padding:12px;font-family:'JetBrains Mono',monospace;font-size:13px;
+                   white-space:pre-wrap;overflow:auto;line-height:1.8;"></div>
+        </div>
+      </div>
+      <!-- 和文入力ヒント -->
+      <div id="morseJaHint" style="display:none;font-size:11px;color:var(--text-dim);background:var(--panel);border-radius:8px;padding:8px 12px;line-height:1.7;">
+        和文モールス対応: ひらがな・カタカナ・一部記号に対応しています。<br>
+        長音(ー)は <code style="background:var(--bg);padding:1px 4px;border-radius:3px;">−−</code>、促音(っ)は <code style="background:var(--bg);padding:1px 4px;border-radius:3px;">・・</code>
       </div>
     </div>
     <!-- key input mode -->
     <div id="morseKeyArea" style="display:none;flex-direction:column;gap:10px;flex:1;">
-      <div style="background:var(--panel);border-radius:12px;padding:14px;font-size:12px;color:var(--text-dim);line-height:1.7;">
-        <strong style="color:var(--text);">スペースキーを押して音を鳴らしながら入力</strong><br>
-        短押し (.): タン　　長押し (−): ツー（500ms以上）<br>
-        文字区切り: 1秒離す　　単語区切り: 2秒以上離す
+      <div style="background:var(--panel);border-radius:10px;padding:12px;font-size:12px;color:var(--text-dim);line-height:1.8;">
+        <strong style="color:var(--text);">スペースキーを押しながら入力</strong><br>
+        短押し <span style="color:var(--accent);">●</span> : タン (200ms未満)　　長押し <span style="color:var(--accent);">━</span> : ツー (200ms以上)<br>
+        文字確定: 0.5秒離す　　スペース: 1秒以上離す
       </div>
-      <div id="morseKeyDisplay" style="font-size:40px;text-align:center;padding:20px;background:var(--panel);border-radius:12px;font-family:'JetBrains Mono',monospace;min-height:80px;letter-spacing:4px;">—</div>
-      <div id="morseKeyDecoded" style="text-align:center;font-size:20px;font-weight:800;color:var(--accent);letter-spacing:4px;"></div>
+      <div id="morseKeyDisplay"
+        style="font-size:44px;text-align:center;padding:20px;background:var(--panel);border-radius:12px;
+               font-family:'JetBrains Mono',monospace;min-height:90px;letter-spacing:6px;transition:.15s;">—</div>
+      <div id="morseKeyDecoded"
+        style="text-align:center;font-size:24px;font-weight:800;color:var(--accent);letter-spacing:6px;min-height:36px;"></div>
       <div style="display:flex;gap:8px;justify-content:center;">
         <button class="btn-mini" onclick="morseKeyClear()">クリア</button>
         <button class="btn-mini" onclick="copyMorseKey()">COPY</button>
       </div>
-      <div id="morseKeyRaw" style="font-size:11px;color:var(--text-dim);text-align:center;font-family:'JetBrains Mono',monospace;"></div>
+      <div id="morseKeyRaw" style="font-size:11px;color:var(--text-dim);text-align:center;font-family:'JetBrains Mono',monospace;word-break:break-all;"></div>
     </div>
   </div>
 
@@ -743,6 +766,214 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
       </div>
     </div>
     <div id="nanoidList" style="display:flex;flex-direction:column;gap:6px;"></div>
+  </div>
+
+  <!-- 専用UI: パスワード生成 -->
+  <div id="ui-passgen" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:14px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <div class="calc-result-label">文字数</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+          <input type="range" id="passLen" min="4" max="128" value="16" oninput="passGenLive()" style="flex:1;accent-color:var(--accent);">
+          <span id="passLenVal" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:800;min-width:32px;text-align:right;">16</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div class="calc-result-label">オプション</div>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;">
+          <input type="checkbox" id="passUpper" checked onchange="passGenLive()"> 大文字 (A-Z)
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;">
+          <input type="checkbox" id="passLower" checked onchange="passGenLive()"> 小文字 (a-z)
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;">
+          <input type="checkbox" id="passNum" checked onchange="passGenLive()"> 数字 (0-9)
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;">
+          <input type="checkbox" id="passSym" checked onchange="passGenLive()"> 記号 (!@#$...)
+        </label>
+      </div>
+    </div>
+    <div id="passResults" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <button class="btn-run" onclick="passGenLive()" style="align-self:flex-start;">🔄 再生成</button>
+    <div id="passStrength" style="font-size:12px;padding:8px 12px;border-radius:8px;background:var(--panel);"></div>
+  </div>
+
+  <!-- 専用UI: テキスト統計 -->
+  <div id="ui-textstats" style="display:none;flex-direction:column;height:100%;overflow:hidden;">
+    <div class="pane" style="height:auto;flex:0 0 auto;max-height:200px;">
+      <div class="pane-header">
+        テキストを入力 / 貼り付け
+        <span id="tsLiveCount" style="font-weight:400;font-size:10px;"></span>
+      </div>
+      <textarea id="tsInput" spellcheck="false" oninput="tsLive()" placeholder="統計を取得したいテキストを入力..." style="flex:1;height:160px;"></textarea>
+    </div>
+    <div id="tsCards" style="flex:1;overflow:auto;padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;"></div>
+  </div>
+
+  <!-- 専用UI: QRコード -->
+  <div id="ui-qr" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:12px;">
+    <div>
+      <div class="calc-result-label">入力テキスト / URL</div>
+      <textarea id="qrInput" spellcheck="false" oninput="qrLive()" placeholder="https://example.com" style="height:80px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:12px;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;resize:none;width:100%;margin-top:4px;"></textarea>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <div>
+        <div class="calc-result-label">エラー訂正</div>
+        <select class="conv-sel" id="qrEcc" onchange="qrLive()" style="margin-top:4px;">
+          <option value="L">L (7%)</option>
+          <option value="M" selected>M (15%)</option>
+          <option value="Q">Q (25%)</option>
+          <option value="H">H (30%)</option>
+        </select>
+      </div>
+      <div>
+        <div class="calc-result-label">サイズ</div>
+        <select class="conv-sel" id="qrSize" onchange="qrLive()" style="margin-top:4px;">
+          <option value="3">小</option>
+          <option value="5" selected>中</option>
+          <option value="7">大</option>
+          <option value="10">特大</option>
+        </select>
+      </div>
+    </div>
+    <div id="qrResult" style="text-align:center;background:var(--panel);border-radius:12px;padding:20px;"></div>
+  </div>
+
+  <!-- 専用UI: Unix時間 / エポック -->
+  <div id="ui-epoch" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:14px;">
+    <div style="background:var(--panel);border-radius:10px;padding:14px;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:11px;color:var(--text-dim);">現在時刻</span>
+      <span id="epochNow" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;"></span>
+      <button class="btn-mini" onclick="epochCopyNow()">COPY Unix</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="date-field-row">
+        <label>Unix タイムスタンプ (秒 or ミリ秒)</label>
+        <input id="epochUnix" class="calc-input" type="number" placeholder="1704067200" oninput="epochFromUnix()" style="font-size:14px;text-align:left;margin-top:4px;">
+      </div>
+      <div class="date-field-row">
+        <label>日時</label>
+        <input id="epochDate" type="datetime-local" onchange="epochFromDate()" style="color-scheme:dark;margin-top:4px;">
+      </div>
+    </div>
+    <div class="pct-result" id="epochResult" style="display:none;">
+      <div class="res-val" id="epochVal" style="font-size:14px;white-space:pre-line;font-family:'JetBrains Mono',monospace;"></div>
+    </div>
+  </div>
+
+  <!-- 専用UI: Lorem Ipsum -->
+  <div id="ui-lorem" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:12px;">
+    <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap;">
+      <div>
+        <div class="calc-result-label">段落数</div>
+        <input type="range" id="loremCount" min="1" max="20" value="3" oninput="loremLive()" style="display:block;margin-top:6px;width:160px;accent-color:var(--accent);">
+        <span id="loremCountVal" style="font-size:11px;color:var(--text-dim);"></span>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+        <button class="btn-mini lorem-type-btn active" data-type="para" onclick="setLoremType('para')">段落</button>
+        <button class="btn-mini lorem-type-btn" data-type="sent" onclick="setLoremType('sent')">文</button>
+        <button class="btn-mini lorem-type-btn" data-type="word" onclick="setLoremType('word')">単語</button>
+      </div>
+      <button class="btn-mini" onclick="navigator.clipboard.writeText(document.getElementById('loremOut').innerText)">COPY</button>
+    </div>
+    <div id="loremOut" style="flex:1;background:var(--panel);border-radius:10px;padding:16px;font-size:13px;line-height:1.8;overflow:auto;white-space:pre-wrap;color:var(--text-dim);"></div>
+  </div>
+
+  <!-- 専用UI: カラーパレット -->
+  <div id="ui-palette" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:16px;gap:12px;">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <input type="color" id="paletteColorPicker" value="#818cf8" oninput="paletteLive()" style="width:48px;height:40px;border:none;border-radius:8px;cursor:pointer;background:none;padding:0;">
+        <input id="paletteHex" class="calc-input" value="#818cf8" oninput="paletteLiveHex()" style="width:110px;font-size:14px;text-align:center;">
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="btn-mini palette-type-btn active" data-pt="shades" onclick="setPaletteType('shades')">明度</button>
+        <button class="btn-mini palette-type-btn" data-pt="analogous" onclick="setPaletteType('analogous')">類似色</button>
+        <button class="btn-mini palette-type-btn" data-pt="complement" onclick="setPaletteType('complement')">補色</button>
+        <button class="btn-mini palette-type-btn" data-pt="triad" onclick="setPaletteType('triad')">三角</button>
+      </div>
+    </div>
+    <div id="paletteSwatches" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+  </div>
+
+  <!-- 専用UI: グラデーション生成 -->
+  <div id="ui-gradient" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:16px;gap:12px;">
+    <div id="gradPreview" style="height:100px;border-radius:12px;transition:.3s;flex-shrink:0;"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;">
+      <div class="date-field-row">
+        <label>カラー 1</label>
+        <div style="display:flex;gap:6px;margin-top:4px;">
+          <input type="color" id="gradC1Picker" value="#818cf8" oninput="gradPickerSync('1')" style="width:40px;height:36px;border:none;border-radius:6px;cursor:pointer;padding:0;">
+          <input id="gradC1" class="calc-input" value="#818cf8" oninput="gradLive()" style="font-size:13px;text-align:left;">
+        </div>
+      </div>
+      <div class="date-field-row">
+        <label>カラー 2</label>
+        <div style="display:flex;gap:6px;margin-top:4px;">
+          <input type="color" id="gradC2Picker" value="#a78bfa" oninput="gradPickerSync('2')" style="width:40px;height:36px;border:none;border-radius:6px;cursor:pointer;padding:0;">
+          <input id="gradC2" class="calc-input" value="#a78bfa" oninput="gradLive()" style="font-size:13px;text-align:left;">
+        </div>
+      </div>
+      <div class="date-field-row">
+        <label>角度</label>
+        <input id="gradDeg" class="calc-input" value="135" type="number" oninput="gradLive()" style="width:80px;font-size:14px;text-align:center;margin-top:4px;">
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="calc-result-label">タイプ</div>
+      <button class="btn-mini grad-type-btn active" data-gt="linear" onclick="setGradType('linear')">linear</button>
+      <button class="btn-mini grad-type-btn" data-gt="radial" onclick="setGradType('radial')">radial</button>
+    </div>
+    <div id="gradCode" style="font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--panel);padding:12px;border-radius:9px;"></div>
+    <button class="btn-mini" onclick="navigator.clipboard.writeText(document.getElementById('gradCode').innerText)" style="align-self:flex-start;">COPY CSS</button>
+  </div>
+
+  <!-- 専用UI: Box Shadow -->
+  <div id="ui-shadow" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:16px;gap:12px;">
+    <div id="shadowPreview" style="height:120px;display:flex;align-items:center;justify-content:center;background:var(--panel);border-radius:12px;flex-shrink:0;">
+      <div id="shadowBox" style="width:80px;height:80px;border-radius:10px;background:var(--accent);transition:.2s;"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+      <div class="date-field-row"><label>X offset</label><input id="shX" class="calc-input" type="number" value="0" oninput="shadowLive()" style="font-size:14px;text-align:center;margin-top:4px;"></div>
+      <div class="date-field-row"><label>Y offset</label><input id="shY" class="calc-input" type="number" value="4" oninput="shadowLive()" style="font-size:14px;text-align:center;margin-top:4px;"></div>
+      <div class="date-field-row"><label>Blur</label><input id="shBlur" class="calc-input" type="number" value="16" oninput="shadowLive()" style="font-size:14px;text-align:center;margin-top:4px;"></div>
+      <div class="date-field-row"><label>Spread</label><input id="shSpread" class="calc-input" type="number" value="0" oninput="shadowLive()" style="font-size:14px;text-align:center;margin-top:4px;"></div>
+      <div class="date-field-row"><label>カラー</label>
+        <div style="display:flex;gap:4px;margin-top:4px;">
+          <input type="color" id="shColorPicker" value="#000000" oninput="shColorSync()" style="width:36px;height:36px;border:none;border-radius:6px;cursor:pointer;padding:0;">
+          <input id="shColor" class="calc-input" value="#00000066" oninput="shadowLive()" style="font-size:12px;text-align:left;">
+        </div>
+      </div>
+      <div class="date-field-row"><label>Inset</label>
+        <div style="display:flex;align-items:center;height:36px;margin-top:4px;">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;">
+            <input type="checkbox" id="shInset" onchange="shadowLive()"> inset
+          </label>
+        </div>
+      </div>
+    </div>
+    <div id="shadowCode" style="font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--panel);padding:12px;border-radius:9px;"></div>
+    <button class="btn-mini" onclick="navigator.clipboard.writeText(document.getElementById('shadowCode').innerText)" style="align-self:flex-start;">COPY CSS</button>
+  </div>
+
+  <!-- 専用UI: スペーシングスケール -->
+  <div id="ui-spacing" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:16px;gap:12px;">
+    <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap;">
+      <div>
+        <div class="calc-result-label">ベースサイズ (px)</div>
+        <input id="spacingBase" class="calc-input" type="number" value="4" oninput="spacingLive()" style="width:100px;font-size:18px;text-align:center;margin-top:4px;">
+      </div>
+      <div>
+        <div class="calc-result-label">スケール</div>
+        <select class="conv-sel" id="spacingScale" onchange="spacingLive()" style="margin-top:4px;">
+          <option value="tailwind">Tailwind CSS</option>
+          <option value="8pt">8pt Grid</option>
+          <option value="custom">カスタム倍率</option>
+        </select>
+      </div>
+    </div>
+    <div id="spacingBars" style="flex:1;overflow:auto;display:flex;flex-direction:column;gap:6px;"></div>
   </div>
 
 </main>
@@ -989,10 +1220,33 @@ function unitConvert(input){const conv={'km to miles':v=>v*0.621371,'miles to km
 function slugify(s){return s.toLowerCase().trim().replace(/[^\w\s-]/g,'').replace(/[\s_-]+/g,'-').replace(/^-+|-+$/g,'');}
 function rot13(s){return s.replace(/[a-zA-Z]/g,c=>{const b=c<='Z'?65:97;return String.fromCharCode((c.charCodeAt(0)-b+13)%26+b);});}
 function caesar(s,shift){return s.replace(/[a-zA-Z]/g,c=>{const b=c<='Z'?65:97;return String.fromCharCode((c.charCodeAt(0)-b+((shift%26)+26))%26+b);});}
-const MORSE_ENC={'a':'.-','b':'-...','c':'-.-.','d':'-..','e':'.','f':'..-.','g':'--.','h':'....','i':'..','j':'.---','k':'-.-','l':'.-..','m':'--','n':'-.','o':'---','p':'.--.','q':'--.-','r':'.-.','s':'...','t':'-','u':'..-','v':'...-','w':'.--','x':'-..-','y':'-.--','z':'--..','0':'-----','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....','6':'-....','7':'--...','8':'---..','9':'----.'};
+const MORSE_ENC={'a':'.-','b':'-...','c':'-.-.','d':'-..','e':'.','f':'..-.','g':'--.','h':'....','i':'..','j':'.---','k':'-.-','l':'.-..','m':'--','n':'-.','o':'---','p':'.--.','q':'--.-','r':'.-.','s':'...','t':'-','u':'..-','v':'...-','w':'.--','x':'-..-','y':'-.--','z':'--..','0':'-----','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....','6':'-....','7':'--...','8':'---..','9':'----.','.'  :'.-.-.-',','  :'--..--','?':'..--..','/':'-..-.','-':'-....-','(':'-.--.',')'  :'.--.-.','_':'..--.-'};
 const MORSE_DEC=Object.fromEntries(Object.entries(MORSE_ENC).map(([k,v])=>[v,k]));
-function morseEncode(s){return s.toLowerCase().split('').map(c=>c===' '?'/':(MORSE_ENC[c]||'?')).join(' ');}
-function morseDecode(s){return s.split(' / ').map(w=>w.split(' ').map(c=>MORSE_DEC[c]||'').join('')).join(' ');}
+const MORSE_JA_ENC={
+  'ア':'.-','イ':'.-','ウ':'..-','エ':'-.---','オ':'.-...','カ':'.-..','キ':'-.-.','ク':'...-','ケ':'-.--','コ':'----',
+  'サ':'-.-.-','シ':'--.-','ス':'---.-','セ':'.---.','ソ':'---.','タ':'-.','チ':'..-.','ツ':'.--.','テ':'.-.--','ト':'..-..',
+  'ナ':'.-.',  'ニ':'-.-.','ヌ':'....','ネ':'--.-.',  'ノ':'..--','ハ':'-...','ヒ':'--..-.','フ':'--..','ヘ':'.','ホ':'-..',
+  'マ':'-..-','ミ':'..-.-','ム':'-','メ':'-...-','モ':'-..-.','ヤ':'.--','ユ':'-..--','ヨ':'--',
+  'ラ':'...','リ':'--.','ル':'-..-','レ':'---','ロ':'.-.-','ワ':'-.-','ヲ':'.---','ン':'.-.-.',
+  'ッ':'.--.','ー':'.-.-.-','、':'.-.-.-','。':'.-.-.-',
+};
+const MORSE_JA_DEC=Object.fromEntries(Object.entries(MORSE_JA_ENC).map(([k,v])=>[v,k]));
+function hiraganaToKatakana(s){return s.replace(/[\u3041-\u3096]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60));}
+let morseLangMode='en';
+function morseEncode(s){
+  if(morseLangMode==='ja'){
+    const k=hiraganaToKatakana(s);
+    return [...k].map(c=>{if(c===' ')return'/';return MORSE_JA_ENC[c]||(MORSE_ENC[c.toLowerCase()]||'');}).join(' ');
+  }
+  return s.toLowerCase().split('').map(c=>c===' '?'/':(MORSE_ENC[c]||'')).join(' ');
+}
+function morseDecode(s){
+  return s.split(' / ').map(w=>w.split(' ').map(c=>{
+    if(!c)return'';
+    if(morseLangMode==='ja')return MORSE_JA_DEC[c]||MORSE_DEC[c]||'';
+    return MORSE_DEC[c]||'';
+  }).join('')).join(' ');
+}
 function wrapText(text,width){return text.split('\n').map(line=>{const words=line.split(' ');const lines=[];let cur='';for(const w of words){if((cur+' '+w).trim().length>width&&cur){lines.push(cur);cur=w;}else cur=(cur+' '+w).trim();}if(cur)lines.push(cur);return lines.join('\n');}).join('\n');}
 const NANO_CHARS='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
 function nanoid(size=21){return Array.from(crypto.getRandomValues(new Uint8Array(size)),b=>NANO_CHARS[b%64]).join('');}
@@ -1229,22 +1483,18 @@ async function execute(){
     if(curTool==='html-dec'){const p=document.createElement('p');p.innerHTML=val;r=p.textContent;}
     if(curTool==='aes-enc')r=CryptoJS.AES.encrypt(val,val2||'devtools').toString();
     if(curTool==='aes-dec')r=CryptoJS.AES.decrypt(val,val2||'devtools').toString(CryptoJS.enc.Utf8);
-    if(curTool==='pass-gen'){const len=Math.min(parseInt(val)||16,128);const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}';r=Array.from(crypto.getRandomValues(new Uint8Array(len)),b=>chars[b%chars.length]).join('');}
+    if(curTool==='pass-gen'){passGenLive();return;}
     if(curTool==='pbkdf2')r=await pbkdf2Hash(val);
     if(curTool==='xor'){r=[...val].map((c,i)=>String.fromCharCode(c.charCodeAt(0)^val2.charCodeAt(i%val2.length))).join('');}
     // UTILS
-    if(curTool==='qr'){const q=qrcode(0,'M');q.addData(val);q.make();img.innerHTML=q.createImgTag(5);img.style.display='block';pre.style.display='none';return;}
+    if(curTool==='qr'){qrLive();return;}
     if(curTool==='uuid'){uuidGenerate();return;}
     if(curTool==='nanoid'){nanoidGenerate();return;}
-    if(curTool==='uuid')r=Array.from({length:5},()=>crypto.randomUUID()).join('\n');
-    if(curTool==='nanoid')r=Array.from({length:5},()=>nanoid()).join('\n');
-    if(curTool==='epoch'){const v=val.trim();r=isNaN(v)?`Unix(s): ${Math.floor(new Date(v).getTime()/1000)}\n\n${fmtTimestamp(v)}`:new Date(+v*(val.length<=10?1000:1)).toLocaleString()+'\n\n'+fmtTimestamp(v);}
-    if(curTool==='color'){const c=convertColor(val);spe.innerHTML=`<div style="background:${c.hex};height:54px;margin:12px;border-radius:10px;border:1px solid var(--border)"></div>`;spe.style.display='block';r=c.text;}
-    if(curTool==='textstats'){const w=val.trim()?val.trim().split(/\s+/).length:0,c=val.length,cn=val.replace(/\s/g,'').length,l=val.split('\n').length,s=(val.match(/[.!?]+/g)||[]).length;r=`Characters (w/ spaces):    ${c}\nCharacters (w/o spaces):   ${cn}\nWords:                     ${w}\nLines:                     ${l}\nSentences:                 ${s}\nAvg word length:           ${w?(cn/w).toFixed(1):0} chars\nReading time (~200wpm):    ${Math.max(1,Math.ceil(w/200))} min`;}
-    if(curTool==='markdown'){htm.innerHTML='<div class="md-preview">'+val.replace(/^### (.+)$/gm,'<h3>$1</h3>').replace(/^## (.+)$/gm,'<h2>$1</h2>').replace(/^# (.+)$/gm,'<h1>$1</h1>').replace(/^> (.+)$/gm,'<blockquote>$1</blockquote>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/`(.+?)`/g,'<code>$1</code>').replace(/\[(.+?)\]\((.+?)\)/g,'<a href="$2" target="_blank">$1</a>').replace(/^[-*] (.+)$/gm,'<li>$1</li>').replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')+'</div>';htm.style.display='block';pre.style.display='none';return;}
-    if(curTool==='diff'){dif.innerHTML=computeDiff(val,val2);dif.style.display='block';pre.style.display='none';return;}
-    if(curTool==='regex'){const flags='gm',regex=new RegExp(val,flags),matches=[...val2.matchAll(regex)];if(!matches.length){r='No matches found.';}else{r=`${matches.length} match(es):\n\n`;matches.forEach((m,i)=>{r+=`Match ${i+1}: "${m[0]}" @ index ${m.index}`;if(m.length>1)r+=`\n  Groups: ${m.slice(1).map((g,j)=>`$${j+1}="${g??'undefined'}"`).join(', ')}`;r+='\n';});r+='\nHighlighted:\n'+val2.replace(regex,m=>`【${m}】`);}}
-    if(curTool==='lorem')r=lorem(parseInt(val)||5);
+    if(curTool==='epoch'){epochFromUnix();return;}
+    if(curTool==='color'){colorLive();return;}
+    if(curTool==='textstats'){tsLive();return;}
+    if(curTool==='lorem'){loremLive();return;}
+    if(curTool==='palette'){paletteLive();return;}
     if(curTool==='baseconv'){const[ns,fb]=val.trim().split(/\s+/);const base=parseInt(fb)||10;const n=parseInt(ns,base);if(isNaN(n))throw new Error('Invalid');r=`Decimal (10): ${n}\nBinary   (2): ${n.toString(2)}\nOctal    (8): ${n.toString(8)}\nHex     (16): ${n.toString(16).toUpperCase()}`;}
     if(curTool==='cron')r=explainCron(val);
     if(curTool==='url-parse')r=parseURL(val);
@@ -1348,11 +1598,11 @@ async function execute(){
     if(curTool==='cidr')r=cidrCalc(val);
     // DESIGN
     if(curTool==='contrast')r=contrastRatio(val,val2);
-    if(curTool==='spacing')r=spacingScale(parseInt(val)||16);
-    if(curTool==='shadow'){spe.innerHTML=`<div style="width:100px;height:100px;background:var(--accent);border-radius:8px;box-shadow:${val};margin:20px auto"></div>`;spe.style.display='block';r=`box-shadow: ${val};`;}
-    if(curTool==='gradient'){const parts=val.trim().split(/\s+/);const c1=parts[0]||'#818cf8',c2=parts[1]||'#a78bfa',deg=parts[2]||'135';const g=`linear-gradient(${deg}deg, ${c1}, ${c2})`;spe.innerHTML=`<div style="width:100%;height:80px;background:${g};border-radius:8px;margin:12px 0"></div>`;spe.style.display='block';r=`background: ${g};`;}
+    if(curTool==='spacing'){spacingLive();return;}
+    if(curTool==='shadow'){shadowLive();return;}
+    if(curTool==='gradient'){gradLive();return;}
     if(curTool==='border-radius'){spe.innerHTML=`<div style="width:100px;height:100px;background:var(--accent);border-radius:${val};margin:20px auto"></div>`;spe.style.display='block';r=`border-radius: ${val};`;}
-    if(curTool==='palette'){r=generatePalette(val.startsWith('#')?val:'#'+val);}
+    if(curTool==='palette'){paletteLive();return;}
     if(curTool==='aspect'){const[w,h]=val.trim().split(/\s+/).map(Number);if(isNaN(w)||isNaN(h))throw new Error('e.g. "1920 1080"');const g=gcd(w,h);r=`${w}×${h}\nAspect ratio: ${w/g}:${h/g}\nDecimal: ${(w/h).toFixed(4)}\n\nCommon comparisons:\n  16:9  = ${Math.abs((w/h)-(16/9))<0.01?'✅ Match':'≈'+(16/9).toFixed(4)}\n  4:3   = ${Math.abs((w/h)-(4/3))<0.01?'✅ Match':'≈'+(4/3).toFixed(4)}\n  1:1   = ${Math.abs((w/h)-1)<0.01?'✅ Match':'≈'+1}`;}
     // DEV
     if(curTool==='html-preview2'){htm.innerHTML=val;htm.style.display='block';pre.style.display='none';return;}
@@ -1397,16 +1647,22 @@ const SPECIAL_UI={
   'url-parse':'ui-urlparse','regex':'ui-regex','fib':'ui-fib',
   'angle':'ui-angle','http-status':'ui-httpstatus','bitwise':'ui-bitwise',
   'uuid':'ui-uuid','nanoid':'ui-nanoid',
+  'pass-gen':'ui-passgen','textstats':'ui-textstats','qr':'ui-qr',
+  'epoch':'ui-epoch','lorem':'ui-lorem','palette':'ui-palette',
+  'gradient':'ui-gradient','shadow':'ui-shadow','spacing':'ui-spacing',
+  'color':'ui-color',
 };
 const ALL_UIS=['editorGrid','ui-calc','ui-conv','ui-pct','ui-random','ui-color',
   'ui-stats','ui-gcdlcm','ui-prime','ui-caesar','ui-morse','ui-date',
   'ui-jsonpath','ui-tz','ui-baseconv','ui-urlparse','ui-regex','ui-fib',
-  'ui-angle','ui-httpstatus','ui-bitwise','ui-uuid','ui-nanoid'];
+  'ui-angle','ui-httpstatus','ui-bitwise','ui-uuid','ui-nanoid',
+  'ui-passgen','ui-textstats','ui-qr','ui-epoch','ui-lorem',
+  'ui-palette','ui-gradient','ui-shadow','ui-spacing'];
 function showUI(toolId){
   const target=SPECIAL_UI[toolId]||'editorGrid';
   const flexUIs=['ui-stats','ui-gcdlcm','ui-caesar','ui-morse','ui-date',
     'ui-jsonpath','ui-regex','ui-urlparse','ui-tz','ui-baseconv',
-    'ui-fib','ui-angle','ui-httpstatus','ui-bitwise'];
+    'ui-fib','ui-angle','ui-httpstatus','ui-bitwise','ui-textstats'];
   ALL_UIS.forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
@@ -1433,8 +1689,17 @@ function showUI(toolId){
   if(toolId==='angle'){document.getElementById('angleInput')?.focus();angleLive();}
   if(toolId==='http-status')initHttpStatus();
   if(toolId==='bitwise')bitwiseLive();
-  if(toolId==='uuid'){uuidGenerate();}
-  if(toolId==='nanoid'){nanoidGenerate();}
+  if(toolId==='uuid')uuidGenerate();
+  if(toolId==='nanoid')nanoidGenerate();
+  if(toolId==='pass-gen')passGenLive();
+  if(toolId==='textstats')tsLive();
+  if(toolId==='qr')qrLive();
+  if(toolId==='epoch')initEpoch();
+  if(toolId==='lorem'){loremLive();}
+  if(toolId==='palette')paletteLive();
+  if(toolId==='gradient')gradLive();
+  if(toolId==='shadow')shadowLive();
+  if(toolId==='spacing')spacingLive();
 }
 
 /* ── 計算機専用UI ── */
@@ -1745,7 +2010,7 @@ function copyCaesarResult(){navigator.clipboard.writeText(document.getElementByI
 /* ── モールス信号専用UI ── */
 let morseMode='encode',morseMute=false,morseAudioCtx=null;
 let morseKeyPressTime=0,morseKeyTimer=null,morseKeyBuffer='',morseKeyDecodeBuffer='';
-function initMorse(){setMorseMode('encode');}
+function initMorse(){morseLangMode='en';setMorseLang('en');setMorseMode('encode');}
 function setMorseMode(m){
   morseMode=m;
   document.querySelectorAll('.morse-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));
@@ -1753,13 +2018,25 @@ function setMorseMode(m){
   const ka=document.getElementById('morseKeyArea');
   if(ta)ta.style.display=m==='key'?'none':'flex';
   if(ka)ka.style.display=m==='key'?'flex':'none';
-  if(m==='key'){if(document.getElementById('morseKeyDisplay'))document.getElementById('morseKeyDisplay').innerText='—';morseKeyBuffer='';morseKeyDecodeBuffer='';}
-  else morseLive();
+  if(m==='key'){
+    const d=document.getElementById('morseKeyDisplay');
+    if(d)d.innerText='—';
+    morseKeyBuffer='';morseKeyDecodeBuffer='';
+  }else morseLive();
+}
+function setMorseLang(l){
+  morseLangMode=l;
+  document.querySelectorAll('.morse-lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.mlang===l));
+  const hint=document.getElementById('morseJaHint');
+  if(hint)hint.style.display=l==='ja'?'block':'none';
+  const inp=document.getElementById('morseInput');
+  if(inp)inp.placeholder=l==='ja'?'ひらがな・カタカナを入力...  例: こんにちは':'Enter text...  e.g. hello world';
+  morseLive();
 }
 function toggleMorseMute(){
   morseMute=!morseMute;
   const btn=document.getElementById('morseToggleMute');
-  if(btn)btn.innerText=morseMute?'🔇 ミュート':'🔊 音あり';
+  if(btn)btn.innerText=morseMute?'🔇':'🔊';
 }
 function morseLive(){
   const inp=document.getElementById('morseInput')?.value||'';
@@ -1768,26 +2045,62 @@ function morseLive(){
   const cc=document.getElementById('morseCharCount');
   if(!out)return;
   if(cc)cc.innerText=inp.length?`${inp.length}文字`:'';
-  if(morseMode==='encode'){if(lbl)lbl.innerText='入力テキスト';out.innerText=morseEncode(inp);}
-  else{if(lbl)lbl.innerText='モールス符号（/ で単語区切り）';out.innerText=morseDecode(inp);}
+  if(morseMode==='encode'){
+    if(lbl)lbl.innerText=morseLangMode==='ja'?'入力 (和文)':'入力 (英文)';
+    out.innerText=morseEncode(inp);
+  }else{
+    if(lbl)lbl.innerText='モールス符号 (/ で単語区切り)';
+    out.innerText=morseDecode(inp);
+  }
 }
 function copyMorseResult(){navigator.clipboard.writeText(document.getElementById('morseOutput')?.innerText||'');}
-function playMorseOutput(){playMorseCode(document.getElementById('morseOutput')?.innerText||'');}
+
+/* 再生停止トグル */
+let morsePlayNodes=[];
+let morseIsPlaying=false;
+function toggleMorsePlay(){
+  if(morseIsPlaying){stopMorsePlay();return;}
+  playMorseOutput();
+}
+function stopMorsePlay(){
+  morsePlayNodes.forEach(n=>{try{n.stop();}catch(_){}});
+  morsePlayNodes=[];
+  morseIsPlaying=false;
+  const btn=document.getElementById('morsePlayBtn');
+  if(btn)btn.innerText='▶ 再生';
+}
+function playMorseOutput(){
+  const code=document.getElementById('morseOutput')?.innerText||'';
+  playMorseCode(code);
+}
 function getMorseAudio(){if(!morseAudioCtx)morseAudioCtx=new(window.AudioContext||window.webkitAudioContext)();return morseAudioCtx;}
 function playMorseCode(code){
   if(morseMute)return;
+  stopMorsePlay();
   const ctx=getMorseAudio();
   let t=ctx.currentTime+0.05;
-  const dot=0.08,dash=0.24,gap=0.08,cGap=0.24,wGap=0.56;
+  const dot=0.08,dash=0.24,gap=0.06,cGap=0.20,wGap=0.50;
   for(const tok of code.split(' ')){
     if(tok==='/'){t+=wGap;continue;}
     if(!tok){t+=cGap;continue;}
     for(const c of tok){
+      if(c!=='.'&&c!=='-')continue;
       const o=ctx.createOscillator(),g=ctx.createGain();
-      o.connect(g);g.connect(ctx.destination);o.frequency.value=600;g.gain.value=0.3;
-      o.start(t);const d=c==='.'?dot:dash;o.stop(t+d);t+=d+gap;
+      o.connect(g);g.connect(ctx.destination);
+      o.frequency.value=600;g.gain.value=0.3;
+      o.start(t);const d=c==='.'?dot:dash;o.stop(t+d);
+      morsePlayNodes.push(o);
+      t+=d+gap;
     }t+=cGap;
   }
+  morseIsPlaying=true;
+  const btn=document.getElementById('morsePlayBtn');
+  if(btn)btn.innerText='⏹ 停止';
+  // 再生終了後にボタンをリセット
+  const totalTime=(t-ctx.currentTime+0.1)*1000;
+  setTimeout(()=>{
+    if(morseIsPlaying){morseIsPlaying=false;morsePlayNodes=[];if(btn)btn.innerText='▶ 再生';}
+  },totalTime);
 }
 document.addEventListener('keydown',e=>{
   // Enter=実行, Shift+Enter=改行
@@ -2227,6 +2540,284 @@ function e_(key,...args){
   const val=tbl[key]||ERR.en[key]||key;
   return typeof val==='function'?val(...args):val;
 }
+
+/* ── パスワード生成専用UI ── */
+function passGenLive(){
+  const len=parseInt(document.getElementById('passLen')?.value)||16;
+  document.getElementById('passLenVal').innerText=len;
+  const upper=document.getElementById('passUpper')?.checked;
+  const lower=document.getElementById('passLower')?.checked;
+  const num=document.getElementById('passNum')?.checked;
+  const sym=document.getElementById('passSym')?.checked;
+  let chars='';
+  if(upper)chars+='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  if(lower)chars+='abcdefghijklmnopqrstuvwxyz';
+  if(num)chars+='0123456789';
+  if(sym)chars+='!@#$%^&*()-_=+[]{}|;:,.<>?';
+  if(!chars)chars='abcdefghijklmnopqrstuvwxyz';
+  const gen=()=>Array.from(crypto.getRandomValues(new Uint8Array(len)),b=>chars[b%chars.length]).join('');
+  const results=document.getElementById('passResults');
+  if(!results)return;
+  const pws=Array.from({length:5},gen);
+  results.innerHTML=pws.map(pw=>`
+    <div style="display:flex;align-items:center;gap:8px;background:var(--panel);border-radius:9px;padding:10px 14px;">
+      <span style="flex:1;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.5px;word-break:break-all;">${pw}</span>
+      <button class="btn-mini" onclick="navigator.clipboard.writeText('${pw.replace(/'/g,"\\'")}')">COPY</button>
+    </div>`).join('');
+  // 強度
+  const strength=document.getElementById('passStrength');
+  if(strength){
+    const score=(upper?1:0)+(lower?1:0)+(num?1:0)+(sym?1:0);
+    const lenScore=len>=16?2:len>=12?1:0;
+    const total=score+lenScore;
+    const [lbl,clr]=total>=5?['強い 💪','var(--add)']:total>=3?['普通 ⚠️','#f59e0b']:['弱い ❌','var(--del)'];
+    strength.innerHTML=`強度: <strong style="color:${clr};">${lbl}</strong>  (${len}文字, ${chars.length}種の文字)`;
+  }
+}
+
+/* ── テキスト統計専用UI ── */
+function tsLive(){
+  const v=document.getElementById('tsInput')?.value||'';
+  const lc=document.getElementById('tsLiveCount');
+  if(lc)lc.innerText=v.length?`${v.length}文字`:'';
+  const cards=document.getElementById('tsCards');
+  if(!cards)return;
+  const w=v.trim()?v.trim().split(/\s+/).length:0;
+  const cn=v.replace(/\s/g,'').length;
+  const lines=v.split('\n').length;
+  const sents=(v.match(/[.!?。！？]+/g)||[]).length;
+  const paras=v.split(/\n\s*\n/).filter(p=>p.trim()).length;
+  const bytes=new TextEncoder().encode(v).length;
+  const readMin=Math.max(1,Math.ceil(w/200));
+  const stats=[
+    {lbl:'文字数(空白込)',val:v.length},{lbl:'文字数(空白除)',val:cn},
+    {lbl:'単語数',val:w},{lbl:'行数',val:lines},
+    {lbl:'段落数',val:paras},{lbl:'文数',val:sents},
+    {lbl:'バイト数',val:bytes},{lbl:'読了時間',val:`約${readMin}分`},
+    {lbl:'平均単語長',val:w?(cn/w).toFixed(1)+'文字':'—'},
+  ];
+  cards.innerHTML=stats.map(s=>`<div class="stat-card"><div class="val">${s.val}</div><div class="lbl">${s.lbl}</div></div>`).join('');
+}
+
+/* ── QRコード専用UI ── */
+function qrLive(){
+  const val=document.getElementById('qrInput')?.value||'';
+  const ecc=document.getElementById('qrEcc')?.value||'M';
+  const size=parseInt(document.getElementById('qrSize')?.value)||5;
+  const res=document.getElementById('qrResult');
+  if(!res)return;
+  if(!val){res.innerHTML='<span style="color:var(--text-dim);font-size:12px;">テキストを入力するとQRコードが表示されます</span>';return;}
+  try{
+    const q=qrcode(0,ecc);
+    q.addData(val);q.make();
+    res.innerHTML=q.createImgTag(size);
+  }catch(e){
+    try{
+      const q=qrcode(10,ecc);
+      q.addData(val);q.make();
+      res.innerHTML=q.createImgTag(size);
+    }catch(e2){res.innerHTML=`<span style="color:var(--del);">Error: ${esc(e2.message)}</span>`;}
+  }
+}
+
+/* ── Unix時間/エポック専用UI ── */
+let epochTimer=null;
+function initEpoch(){
+  clearInterval(epochTimer);
+  epochTimer=setInterval(()=>{
+    const now=Date.now();
+    const el=document.getElementById('epochNow');
+    if(el)el.innerText=`${Math.floor(now/1000)} (ms: ${now})`;
+  },1000);
+  const now=new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  const dt=document.getElementById('epochDate');
+  if(dt)dt.value=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+}
+function epochCopyNow(){navigator.clipboard.writeText(String(Math.floor(Date.now()/1000)));}
+function epochFromUnix(){
+  const raw=document.getElementById('epochUnix')?.value?.trim();
+  if(!raw)return;
+  const n=Number(raw);
+  const d=new Date(raw.length<=10?n*1000:n);
+  const res=document.getElementById('epochResult');
+  const val=document.getElementById('epochVal');
+  if(!res||!val)return;
+  if(isNaN(d)){val.innerText='無効なタイムスタンプ';res.style.display='block';return;}
+  // 同期: date picker
+  const pad=n=>String(n).padStart(2,'0');
+  const dt=document.getElementById('epochDate');
+  if(dt)dt.value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  val.innerText=fmtTimestamp(raw.length<=10?n*1000:n);
+  res.style.display='block';
+}
+function epochFromDate(){
+  const dt=document.getElementById('epochDate')?.value;
+  if(!dt)return;
+  const d=new Date(dt);
+  const unix=document.getElementById('epochUnix');
+  if(unix)unix.value=Math.floor(d.getTime()/1000);
+  const res=document.getElementById('epochResult');
+  const val=document.getElementById('epochVal');
+  if(val){val.innerText=fmtTimestamp(d.getTime());if(res)res.style.display='block';}
+}
+
+/* ── Lorem Ipsum専用UI ── */
+let loremType='para';
+function setLoremType(t){
+  loremType=t;
+  document.querySelectorAll('.lorem-type-btn').forEach(b=>b.classList.toggle('active',b.dataset.type===t));
+  loremLive();
+}
+function loremLive(){
+  const n=parseInt(document.getElementById('loremCount')?.value)||3;
+  const lv=document.getElementById('loremCountVal');
+  const out=document.getElementById('loremOut');
+  if(lv)lv.innerText=n+(loremType==='para'?'段落':loremType==='sent'?'文':'語');
+  if(!out)return;
+  if(loremType==='para')out.innerText=lorem(n);
+  else if(loremType==='sent'){
+    const words=LOREM_W;
+    const sents=Array.from({length:n},()=>{
+      const len=8+Math.floor(Math.random()*12);
+      const w=Array.from({length:len},()=>words[Math.floor(Math.random()*words.length)]);
+      w[0]=w[0][0].toUpperCase()+w[0].slice(1);
+      return w.join(' ')+'.';
+    });
+    out.innerText=sents.join(' ');
+  }else{
+    const words=Array.from({length:n},()=>LOREM_W[Math.floor(Math.random()*LOREM_W.length)]);
+    out.innerText=words.join(', ');
+  }
+}
+
+/* ── カラーパレット専用UI ── */
+let paletteType='shades';
+function setPaletteType(t){
+  paletteType=t;
+  document.querySelectorAll('.palette-type-btn').forEach(b=>b.classList.toggle('active',b.dataset.pt===t));
+  paletteLive();
+}
+function paletteLiveHex(){
+  const v=document.getElementById('paletteHex')?.value||'';
+  const picker=document.getElementById('paletteColorPicker');
+  if(picker&&/^#[0-9a-fA-F]{6}$/.test(v))picker.value=v;
+  paletteLive();
+}
+function paletteLive(){
+  const hex=(document.getElementById('paletteHex')?.value||'#818cf8').replace(/[^#0-9a-fA-F]/g,'');
+  const picker=document.getElementById('paletteColorPicker');
+  if(picker&&/^#[0-9a-fA-F]{6}$/.test(hex)){picker.value=hex;document.getElementById('paletteHex').value=hex;}
+  const sw=document.getElementById('paletteSwatches');
+  if(!sw)return;
+  try{
+    let colors=[];
+    const {r,g,b}=hexToRgb(hex);
+    const {h,s,l}=rgbToHsl(r,g,b);
+    function hslToHex(hh,ss,ll){
+      hh/=360;ss/=100;ll/=100;
+      const q=ll<0.5?ll*(1+ss):ll+ss-ll*ss,p=2*ll-q;
+      const h2r=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};
+      const [rr,gg,bb]=[h2r(p,q,hh+1/3),h2r(p,q,hh),h2r(p,q,hh-1/3)].map(v=>Math.round(v*255));
+      return'#'+[rr,gg,bb].map(v=>v.toString(16).padStart(2,'0')).join('');
+    }
+    if(paletteType==='shades'){
+      colors=[5,15,25,35,45,55,65,75,85,95].map(ll=>({hex:hslToHex(h,s,ll),lbl:`${ll}%`}));
+    }else if(paletteType==='analogous'){
+      colors=[-60,-30,-15,0,15,30,60].map(dh=>({hex:hslToHex((h+dh+360)%360,s,l),lbl:`${dh>0?'+':''}${dh}°`}));
+    }else if(paletteType==='complement'){
+      colors=[0,30,60,90,120,150,180].map(dh=>({hex:hslToHex((h+dh+360)%360,s,l),lbl:`${dh}°`}));
+    }else if(paletteType==='triad'){
+      colors=[0,120,240].flatMap(dh=>[0,15,-15].map(dd=>({hex:hslToHex((h+dh+dd+360)%360,s,l),lbl:`${(h+dh+dd+360)%360|0}°`})));
+    }
+    sw.innerHTML=colors.map(c=>`
+      <div onclick="navigator.clipboard.writeText('${c.hex}')"
+        style="cursor:pointer;width:72px;text-align:center;transition:.12s;"
+        title="クリックでコピー: ${c.hex}">
+        <div style="height:56px;border-radius:10px;background:${c.hex};margin-bottom:4px;border:1px solid var(--border);"></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);">${c.hex}</div>
+        <div style="font-size:9px;color:var(--text-dim);">${c.lbl}</div>
+      </div>`).join('');
+  }catch(e){sw.innerHTML=`<span style="color:var(--del);">${esc(e.message)}</span>`;}
+}
+
+/* ── グラデーション生成専用UI ── */
+let gradType='linear';
+function setGradType(t){
+  gradType=t;
+  document.querySelectorAll('.grad-type-btn').forEach(b=>b.classList.toggle('active',b.dataset.gt===t));
+  gradLive();
+}
+function gradPickerSync(n){
+  const picker=document.getElementById(`gradC${n}Picker`);
+  const inp=document.getElementById(`gradC${n}`);
+  if(picker&&inp)inp.value=picker.value;
+  gradLive();
+}
+function gradLive(){
+  const c1=document.getElementById('gradC1')?.value||'#818cf8';
+  const c2=document.getElementById('gradC2')?.value||'#a78bfa';
+  const deg=document.getElementById('gradDeg')?.value||'135';
+  const p1=document.getElementById('gradC1Picker');
+  const p2=document.getElementById('gradC2Picker');
+  if(p1&&/^#[0-9a-fA-F]{6}$/.test(c1))p1.value=c1;
+  if(p2&&/^#[0-9a-fA-F]{6}$/.test(c2))p2.value=c2;
+  const g=gradType==='radial'?`radial-gradient(circle, ${c1}, ${c2})`:`linear-gradient(${deg}deg, ${c1}, ${c2})`;
+  const prev=document.getElementById('gradPreview');
+  if(prev)prev.style.background=g;
+  const code=document.getElementById('gradCode');
+  if(code)code.innerText=`background: ${g};`;
+}
+
+/* ── Box Shadow専用UI ── */
+function shColorSync(){
+  const picker=document.getElementById('shColorPicker');
+  const inp=document.getElementById('shColor');
+  if(picker&&inp)inp.value=picker.value+'66';
+  shadowLive();
+}
+function shadowLive(){
+  const x=document.getElementById('shX')?.value||0;
+  const y=document.getElementById('shY')?.value||4;
+  const blur=document.getElementById('shBlur')?.value||16;
+  const spread=document.getElementById('shSpread')?.value||0;
+  const color=document.getElementById('shColor')?.value||'#00000066';
+  const inset=document.getElementById('shInset')?.checked?'inset ':'';
+  const val=`${inset}${x}px ${y}px ${blur}px ${spread}px ${color}`;
+  const box=document.getElementById('shadowBox');
+  if(box)box.style.boxShadow=val;
+  const code=document.getElementById('shadowCode');
+  if(code)code.innerText=`box-shadow: ${val};`;
+}
+
+/* ── スペーシングスケール専用UI ── */
+function spacingLive(){
+  const base=parseInt(document.getElementById('spacingBase')?.value)||4;
+  const scale=document.getElementById('spacingScale')?.value||'tailwind';
+  const bars=document.getElementById('spacingBars');
+  if(!bars)return;
+  let steps=[];
+  if(scale==='tailwind'){
+    steps=[{k:'0',v:0},{k:'px',v:1},{k:'0.5',v:2},{k:'1',v:4},{k:'1.5',v:6},{k:'2',v:8},{k:'2.5',v:10},{k:'3',v:12},{k:'3.5',v:14},{k:'4',v:16},{k:'5',v:20},{k:'6',v:24},{k:'7',v:28},{k:'8',v:32},{k:'9',v:36},{k:'10',v:40},{k:'11',v:44},{k:'12',v:48},{k:'14',v:56},{k:'16',v:64},{k:'20',v:80},{k:'24',v:96}];
+  }else if(scale==='8pt'){
+    steps=Array.from({length:16},(_,i)=>({k:`${i+1}`,v:(i+1)*8}));
+  }else{
+    steps=Array.from({length:16},(_,i)=>({k:`${i+1}`,v:(i+1)*base}));
+  }
+  const max=steps[steps.length-1].v||1;
+  bars.innerHTML=steps.map(s=>{
+    const px=scale==='tailwind'?s.v:s.v;
+    const rem=(px/16).toFixed(3).replace(/\.?0+$/,'');
+    const w=Math.min(100,Math.round(px/max*100));
+    return`<div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);width:40px;text-align:right;">${s.k}</span>
+      <div style="height:16px;background:var(--accent);border-radius:3px;width:${w}%;min-width:2px;"></div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);">${px}px / ${rem}rem</span>
+    </div>`;
+  }).join('');
+}
+
+/* ── その他ボタン用CSS追加 ── */
 
 /* ── copyResult拡張（専用UIも対応） ── */
 function copyResult(){
