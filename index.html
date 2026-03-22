@@ -1277,7 +1277,7 @@ function convSelectLive(){
     // 全単位への変換も表示
     const lines=CONV_UNITS[cat].units.map(([u,l])=>{
       const r=convFromBase(base,u,cat);
-      return`${l.padEnd(18,' '}: ${fmt(r)} ${u}`;
+      return`${l.padEnd(18,' ')}: ${fmt(r)} ${u}`;
     });
     allRes.innerText=lines.join('\n');
   }catch(e){res.innerText='Error';}
