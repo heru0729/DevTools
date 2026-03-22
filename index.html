@@ -268,7 +268,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
       <div class="pane-header" id="lbl-input">
         INPUT
         <span id="charCounter" style="font-weight:400;color:var(--text-dim);font-size:10px;"></span>
-        <span id="enterHint" style="font-weight:400;color:var(--text-dim);font-size:10px;margin-left:auto;">Enter: 実行 / Shift+Enter: 改行</span>
+        <span id="enterHint" style="font-weight:400;color:var(--text-dim);font-size:10px;margin-left:auto;">Enter: run / Shift+Enter: newline</span>
       </div>
       <textarea id="input" spellcheck="false" placeholder="Paste data here..." oninput="updateCharCount()"></textarea>
       <div id="input2-row">
@@ -318,7 +318,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
       <button class="calc-btn op" onclick="calcAppend('%')">%</button>
       <button class="calc-btn eq" onclick="calcEval()">=</button>
     </div>
-    <div style="font-size:10.5px;color:var(--text-dim);text-align:center;">キーボードでも入力できます · Enterで計算</div>
+    <div style="font-size:10.5px;color:var(--text-dim);text-align:center;">Keyboard input supported · Enter to calculate</div>
     <div id="calcHistory" class="calc-history"></div>
   </div>
 
@@ -326,32 +326,32 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <div id="ui-conv" class="conv-ui" style="display:none;">
     <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:end;">
       <div>
-        <div class="calc-result-label">値</div>
+        <div class="calc-result-label">Value</div>
         <input class="calc-input" id="convVal" placeholder="100" type="number" oninput="convSelectLive()" style="font-size:20px;text-align:center;">
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;padding-bottom:2px;">
         <select class="conv-sel" id="convCat" onchange="convUpdateUnits()">
-          <option value="length">長さ</option>
-          <option value="weight">重さ</option>
-          <option value="temp">温度</option>
-          <option value="data">データ容量</option>
-          <option value="speed">速度</option>
-          <option value="area">面積</option>
-          <option value="time_unit">時間</option>
+          <option value="length">Length</option>
+          <option value="weight">Weight</option>
+          <option value="temp">Temperature</option>
+          <option value="data">Data</option>
+          <option value="speed">Speed</option>
+          <option value="area">Area</option>
+          <option value="time_unit">Time</option>
         </select>
       </div>
       <div>
-        <div class="calc-result-label">結果</div>
+        <div class="calc-result-label">Result</div>
         <div class="conv-result" id="convResult" style="font-size:20px;min-height:52px;border-radius:10px;">—</div>
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
       <div>
-        <div class="calc-result-label">変換元</div>
+        <div class="calc-result-label">From</div>
         <select class="conv-sel" id="convFrom" onchange="convSelectLive()" style="width:100%;"></select>
       </div>
       <div>
-        <div class="calc-result-label">変換先</div>
+        <div class="calc-result-label">To</div>
         <select class="conv-sel" id="convTo" onchange="convSelectLive()" style="width:100%;"></select>
       </div>
     </div>
@@ -360,12 +360,12 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
 
   <!-- 専用UI: パーセント -->
   <div id="ui-pct" class="pct-ui" style="display:none;">
-    <div style="font-size:12px;color:var(--text-dim);margin-bottom:4px;">計算したいものを選んでください：</div>
+    <div style="font-size:12px;color:var(--text-dim);margin-bottom:4px;">Select calculation type:</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
-      <button class="btn-mini pct-mode-btn active" data-mode="percent" onclick="setPctMode('percent')">AのBに対する割合</button>
-      <button class="btn-mini pct-mode-btn" data-mode="ofpct" onclick="setPctMode('ofpct')">AのB%</button>
-      <button class="btn-mini pct-mode-btn" data-mode="change" onclick="setPctMode('change')">変化率</button>
-      <button class="btn-mini pct-mode-btn" data-mode="tax" onclick="setPctMode('tax')">税込計算</button>
+      <button class="btn-mini pct-mode-btn active" data-mode="percent" onclick="setPctMode('percent')">A/B ratio (%)</button>
+      <button class="btn-mini pct-mode-btn" data-mode="ofpct" onclick="setPctMode('ofpct')">B% of A</button>
+      <button class="btn-mini pct-mode-btn" data-mode="change" onclick="setPctMode('change')">% Change</button>
+      <button class="btn-mini pct-mode-btn" data-mode="tax" onclick="setPctMode('tax')">Tax calc</button>
     </div>
     <div id="pctFields" style="display:flex;flex-direction:column;gap:10px;"></div>
     <div class="pct-result" id="pctResult" style="display:none;">
@@ -376,22 +376,22 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
 
   <!-- 専用UI: 乱数 -->
   <div id="ui-random" class="conv-ui" style="display:none;">
-    <div class="conv-hint">最小値と最大値を入力してください</div>
+    <div class="conv-hint">Enter min and max values</div>
     <div style="display:flex;gap:10px;align-items:center;">
-      <input class="calc-input pct-inp" id="randMin" placeholder="最小 (例: 1)" style="font-size:18px;text-align:center;" value="1">
-      <span style="font-size:18px;color:var(--text-dim);">〜</span>
-      <input class="calc-input pct-inp" id="randMax" placeholder="最大 (例: 100)" style="font-size:18px;text-align:center;" value="100">
+      <input class="calc-input pct-inp" id="randMin" placeholder="Min (e.g. 1)" style="font-size:18px;text-align:center;" value="1">
+      <span style="font-size:18px;color:var(--text-dim);">–</span>
+      <input class="calc-input pct-inp" id="randMax" placeholder="Max (e.g. 100)" style="font-size:18px;text-align:center;" value="100">
     </div>
     <div class="conv-result" id="randResult" style="font-size:56px;">—</div>
     <button class="btn-run" onclick="doRandom()" style="align-self:center;padding:12px 40px;font-size:15px;">🎲 Generate</button>
-    <div style="font-size:10.5px;color:var(--text-dim);text-align:center;">Enterキーでも生成できます</div>
+    <div style="font-size:10.5px;color:var(--text-dim);text-align:center;">Press Enter to generate</div>
   </div>
 
   <!-- 専用UI: カラー変換 -->
   <div id="ui-color" class="color-ui" style="display:none;">
     <div class="color-swatch-large" id="colorSwatch"></div>
     <div style="padding:14px 16px 4px;">
-      <input class="calc-input pct-inp" id="colorInput" placeholder="#818cf8 または rgb(129,140,248) または hsl(234,89%,74%)" oninput="colorLive()" style="font-size:13px;text-align:left;width:100%;">
+      <input class="calc-input pct-inp" id="colorInput" placeholder="#818cf8 or rgb(129,140,248) or hsl(234,89%,74%)" oninput="colorLive()" style="font-size:13px;text-align:left;width:100%;">
     </div>
     <div class="color-values" id="colorValues" style="white-space:pre-wrap;"></div>
   </div>
@@ -400,9 +400,9 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <div id="ui-stats" style="display:none;flex-direction:column;height:100%;overflow:hidden;">
     <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;">
       <span style="font-size:11px;font-weight:800;color:var(--text-dim);">NUMBERS</span>
-      <button class="btn-mini" onclick="statsAddRow()">+ 追加</button>
-      <button class="btn-mini" onclick="statsClear()">クリア</button>
-      <span style="font-size:10.5px;color:var(--text-dim);margin-left:auto;">一括入力: カンマ or 改行区切りでOK</span>
+      <button class="btn-mini" onclick="statsAddRow()">+ Add</button>
+      <button class="btn-mini" onclick="statsClear()">Clear</button>
+      <span style="font-size:10.5px;color:var(--text-dim);margin-left:auto;">Comma / newline separated</span>
     </div>
     <div id="statsRows" style="padding:10px 14px;display:flex;flex-wrap:wrap;gap:8px;overflow-y:auto;max-height:160px;border-bottom:1px solid var(--border);">
     </div>
@@ -412,7 +412,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <!-- 専用UI: GCD/LCM (複数入力欄) -->
   <div id="ui-gcdlcm" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:14px;">
     <div style="display:flex;align-items:center;gap:10px;">
-      <span style="font-size:11px;font-weight:800;color:var(--text-dim);">整数を入力</span>
+      <span style="font-size:11px;font-weight:800;color:var(--text-dim);">Integers</span>
       <button class="btn-mini" onclick="gcdAddRow()">+ 追加</button>
       <button class="btn-mini" onclick="gcdClear()">クリア</button>
     </div>
@@ -424,13 +424,13 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
 
   <!-- 専用UI: 素数判定 -->
   <div id="ui-prime" class="conv-ui" style="display:none;gap:10px;">
-    <input class="calc-input" id="primeInput" placeholder="判定したい整数を入力" type="number" oninput="primeLive()" style="font-size:20px;text-align:center;">
+    <input class="calc-input" id="primeInput" placeholder="Enter integer" type="number" oninput="primeLive()" style="font-size:20px;text-align:center;">
     <div id="primeResult" style="text-align:center;">
       <div id="primeBig" style="font-size:64px;line-height:1.2;"></div>
       <div id="primeSub" style="font-size:14px;color:var(--text-dim);margin-top:6px;"></div>
     </div>
     <div style="background:var(--panel);border-radius:10px;padding:14px;">
-      <div style="font-size:10.5px;font-weight:800;color:var(--text-dim);margin-bottom:8px;">周辺の素数</div>
+      <div style="font-size:10.5px;font-weight:800;color:var(--text-dim);margin-bottom:8px;">Nearby primes</div>
       <div id="primeNeighbors" style="font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.8;"></div>
     </div>
   </div>
@@ -439,7 +439,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <div id="ui-caesar" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:14px;">
     <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
       <div style="flex:1;min-width:160px;">
-        <div class="calc-result-label">シフト数 (1〜25)</div>
+        <div class="calc-result-label">Shift (1–25)</div>
         <div style="display:flex;align-items:center;gap:8px;">
           <button class="calc-btn op" onclick="caesarShiftAdj(-1)" style="width:40px;height:40px;flex-shrink:0;">−</button>
           <input class="calc-input" id="caesarShift" type="number" min="1" max="25" value="3" oninput="caesarLive()" style="font-size:22px;text-align:center;flex:1;">
@@ -447,24 +447,24 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
         </div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn-mini caesar-dir active" data-dir="enc" onclick="setCaesarDir('enc')">暗号化 →</button>
-        <button class="btn-mini caesar-dir" data-dir="dec" onclick="setCaesarDir('dec')">復号 ←</button>
+        <button class="btn-mini caesar-dir active" data-dir="enc" onclick="setCaesarDir('enc')">Encode →</button>
+        <button class="btn-mini caesar-dir" data-dir="dec" onclick="setCaesarDir('dec')">Decode ←</button>
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1;">
       <div style="display:flex;flex-direction:column;gap:4px;">
-        <div class="calc-result-label">入力テキスト</div>
-        <textarea id="caesarInput" spellcheck="false" placeholder="テキストを入力..." oninput="caesarLive()" style="flex:1;min-height:120px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:12px;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;resize:none;"></textarea>
+        <div class="calc-result-label">Input</div>
+        <textarea id="caesarInput" spellcheck="false" placeholder="Enter text..." oninput="caesarLive()" style="flex:1;min-height:120px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:12px;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;resize:none;"></textarea>
         <div id="caesarCharCount" style="font-size:10.5px;color:var(--text-dim);"></div>
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;">
-        <div class="calc-result-label">出力</div>
+        <div class="calc-result-label">Output</div>
         <div id="caesarOutput" style="flex:1;min-height:120px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--accent);padding:12px;font-family:'JetBrains Mono',monospace;font-size:13px;white-space:pre-wrap;overflow:auto;"></div>
         <button class="btn-mini" onclick="copyCaesarResult()" style="align-self:flex-start;">COPY</button>
       </div>
     </div>
     <div style="background:var(--panel);border-radius:10px;padding:12px;">
-      <div style="font-size:10.5px;font-weight:800;color:var(--text-dim);margin-bottom:6px;">全シフト一覧 (ブルートフォース)</div>
+      <div style="font-size:10.5px;font-weight:800;color:var(--text-dim);margin-bottom:6px;">All shifts (brute force)</div>
       <div id="caesarBrute" style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text-dim);max-height:140px;overflow-y:auto;white-space:pre;"></div>
     </div>
   </div>
@@ -473,13 +473,13 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <div id="ui-morse" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:16px;gap:10px;">
     <!-- モード行 -->
     <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-      <button class="btn-mini morse-mode-btn active" data-mode="encode" onclick="setMorseMode('encode')">テキスト → 符号</button>
-      <button class="btn-mini morse-mode-btn" data-mode="decode" onclick="setMorseMode('decode')">符号 → テキスト</button>
-      <button class="btn-mini morse-mode-btn" data-mode="key" onclick="setMorseMode('key')">⚡ キー入力</button>
+      <button class="btn-mini morse-mode-btn active" data-mode="encode" onclick="setMorseMode('encode')">Text → Code</button>
+      <button class="btn-mini morse-mode-btn" data-mode="decode" onclick="setMorseMode('decode')">Code → Text</button>
+      <button class="btn-mini morse-mode-btn" data-mode="key" onclick="setMorseMode('key')">⚡ Key input</button>
       <div style="width:1px;height:18px;background:var(--border);margin:0 4px;"></div>
       <!-- 和文/英文 切替 -->
-      <button class="btn-mini morse-lang-btn active" data-mlang="en" onclick="setMorseLang('en')">英文</button>
-      <button class="btn-mini morse-lang-btn" data-mlang="ja" onclick="setMorseLang('ja')">和文</button>
+      <button class="btn-mini morse-lang-btn active" data-mlang="en" onclick="setMorseLang('en')">Latin</button>
+      <button class="btn-mini morse-lang-btn" data-mlang="ja" onclick="setMorseLang('ja')">Japanese</button>
       <div style="margin-left:auto;display:flex;gap:6px;align-items:center;">
         <button class="btn-mini" id="morseToggleMute" onclick="toggleMorseMute()">🔊</button>
       </div>
@@ -517,9 +517,9 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
     <!-- key input mode -->
     <div id="morseKeyArea" style="display:none;flex-direction:column;gap:10px;flex:1;">
       <div style="background:var(--panel);border-radius:10px;padding:12px;font-size:12px;color:var(--text-dim);line-height:1.8;">
-        <strong style="color:var(--text);">スペースキーを押しながら入力</strong><br>
-        短押し <span style="color:var(--accent);">●</span> : タン (200ms未満)　　長押し <span style="color:var(--accent);">━</span> : ツー (200ms以上)<br>
-        文字確定: 0.5秒離す　　スペース: 1秒以上離す
+        <strong style="color:var(--text);">Press Space to input</strong><br>
+        Short <span style="color:var(--accent);">●</span>: Dit (&lt;200ms)　　Long <span style="color:var(--accent);">━</span>: Dah (≥200ms)<br>
+        Char: release 0.5s　　Space: release 1s+
       </div>
       <div id="morseKeyDisplay"
         style="font-size:44px;text-align:center;padding:20px;background:var(--panel);border-radius:12px;
@@ -565,14 +565,14 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <div id="ui-tz" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:14px;">
     <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:end;">
       <div class="date-field-row">
-        <label>日時</label>
+        <label>Date/Time</label>
         <input type="datetime-local" id="tzDateTime" onchange="tzLive()" oninput="tzLive()" style="color-scheme:dark;">
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;padding-bottom:2px;align-items:center;">
         <span style="font-size:18px;color:var(--text-dim);">→</span>
       </div>
       <div class="date-field-row">
-        <label>変換先タイムゾーン</label>
+        <label>Target timezone</label>
         <select class="conv-sel" id="tzTo" onchange="tzLive()" style="width:100%;"></select>
       </div>
     </div>
@@ -593,11 +593,11 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <div id="ui-baseconv" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:12px;">
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
       <div style="flex:1;min-width:180px;">
-        <div class="calc-result-label">入力値</div>
+        <div class="calc-result-label">Value</div>
         <input id="baseInput" class="calc-input" placeholder="255" oninput="baseConvLive()" style="font-size:20px;text-align:center;">
       </div>
       <div>
-        <div class="calc-result-label">入力の基数</div>
+        <div class="calc-result-label">Input base</div>
         <select class="conv-sel" id="baseFrom" onchange="baseConvLive()">
           <option value="10">10進数 (Decimal)</option>
           <option value="2">2進数 (Binary)</option>
@@ -608,7 +608,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
     </div>
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;" id="baseCards"></div>
     <div style="background:var(--panel);border-radius:10px;padding:12px;">
-      <div style="font-size:10px;font-weight:800;color:var(--text-dim);margin-bottom:6px;">ビット表示</div>
+      <div style="font-size:10px;font-weight:800;color:var(--text-dim);margin-bottom:6px;">Bit display</div>
       <div id="baseBits" style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:2px;word-break:break-all;"></div>
     </div>
   </div>
@@ -656,7 +656,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <!-- 専用UI: フィボナッチ -->
   <div id="ui-fib" class="conv-ui" style="display:none;gap:12px;">
     <div>
-      <div class="calc-result-label">個数 N: <span id="fibNLabel">10</span></div>
+      <div class="calc-result-label">Count N: <span id="fibNLabel">10</span></div>
       <input type="range" id="fibSlider" min="1" max="50" value="10" oninput="fibLive()" style="width:100%;margin-top:6px;accent-color:var(--accent);">
     </div>
     <div id="fibCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;max-height:300px;overflow-y:auto;"></div>
@@ -666,11 +666,11 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <div id="ui-angle" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:12px;">
     <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap;">
       <div style="flex:1;min-width:150px;">
-        <div class="calc-result-label">値</div>
+        <div class="calc-result-label">Value</div>
         <input id="angleInput" class="calc-input" placeholder="90" type="number" oninput="angleLive()" style="font-size:22px;text-align:center;">
       </div>
       <div>
-        <div class="calc-result-label">単位</div>
+        <div class="calc-result-label">Unit</div>
         <select class="conv-sel" id="angleUnit" onchange="angleLive()">
           <option value="deg">度 (°)</option>
           <option value="rad">ラジアン (rad)</option>
@@ -708,7 +708,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
         <input id="bitwiseA" class="calc-input" placeholder="12" type="number" oninput="bitwiseLive()" style="font-size:20px;text-align:center;">
       </div>
       <div>
-        <div class="calc-result-label">演算</div>
+        <div class="calc-result-label">Operation</div>
         <select class="conv-sel" id="bitwiseOp" onchange="bitwiseLive()">
           <option value="AND">AND (&amp;)</option>
           <option value="OR">OR (|)</option>
@@ -719,7 +719,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
         </select>
       </div>
       <div>
-        <div class="calc-result-label">B (NOT/シフト以外)</div>
+        <div class="calc-result-label">B (except NOT/shift)</div>
         <input id="bitwiseB" class="calc-input" placeholder="10" type="number" oninput="bitwiseLive()" style="font-size:20px;text-align:center;">
       </div>
     </div>
@@ -727,7 +727,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
       <div class="res-val" id="bitwiseVal" style="font-size:20px;white-space:pre;font-family:'JetBrains Mono',monospace;"></div>
     </div>
     <div style="background:var(--panel);border-radius:10px;padding:12px;">
-      <div style="font-size:10px;font-weight:800;color:var(--text-dim);margin-bottom:8px;">ビット表示</div>
+      <div style="font-size:10px;font-weight:800;color:var(--text-dim);margin-bottom:8px;">Bit display</div>
       <div id="bitwiseBits" style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;"></div>
     </div>
   </div>
@@ -753,7 +753,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
     </div>
     <div style="display:flex;gap:12px;align-items:end;flex-wrap:wrap;">
       <div>
-        <div class="calc-result-label">文字数</div>
+        <div class="calc-result-label">Length</div>
         <input id="nanoidSize" type="number" min="4" max="64" value="21" class="calc-input" style="width:90px;font-size:18px;text-align:center;" oninput="nanoidGenerate()">
       </div>
       <div style="flex:1;min-width:200px;">
@@ -772,25 +772,25 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <div id="ui-passgen" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:14px;">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
       <div>
-        <div class="calc-result-label">文字数</div>
+        <div class="calc-result-label">Length</div>
         <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
           <input type="range" id="passLen" min="4" max="128" value="16" oninput="passGenLive()" style="flex:1;accent-color:var(--accent);">
           <span id="passLenVal" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:800;min-width:32px;text-align:right;">16</span>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;">
-        <div class="calc-result-label">オプション</div>
+        <div class="calc-result-label">Options</div>
         <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;">
-          <input type="checkbox" id="passUpper" checked onchange="passGenLive()"> 大文字 (A-Z)
+          <input type="checkbox" id="passUpper" checked onchange="passGenLive()"> Uppercase (A-Z)
         </label>
         <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;">
-          <input type="checkbox" id="passLower" checked onchange="passGenLive()"> 小文字 (a-z)
+          <input type="checkbox" id="passLower" checked onchange="passGenLive()"> Lowercase (a-z)
         </label>
         <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;">
-          <input type="checkbox" id="passNum" checked onchange="passGenLive()"> 数字 (0-9)
+          <input type="checkbox" id="passNum" checked onchange="passGenLive()"> Digits (0-9)
         </label>
         <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;">
-          <input type="checkbox" id="passSym" checked onchange="passGenLive()"> 記号 (!@#$...)
+          <input type="checkbox" id="passSym" checked onchange="passGenLive()"> Symbols (!@#$...)
         </label>
       </div>
     </div>
@@ -814,12 +814,12 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <!-- 専用UI: QRコード -->
   <div id="ui-qr" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:12px;">
     <div>
-      <div class="calc-result-label">入力テキスト / URL</div>
+      <div class="calc-result-label">Text / URL</div>
       <textarea id="qrInput" spellcheck="false" oninput="qrLive()" placeholder="https://example.com" style="height:80px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:12px;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;resize:none;width:100%;margin-top:4px;"></textarea>
     </div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
       <div>
-        <div class="calc-result-label">エラー訂正</div>
+        <div class="calc-result-label">Error correction</div>
         <select class="conv-sel" id="qrEcc" onchange="qrLive()" style="margin-top:4px;">
           <option value="L">L (7%)</option>
           <option value="M" selected>M (15%)</option>
@@ -828,12 +828,12 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
         </select>
       </div>
       <div>
-        <div class="calc-result-label">サイズ</div>
+        <div class="calc-result-label">Size</div>
         <select class="conv-sel" id="qrSize" onchange="qrLive()" style="margin-top:4px;">
-          <option value="3">小</option>
+          <option value="3">Small</option>
           <option value="5" selected>中</option>
-          <option value="7">大</option>
-          <option value="10">特大</option>
+          <option value="7">Large</option>
+          <option value="10">X-Large</option>
         </select>
       </div>
     </div>
@@ -843,17 +843,17 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <!-- 専用UI: Unix時間 / エポック -->
   <div id="ui-epoch" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:14px;">
     <div style="background:var(--panel);border-radius:10px;padding:14px;display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-size:11px;color:var(--text-dim);">現在時刻</span>
+      <span style="font-size:11px;color:var(--text-dim);">Current time</span>
       <span id="epochNow" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;"></span>
       <button class="btn-mini" onclick="epochCopyNow()">COPY Unix</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
       <div class="date-field-row">
-        <label>Unix タイムスタンプ (秒 or ミリ秒)</label>
+        <label>Unix timestamp (sec or ms)</label>
         <input id="epochUnix" class="calc-input" type="number" placeholder="1704067200" oninput="epochFromUnix()" style="font-size:14px;text-align:left;margin-top:4px;">
       </div>
       <div class="date-field-row">
-        <label>日時</label>
+        <label>Date/Time</label>
         <input id="epochDate" type="datetime-local" onchange="epochFromDate()" style="color-scheme:dark;margin-top:4px;">
       </div>
     </div>
@@ -866,7 +866,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <div id="ui-lorem" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:12px;">
     <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap;">
       <div>
-        <div class="calc-result-label">段落数</div>
+        <div class="calc-result-label">Count</div>
         <input type="range" id="loremCount" min="1" max="20" value="3" oninput="loremLive()" style="display:block;margin-top:6px;width:160px;accent-color:var(--accent);">
         <span id="loremCountVal" style="font-size:11px;color:var(--text-dim);"></span>
       </div>
@@ -888,10 +888,10 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
         <input id="paletteHex" class="calc-input" value="#818cf8" oninput="paletteLiveHex()" style="width:110px;font-size:14px;text-align:center;">
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;">
-        <button class="btn-mini palette-type-btn active" data-pt="shades" onclick="setPaletteType('shades')">明度</button>
-        <button class="btn-mini palette-type-btn" data-pt="analogous" onclick="setPaletteType('analogous')">類似色</button>
-        <button class="btn-mini palette-type-btn" data-pt="complement" onclick="setPaletteType('complement')">補色</button>
-        <button class="btn-mini palette-type-btn" data-pt="triad" onclick="setPaletteType('triad')">三角</button>
+        <button class="btn-mini palette-type-btn active" data-pt="shades" onclick="setPaletteType('shades')">Shades</button>
+        <button class="btn-mini palette-type-btn" data-pt="analogous" onclick="setPaletteType('analogous')">Analogous</button>
+        <button class="btn-mini palette-type-btn" data-pt="complement" onclick="setPaletteType('complement')">Complement</button>
+        <button class="btn-mini palette-type-btn" data-pt="triad" onclick="setPaletteType('triad')">Triadic</button>
       </div>
     </div>
     <div id="paletteSwatches" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
@@ -902,26 +902,26 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
     <div id="gradPreview" style="height:100px;border-radius:12px;transition:.3s;flex-shrink:0;"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;">
       <div class="date-field-row">
-        <label>カラー 1</label>
+        <label>Color 1</label>
         <div style="display:flex;gap:6px;margin-top:4px;">
           <input type="color" id="gradC1Picker" value="#818cf8" oninput="gradPickerSync('1')" style="width:40px;height:36px;border:none;border-radius:6px;cursor:pointer;padding:0;">
           <input id="gradC1" class="calc-input" value="#818cf8" oninput="gradLive()" style="font-size:13px;text-align:left;">
         </div>
       </div>
       <div class="date-field-row">
-        <label>カラー 2</label>
+        <label>Color 2</label>
         <div style="display:flex;gap:6px;margin-top:4px;">
           <input type="color" id="gradC2Picker" value="#a78bfa" oninput="gradPickerSync('2')" style="width:40px;height:36px;border:none;border-radius:6px;cursor:pointer;padding:0;">
           <input id="gradC2" class="calc-input" value="#a78bfa" oninput="gradLive()" style="font-size:13px;text-align:left;">
         </div>
       </div>
       <div class="date-field-row">
-        <label>角度</label>
+        <label>Angle</label>
         <input id="gradDeg" class="calc-input" value="135" type="number" oninput="gradLive()" style="width:80px;font-size:14px;text-align:center;margin-top:4px;">
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <div class="calc-result-label">タイプ</div>
+      <div class="calc-result-label">Type</div>
       <button class="btn-mini grad-type-btn active" data-gt="linear" onclick="setGradType('linear')">linear</button>
       <button class="btn-mini grad-type-btn" data-gt="radial" onclick="setGradType('radial')">radial</button>
     </div>
@@ -939,7 +939,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
       <div class="date-field-row"><label>Y offset</label><input id="shY" class="calc-input" type="number" value="4" oninput="shadowLive()" style="font-size:14px;text-align:center;margin-top:4px;"></div>
       <div class="date-field-row"><label>Blur</label><input id="shBlur" class="calc-input" type="number" value="16" oninput="shadowLive()" style="font-size:14px;text-align:center;margin-top:4px;"></div>
       <div class="date-field-row"><label>Spread</label><input id="shSpread" class="calc-input" type="number" value="0" oninput="shadowLive()" style="font-size:14px;text-align:center;margin-top:4px;"></div>
-      <div class="date-field-row"><label>カラー</label>
+      <div class="date-field-row"><label>Color</label>
         <div style="display:flex;gap:4px;margin-top:4px;">
           <input type="color" id="shColorPicker" value="#000000" oninput="shColorSync()" style="width:36px;height:36px;border:none;border-radius:6px;cursor:pointer;padding:0;">
           <input id="shColor" class="calc-input" value="#00000066" oninput="shadowLive()" style="font-size:12px;text-align:left;">
@@ -961,11 +961,11 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <div id="ui-spacing" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:16px;gap:12px;">
     <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap;">
       <div>
-        <div class="calc-result-label">ベースサイズ (px)</div>
+        <div class="calc-result-label">Base size (px)</div>
         <input id="spacingBase" class="calc-input" type="number" value="4" oninput="spacingLive()" style="width:100px;font-size:18px;text-align:center;margin-top:4px;">
       </div>
       <div>
-        <div class="calc-result-label">スケール</div>
+        <div class="calc-result-label">Scale</div>
         <select class="conv-sel" id="spacingScale" onchange="spacingLive()" style="margin-top:4px;">
           <option value="tailwind">Tailwind CSS</option>
           <option value="8pt">8pt Grid</option>
@@ -980,12 +980,12 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
   <div id="ui-roman" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:14px;">
     <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap;">
       <div style="flex:1;min-width:180px;">
-        <div class="calc-result-label">アラビア数字 → ローマ数字</div>
+        <div class="calc-result-label">Arabic → Roman</div>
         <input id="romanArabic" class="calc-input" type="number" min="1" max="3999" placeholder="1〜3999"
           oninput="romanFromArabic()" style="font-size:20px;text-align:center;margin-top:4px;">
       </div>
       <div style="flex:1;min-width:180px;">
-        <div class="calc-result-label">ローマ数字 → アラビア数字</div>
+        <div class="calc-result-label">Roman → Arabic</div>
         <input id="romanRoman" class="calc-input" placeholder="XIV" oninput="romanFromRoman()"
           style="font-size:20px;text-align:center;margin-top:4px;font-family:'JetBrains Mono',monospace;">
       </div>
@@ -1012,7 +1012,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
     </div>
     <!-- Unicode一覧テーブル -->
     <div style="background:var(--panel);border-radius:12px;padding:14px;">
-      <div style="font-size:10.5px;font-weight:800;color:var(--text-dim);margin-bottom:10px;">Unicode ローマ数字一覧 (クリックでコピー)</div>
+      <div style="font-size:10.5px;font-weight:800;color:var(--text-dim);margin-bottom:10px;">Unicode Roman numerals (click to copy)</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;" id="romanUniTable"></div>
     </div>
   </div>
@@ -1758,7 +1758,7 @@ const CONV_UNITS={
   weight:{label:'重さ',units:[['kg','キログラム'],['g','グラム'],['mg','ミリグラム'],['lb','ポンド'],['oz','オンス'],['t','トン'],['ug','マイクログラム']]},
   temp:{label:'温度',units:[['c','摂氏 (°C)'],['f','華氏 (°F)'],['k','ケルビン (K)']]},
   data:{label:'データ容量',units:[['bytes','バイト'],['kb','キロバイト'],['mb','メガバイト'],['gb','ギガバイト'],['tb','テラバイト'],['pb','ペタバイト'],['bits','ビット']]},
-  speed:{label:'速度',units:[['m/s','メートル/秒'],['km/h','キロメートル/時'],['mph','マイル/時'],['knots','ノット'],['ft/s','フィート/秒']]},
+  speed:{label:'速度',units:[['m/s','m/s'],['km/h','km/h'],['mph','mph'],['knots','ノット'],['ft/s','ft/s']]},
   area:{label:'面積',units:[['m2','平方メートル'],['km2','平方キロメートル'],['cm2','平方センチメートル'],['ft2','平方フィート'],['in2','平方インチ'],['acres','エーカー'],['ha','ヘクタール']]},
   time_unit:{label:'時間',units:[['s','秒'],['ms','ミリ秒'],['min','分'],['h','時間'],['d','日'],['w','週'],['month','月(30日)'],['year','年(365日)']]},
 };
@@ -1836,10 +1836,10 @@ function convSelectLive(){
 /* ── パーセント専用UI ── */
 let pctMode='percent';
 const PCT_MODES={
-  percent:{labels:['数値 A','全体 B'],hint:'A ÷ B × 100 = ?%',calc:(a,b)=>`${a} / ${b} = ${((a/b)*100).toFixed(4)}%`},
-  ofpct:{labels:['元の数値','割合 (%)'],hint:'A × B% = ?',calc:(a,b)=>`${a} × ${b}% = ${(a*b/100).toFixed(4)}`},
-  change:{labels:['変化前','変化後'],hint:'変化率 = (B-A)/A × 100%',calc:(a,b)=>`変化率: ${(((b-a)/a)*100).toFixed(4)}%`},
-  tax:{labels:['税抜き金額','税率 (例: 0.1)'],hint:'税込 = 金額 × (1 + 税率)',calc:(a,b)=>{const tax=a*b;return`税抜き: ${a}\n税額 (${(b*100).toFixed(1)}%): ${tax.toFixed(2)}\n税込み: ${(a+tax).toFixed(2)}`;}},
+  percent:{labels:()=>[lang==='ja'?'数値 A':'Value A',lang==='ja'?'全体 B':'Total B'],hint:'A ÷ B × 100 = ?%',calc:(a,b)=>`${a} / ${b} = ${((a/b)*100).toFixed(4)}%`},
+  ofpct:{labels:()=>[lang==='ja'?'元の数値':'Value',lang==='ja'?'割合 (%)':'Percent (%)'],hint:'A × B% = ?',calc:(a,b)=>`${a} × ${b}% = ${(a*b/100).toFixed(4)}`},
+  change:{labels:()=>[lang==='ja'?'変化前':'Before',lang==='ja'?'変化後':'After'],hint:'(B-A)/A × 100%',calc:(a,b)=>lang==='ja'?`変化率: ${(((b-a)/a)*100).toFixed(4)}%`:`Change: ${(((b-a)/a)*100).toFixed(4)}%`},
+  tax:{labels:()=>[lang==='ja'?'税抜き金額':'Amount (excl. tax)',lang==='ja'?'税率 (例: 0.1)':'Tax rate (e.g. 0.1)'],hint:lang==='ja'?'税込 = 金額 × (1 + 税率)':'Total = Amount × (1 + rate)',calc:(a,b)=>{const tax=a*b;return lang==='ja'?`税抜き: ${a}\n税額 (${(b*100).toFixed(1)}%): ${tax.toFixed(2)}\n税込み: ${(a+tax).toFixed(2)}`:`Excl. tax: ${a}\nTax (${(b*100).toFixed(1)}%): ${tax.toFixed(2)}\nTotal: ${(a+tax).toFixed(2)}`;}},
 };
 function setPctMode(mode){
   pctMode=mode;
@@ -1849,7 +1849,7 @@ function setPctMode(mode){
 function renderPctFields(){
   const m=PCT_MODES[pctMode];
   const f=document.getElementById('pctFields');
-  f.innerHTML=m.labels.map((l,i)=>`<div class="pct-row"><span class="pct-label">${l}</span><input class="pct-inp" id="pctA${i}" placeholder="0" type="number" oninput="pctCalc()"></div>`).join('');
+  const lbls=typeof m.labels==='function'?m.labels():m.labels;f.innerHTML=lbls.map((l,i)=>`<div class="pct-row"><span class="pct-label">${l}</span><input class="pct-inp" id="pctA${i}" placeholder="0" type="number" oninput="pctCalc()"></div>`).join('');
   document.getElementById('pctResult').style.display='none';
   document.querySelector('.conv-hint#convHint')&&(document.querySelector('.conv-hint#convHint').innerText=m.hint);
 }
@@ -1893,7 +1893,7 @@ function updateCharCount(){
   const val=document.getElementById('input').value;
   const el=document.getElementById('charCounter');
   if(!el)return;
-  el.innerText=val.length?`${val.length}文字 / ${val.split(/\s+/).filter(Boolean).length}語`:'';
+  el.innerText=val.length?`${val.length}${e_('chars')} / ${val.split(/\s+/).filter(Boolean).length}${e_('words')}`:'';
 }
 
 /* ── リアルタイム変換（入力だけで変換） ── */
@@ -1935,10 +1935,10 @@ function statsCalc(){
   const sd=Math.sqrt(variance);
   const mode=Object.entries(all.reduce((a,v)=>(a[v]=(a[v]||0)+1,a),{})).sort((a,b)=>b[1]-a[1])[0][0];
   const stats=[
-    {lbl:'個数',val:n},{lbl:'合計',val:all.reduce((a,b)=>a+b,0)},
-    {lbl:'平均',val:mean.toFixed(4)},{lbl:'中央値',val:med},
-    {lbl:'最頻値',val:mode},{lbl:'最小',val:sorted[0]},{lbl:'最大',val:sorted[n-1]},
-    {lbl:'範囲',val:sorted[n-1]-sorted[0]},{lbl:'標準偏差',val:sd.toFixed(4)},{lbl:'分散',val:variance.toFixed(4)},
+    {lbl:lang==='ja'?'個数':'Count',val:n},{lbl:lang==='ja'?'合計':'Sum',val:all.reduce((a,b)=>a+b,0)},
+    {lbl:lang==='ja'?'平均':'Mean',val:mean.toFixed(4)},{lbl:lang==='ja'?'中央値':'Median',val:med},
+    {lbl:lang==='ja'?'最頻値':'Mode',val:mode},{lbl:lang==='ja'?'最小':'Min',val:sorted[0]},{lbl:lang==='ja'?'最大':'Max',val:sorted[n-1]},
+    {lbl:lang==='ja'?'範囲':'Range',val:sorted[n-1]-sorted[0]},{lbl:lang==='ja'?'標準偏差':'Std Dev',val:sd.toFixed(4)},{lbl:lang==='ja'?'分散':'Variance',val:variance.toFixed(4)},
   ];
   cards.innerHTML=stats.map(s=>`<div class="stat-card"><div class="val">${s.val}</div><div class="lbl">${s.lbl}</div></div>`).join('');
 }
@@ -1977,13 +1977,13 @@ function primeLive(){
   if(isNaN(n)||n<2){big.innerText='';sub.innerText='';if(nb)nb.innerText='';return;}
   const p=isPrime(n);
   big.innerText=p?'✅':'❌';
-  sub.innerText=p?`${n} は素数です`:`${n} は素数ではありません`;
+  sub.innerText=`${n} ${p?e_('prime_is'):e_('prime_not')}`;
   sub.style.color=p?'var(--add)':'var(--del)';
   if(nb){
     const prev=[],next=[];
     for(let i=n-1;i>=2&&prev.length<5;i--)if(isPrime(i))prev.unshift(i);
     for(let i=n+(p?1:0);next.length<5;i++)if(isPrime(i))next.push(i);
-    nb.innerText=`前の素数: ${prev.join(' → ')||'—'}\n${p?`▶ ${n} (素数)`:''}\n次の素数: ${next.join(' → ')}`;
+    nb.innerText=`${e_('prev_primes')}: ${prev.join(' → ')||'—'}\n${p?`▶ ${n}`:'' }\n${e_('next_primes')}: ${next.join(' → ')}`;
   }
 }
 
@@ -2011,7 +2011,7 @@ function caesarLive(){
   const s=caesarDir==='enc'?shift:26-shift;
   const result=caesar(text,s);
   out.innerText=result;
-  if(cc)cc.innerText=text.length?`${text.length}文字`:'';
+  if(cc)cc.innerText=text.length?`${text.length}${e_('chars')}`:'';
   if(brute&&text){
     brute.innerText=Array.from({length:25},(_,i)=>{
       const r=caesar(text,i+1);
@@ -2063,13 +2063,13 @@ function morseLive(){
   const lbl=document.getElementById('morseInputLabel');
   const cc=document.getElementById('morseCharCount');
   if(!out)return;
-  if(cc)cc.innerText=inp.length?`${inp.length}文字`:'';
+  if(cc)cc.innerText=inp.length?`${inp.length}${e_('chars')}`:'';
   const mode=morseMode||'encode';
   if(mode==='encode'){
-    if(lbl)lbl.innerText=morseLangMode==='ja'?'入力 (和文)':'入力 (英文)';
+    if(lbl)lbl.innerText=morseLangMode==='ja'?e_('encode_label_ja'):e_('encode_label_en');
     out.innerText=morseEncode(inp);
   }else{
-    if(lbl)lbl.innerText='モールス符号 (/ で単語区切り)';
+    if(lbl)lbl.innerText=e_('decode_label');
     out.innerText=morseDecode(inp);
   }
 }
@@ -2087,7 +2087,7 @@ function stopMorsePlay(){
   morsePlayNodes=[];
   morseIsPlaying=false;
   const btn=document.getElementById('morsePlayBtn');
-  if(btn)btn.innerText='▶ 再生';
+  if(btn)btn.innerText=e_('stopped');
 }
 function playMorseOutput(){
   const code=document.getElementById('morseOutput')?.innerText||'';
@@ -2115,11 +2115,11 @@ function playMorseCode(code){
   }
   morseIsPlaying=true;
   const btn=document.getElementById('morsePlayBtn');
-  if(btn)btn.innerText='⏹ 停止';
+  if(btn)btn.innerText=e_('playing');
   // 再生終了後にボタンをリセット
   const totalTime=(t-ctx.currentTime+0.1)*1000;
   setTimeout(()=>{
-    if(morseIsPlaying){morseIsPlaying=false;morsePlayNodes=[];if(btn)btn.innerText='▶ 再生';}
+    if(morseIsPlaying){morseIsPlaying=false;morsePlayNodes=[];if(btn)btn.innerText=e_('stopped');}
   },totalTime);
 }
 document.addEventListener('keydown',e=>{
@@ -2184,18 +2184,18 @@ function copyMorseKey(){navigator.clipboard.writeText(document.getElementById('m
 
 /* ── 日付系専用UI ── */
 const DATE_MODES={
-  'ts-format':{label:'タイムスタンプ変換',fields:[{id:'tsIn',label:'日時',type:'datetime-local'}],calc(f){const v=f.tsIn?.value;if(!v)return'';return fmtTimestamp(new Date(v).getTime());}},
-  'date-diff':{label:'日付の差分',fields:[{id:'ddA',label:'開始日',type:'date'},{id:'ddB',label:'終了日',type:'date'}],calc(f){const a=f.ddA?.value,b=f.ddB?.value;if(!a||!b)return'';return dateDiff(a,b);}},
-  'date-add':{label:'日付の加算',fields:[{id:'daBase',label:'基準日',type:'date'},{id:'daNum',label:'数値',type:'number',ph:'30'},{id:'daUnit',label:'単位',type:'select',opts:['days','hours','minutes','months','years']}],calc(f){const base=f.daBase?.value,n=f.daNum?.value,unit=f.daUnit?.value;if(!base||!n)return'';return dateAdd(`${base} ${n>0?'+':''}${n} ${unit}`);}},
-  'weekday':{label:'曜日確認',fields:[{id:'wdDate',label:'日付',type:'date'}],calc(f){const d=new Date(f.wdDate?.value);if(isNaN(d))return'';const days=['日','月','火','水','木','金','土'];return`${d.toLocaleDateString('ja-JP')} は ${days[d.getDay()]}曜日 (${DOW[d.getDay()]})`;}},
-  'iso-week':{label:'ISO週番号',fields:[{id:'iwDate',label:'日付',type:'date'}],calc(f){const v=f.iwDate?.value;if(!v)return'';return isoWeek(v);}},
-  'countdown':{label:'カウントダウン',fields:[{id:'cdDate',label:'目標日時',type:'datetime-local'}],calc(f){const v=f.cdDate?.value;if(!v)return'';return countdown(v);}},
+  'ts-format':{label:()=>lang==='ja'?'タイムスタンプ変換':'Timestamp',fields:[{id:'tsIn',label:()=>lang==='ja'?'日時':'Date/Time',type:'datetime-local'}],calc(f){const v=f.tsIn?.value;if(!v)return'';return fmtTimestamp(new Date(v).getTime());}},
+  'date-diff':{label:()=>lang==='ja'?'日付の差分':'Date Diff',fields:[{id:'ddA',label:()=>lang==='ja'?'開始日':'Start',type:'date'},{id:'ddB',label:()=>lang==='ja'?'終了日':'End',type:'date'}],calc(f){const a=f.ddA?.value,b=f.ddB?.value;if(!a||!b)return'';return dateDiff(a,b);}},
+  'date-add':{label:()=>lang==='ja'?'日付の加算':'Date Add',fields:[{id:'daBase',label:()=>lang==='ja'?'基準日':'Base date',type:'date'},{id:'daNum',label:()=>lang==='ja'?'数値':'Amount',type:'number',ph:'30'},{id:'daUnit',label:()=>lang==='ja'?'単位':'Unit',type:'select',opts:['days','hours','minutes','months','years']}],calc(f){const base=f.daBase?.value,n=f.daNum?.value,unit=f.daUnit?.value;if(!base||!n)return'';return dateAdd(`${base} ${n>0?'+':''}${n} ${unit}`);}},
+  'weekday':{label:()=>lang==='ja'?'曜日確認':'Weekday',fields:[{id:'wdDate',label:()=>lang==='ja'?'日付':'Date',type:'date'}],calc(f){const d=new Date(f.wdDate?.value);if(isNaN(d))return'';const days=['日','月','火','水','木','金','土'];return`${d.toLocaleDateString('ja-JP')} は ${days[d.getDay()]}曜日 (${DOW[d.getDay()]})`;}},
+  'iso-week':{label:()=>lang==='ja'?'ISO週番号':'ISO Week',fields:[{id:'iwDate',label:()=>lang==='ja'?'日付':'Date',type:'date'}],calc(f){const v=f.iwDate?.value;if(!v)return'';return isoWeek(v);}},
+  'countdown':{label:()=>lang==='ja'?'カウントダウン':'Countdown',fields:[{id:'cdDate',label:()=>lang==='ja'?'目標日時':'Target',type:'datetime-local'}],calc(f){const v=f.cdDate?.value;if(!v)return'';return countdown(v);}},
 };
 let dateSubTool='ts-format';
 function initDateUI(toolId){
   dateSubTool=toolId;
   const sub=document.getElementById('dateSubMode');
-  if(sub)sub.innerHTML=Object.entries(DATE_MODES).map(([k,m])=>`<button class="btn-mini date-mode-btn${k===toolId?' active':''}" onclick="switchDateMode('${k}')">${m.label}</button>`).join('');
+  if(sub)sub.innerHTML=Object.entries(DATE_MODES).map(([k,m])=>{const lbl=typeof m.label==='function'?m.label():m.label;return`<button class="btn-mini date-mode-btn${k===toolId?' active':''}" onclick="switchDateMode('${k}')">${lbl}</button>`;}).join('');
   renderDateFields(toolId);
 }
 function switchDateMode(toolId){
@@ -2206,9 +2206,9 @@ function switchDateMode(toolId){
 function renderDateFields(toolId){
   const mode=DATE_MODES[toolId];if(!mode)return;
   const fields=document.getElementById('dateFields');const res=document.getElementById('dateResult');if(!fields)return;
-  fields.innerHTML=mode.fields.map(f=>{
-    if(f.type==='select')return`<div class="date-field-row"><label>${f.label}</label><select class="conv-sel" id="df_${f.id}" onchange="dateLive()" style="width:100%;">${(f.opts||[]).map(o=>`<option value="${o}">${o}</option>`).join('')}</select></div>`;
-    return`<div class="date-field-row"><label>${f.label}</label><input type="${f.type}" id="df_${f.id}" onchange="dateLive()" oninput="dateLive()" ${f.ph?`placeholder="${f.ph}"`:''} style="color-scheme:dark;"></div>`;
+  fields.innerHTML=mode.fields.map(f=>{ const flabel=typeof f.label==='function'?f.label():f.label;
+    if(f.type==='select')return`<div class="date-field-row"><label>${flabel}</label><select class="conv-sel" id="df_${f.id}" onchange="dateLive()" style="width:100%;">${(f.opts||[]).map(o=>`<option value="${o}">${o}</option>`).join('')}</select></div>`;
+    return`<div class="date-field-row"><label>${flabel}</label><input type="${f.type}" id="df_${f.id}" onchange="dateLive()" oninput="dateLive()" ${f.ph?`placeholder="${f.ph}"`:''} style="color-scheme:dark;"></div>`;
   }).join('');
   if(res)res.style.display='none';
 }
@@ -2229,7 +2229,7 @@ function jsonpathLive(){
   const json=document.getElementById('jsonpathInput')?.value||'';
   const out=document.getElementById('jsonpathOutput');
   const cc=document.getElementById('jsonpathCharCount');
-  if(cc)cc.innerText=json.length?`${json.length}文字`:'';
+  if(cc)cc.innerText=json.length?`${json.length}${e_('chars')}`:'';
   if(!out)return;
   if(!expr||!json){out.innerText='';return;}
   try{
@@ -2240,26 +2240,26 @@ function jsonpathLive(){
 }
 
 /* ── タイムゾーン変換専用UI ── */
-const TZ_LIST=[
-  ['UTC','UTC (協定世界時)'],
-  ['Asia/Tokyo','JST (日本標準時)'],
-  ['Asia/Shanghai','CST (中国標準時)'],
-  ['Asia/Seoul','KST (韓国標準時)'],
-  ['Asia/Singapore','SGT (シンガポール時間)'],
-  ['Asia/Kolkata','IST (インド標準時)'],
-  ['Asia/Dubai','GST (湾岸標準時)'],
-  ['Europe/London','GMT/BST (英国)'],
-  ['Europe/Paris','CET (中央ヨーロッパ)'],
-  ['Europe/Berlin','CET (ドイツ)'],
-  ['Europe/Moscow','MSK (モスクワ)'],
-  ['America/New_York','EST/EDT (米国東部)'],
-  ['America/Chicago','CST/CDT (米国中部)'],
-  ['America/Denver','MST/MDT (米国山岳部)'],
-  ['America/Los_Angeles','PST/PDT (米国西部)'],
-  ['America/Sao_Paulo','BRT (ブラジル)'],
-  ['Australia/Sydney','AEST (オーストラリア東部)'],
-  ['Pacific/Auckland','NZST (ニュージーランド)'],
+const TZ_LIST_JA=[
+  ['UTC','UTC (協定世界時)'],['Asia/Tokyo','JST (日本標準時)'],['Asia/Shanghai','CST (中国標準時)'],
+  ['Asia/Seoul','KST (韓国標準時)'],['Asia/Singapore','SGT (シンガポール時間)'],['Asia/Kolkata','IST (インド標準時)'],
+  ['Asia/Dubai','GST (湾岸標準時)'],['Europe/London','GMT/BST (英国)'],['Europe/Paris','CET (中央ヨーロッパ)'],
+  ['Europe/Berlin','CET (ドイツ)'],['Europe/Moscow','MSK (モスクワ)'],['America/New_York','EST/EDT (米国東部)'],
+  ['America/Chicago','CST/CDT (米国中部)'],['America/Denver','MST/MDT (米国山岳部)'],
+  ['America/Los_Angeles','PST/PDT (米国西部)'],['America/Sao_Paulo','BRT (ブラジル)'],
+  ['Australia/Sydney','AEST (オーストラリア東部)'],['Pacific/Auckland','NZST (ニュージーランド)'],
 ];
+const TZ_LIST_EN=[
+  ['UTC','UTC'],['Asia/Tokyo','JST (Japan)'],['Asia/Shanghai','CST (China)'],
+  ['Asia/Seoul','KST (Korea)'],['Asia/Singapore','SGT (Singapore)'],['Asia/Kolkata','IST (India)'],
+  ['Asia/Dubai','GST (Gulf)'],['Europe/London','GMT/BST (UK)'],['Europe/Paris','CET (France)'],
+  ['Europe/Berlin','CET (Germany)'],['Europe/Moscow','MSK (Russia)'],['America/New_York','EST/EDT (US East)'],
+  ['America/Chicago','CST/CDT (US Central)'],['America/Denver','MST/MDT (US Mountain)'],
+  ['America/Los_Angeles','PST/PDT (US West)'],['America/Sao_Paulo','BRT (Brazil)'],
+  ['Australia/Sydney','AEST (Australia East)'],['Pacific/Auckland','NZST (New Zealand)'],
+];
+function getTzList(){return lang==='ja'?TZ_LIST_JA:TZ_LIST_EN;}
+const TZ_LIST=new Proxy([],{get(_,k){return getTzList()[k];}});
 function initTz(){
   ['tzFrom','tzTo'].forEach((id,i)=>{
     const sel=document.getElementById(id);
@@ -2307,8 +2307,8 @@ function baseConvLive(){
   if(!raw.trim()){cards.innerHTML='';if(bits)bits.innerHTML='';return;}
   try{
     const n=parseInt(raw.trim(),fromBase);
-    if(isNaN(n))throw new Error('無効な値');
-    const defs=[['2進数 (Binary)','2',n.toString(2)],['8進数 (Octal)','8',n.toString(8)],['10進数 (Decimal)','10',n.toString(10)],['16進数 (Hex)','16',n.toString(16).toUpperCase()]];
+    if(isNaN(n))throw new Error(e_('invalid_value'));
+    const defs=[[lang==='ja'?'2進数':'Binary','2',n.toString(2)],[lang==='ja'?'8進数':'Octal','8',n.toString(8)],[lang==='ja'?'10進数':'Decimal','10',n.toString(10)],[lang==='ja'?'16進数':'Hex','16',n.toString(16).toUpperCase()]];
     cards.innerHTML=defs.map(([l,b,v])=>`<div class="base-card" onclick="navigator.clipboard.writeText('${v}')"><div class="bc-lbl">${l}</div><div class="bc-val">${v}</div><div style="font-size:9px;color:var(--text-dim);margin-top:4px;">クリックでコピー</div></div>`).join('');
     if(bits){
       const bin=n.toString(2).padStart(Math.ceil(n.toString(2).length/8)*8,'0');
@@ -2329,9 +2329,9 @@ function urlParseLive(){
   try{
     const u=new URL(raw.includes('://')?raw:'https://'+raw);
     const fields=[
-      ['プロトコル',u.protocol],['ホスト',u.host],['ホスト名',u.hostname],
-      ['ポート',u.port||'(デフォルト)'],['パス',u.pathname],
-      ['クエリ',u.search||'(なし)'],['ハッシュ',u.hash||'(なし)'],['オリジン',u.origin]
+      [lang==='ja'?'プロトコル':'Protocol',u.protocol],[lang==='ja'?'ホスト':'Host',u.host],[lang==='ja'?'ホスト名':'Hostname',u.hostname],
+      [lang==='ja'?'ポート':'Port',u.port||(lang==='ja'?'(デフォルト)':'(default)')],[lang==='ja'?'パス':'Path',u.pathname],
+      [lang==='ja'?'クエリ':'Query',u.search||(lang==='ja'?'(なし)':'(none)')],[lang==='ja'?'ハッシュ':'Hash',u.hash||(lang==='ja'?'(なし)':'(none)')],[lang==='ja'?'オリジン':'Origin',u.origin]
     ];
     cards.innerHTML=fields.map(([l,v])=>`<div class="url-card"><div class="uc-lbl">${l}</div><div class="uc-val">${esc(v)}</div></div>`).join('');
     const qp={};u.searchParams.forEach((v,k)=>qp[k]=v);
@@ -2355,7 +2355,7 @@ function regexLive(){
   try{
     const re=new RegExp(pattern,flags.includes('g')?flags:flags+'g');
     const matches=[...text.matchAll(re)];
-    if(summary)summary.innerText=matches.length?`${matches.length}件マッチ`:'マッチなし';
+    if(summary)summary.innerText=matches.length?e_('match_count',matches.length):e_('no_match_re');
     if(summary)summary.style.color=matches.length?'var(--add)':'var(--del)';
     // ハイライト
     let last=0,html='';
@@ -2399,7 +2399,7 @@ function angleLive(){
   const rad=deg*Math.PI/180;
   const grad=deg/0.9;
   const turn=deg/360;
-  const defs=[['度 (°)','deg',deg.toFixed(6)],['ラジアン (rad)','rad',rad.toFixed(6)],['グラジアン (grad)','grad',grad.toFixed(6)],['回転 (turn)','turn',turn.toFixed(6)]];
+  const defs=[[lang==='ja'?'度 (°)':'Degrees (°)','deg',deg.toFixed(6)],[lang==='ja'?'ラジアン':'Radians','rad',rad.toFixed(6)],[lang==='ja'?'グラジアン':'Gradians','grad',grad.toFixed(6)],[lang==='ja'?'回転':'Turns','turn',turn.toFixed(6)]];
   cards.innerHTML=defs.map(([l,u,v])=>`<div class="angle-card"><div class="ac-lbl">${l}</div><div class="ac-val">${v}</div></div>`).join('');
   // 円グラフ描画
   if(canvas){
@@ -2435,10 +2435,10 @@ function httpStatusLive(){
   if(!badge)return;
   if(isNaN(code)){badge.innerText='';if(detail)detail.style.display='none';return;}
   const name=HTTP_STATUS[code];
-  if(!name){badge.innerText=`${code} 不明`;badge.style.color='var(--text-dim)';if(detail)detail.style.display='none';return;}
+  if(!name){badge.innerText=`${code} ${lang==='ja'?'不明':'Unknown'}`;badge.style.color='var(--text-dim)';if(detail)detail.style.display='none';return;}
   const color=code<300?'var(--add)':code<400?'#f59e0b':code<500?'var(--del)':'#ef4444';
   badge.innerText=`${code} ${name}`;badge.style.color=color;
-  const cat=code<200?'1xx 情報':code<300?'2xx 成功':code<400?'3xx リダイレクト':code<500?'4xx クライアントエラー':'5xx サーバーエラー';
+  const cat=lang==='ja'?(code<200?'1xx 情報':code<300?'2xx 成功':code<400?'3xx リダイレクト':code<500?'4xx クライアントエラー':'5xx サーバーエラー'):(code<200?'1xx Informational':code<300?'2xx Success':code<400?'3xx Redirection':code<500?'4xx Client Error':'5xx Server Error');
   if(desc)desc.innerHTML=`<strong style="font-size:15px;color:${color};">${code} ${name}</strong><br><span style="color:var(--text-dim);">${cat}</span><br><br>${HTTP_DESC[code]||''}`;
   if(detail)detail.style.display='block';
 }
@@ -2455,7 +2455,7 @@ function bitwiseLive(){
   const ops={AND:()=>a&b,OR:()=>a|b,XOR:()=>a^b,NOT:()=>~a,LSHIFT:()=>a<<b,RSHIFT:()=>a>>b};
   try{
     const r=ops[op]();
-    val.innerText=`結果: ${r}\n2進数: ${r.toString(2)}\n16進数: 0x${r.toString(16).toUpperCase()}`;
+    val.innerText=`${e_('result')}: ${r}\n${e_('binary')}: ${r.toString(2)}\n${e_('hex_label')}: 0x${r.toString(16).toUpperCase()}`;
     res.style.display='block';
     if(bits){
       const fmt=n=>{const b=n>=0?n.toString(2):((n>>>0).toString(2));return b.padStart(Math.ceil(b.length/8)*8,'0');}
@@ -2528,6 +2528,23 @@ const ERR={
     'enter_seconds':'Enter seconds (number)',
     'enter_port':'Enter a port number',
     'hex_or_rgb':'Use #HEX or rgb(r,g,b)',
+    'invalid_value':'Invalid value',
+    'prime_is':'is prime','prime_not':'is not prime',
+    'prev_primes':'Previous primes','next_primes':'Next primes',
+    'out_of_range':'Out of range (1–3999)',
+    'no_unicode':'(no single Unicode char for this value)',
+    'invalid_input':'Invalid input',
+    'playing':'⏹ Stop','stopped':'▶ Play',
+    'encode_label_en':'Input (Latin)','encode_label_ja':'Input (Japanese)',
+    'decode_label':'Morse code (/ = word separator)',
+    'strength_strong':'Strong 💪','strength_mid':'Medium ⚠️','strength_weak':'Weak ❌',
+    'strength_label':(len,chars)=>`Strength: ${len} chars, ${chars} char types`,
+    'chars':'chars','words':'words','match_count':(n)=>`${n} match(es)`,'no_match_re':'No matches',
+    'result':'Result','binary':'Binary','hex_label':'Hex',
+    'invalid_ts':'Invalid timestamp',
+    'qr_hint':'Enter text to generate QR code',
+    'lorem_para':'paragraphs','lorem_sent':'sentences','lorem_word':'words',
+    'copy_hint':'Click to copy uppercase',
   },
   ja:{
     'invalid_json':'無効なJSONです',
@@ -2540,19 +2557,36 @@ const ERR={
     'invalid_number':'有効な数値がありません',
     'unknown_status':'不明なHTTPステータスコードです',
     'unknown_method':'不明なHTTPメソッドです',
-    'roman_range':'ローマ数字は 1〜3999 の範囲のみ対応しています',
-    'roman_positive':'ローマ数字は 1 以上の正の整数を入力してください',
+    'roman_range':'ローマ数字の範囲は 1〜3999 です',
+    'roman_positive':'1 以上の正の整数を入力してください',
     'no_match':'マッチなし',
     'vector_length':'ベクトルの長さが一致していません',
     'matrix_sep':'行列は --- で区切ってください',
-    'matrix_dims':'行列の次元が合わず演算できません',
+    'matrix_dims':'行列の次元が合いません',
     'format_unit':'"100 km to miles" の形式で入力してください',
     'unknown_unit':(k)=>`不明な単位: "${k}"`,
     'format_angle':'"90 deg" や "1.57 rad" の形式で入力してください',
-    'format_percent':'"30 of 150" / "150 * 20%" / "20% of 150" / "100 to 150" の形式で入力してください',
+    'format_percent':'"30 of 150" / "150 * 20%" などの形式で入力してください',
     'enter_seconds':'秒数を数値で入力してください',
     'enter_port':'ポート番号を入力してください',
     'hex_or_rgb':'#HEX または rgb(r,g,b) 形式で入力してください',
+    'invalid_value':'無効な値です',
+    'prime_is':'は素数です','prime_not':'は素数ではありません',
+    'prev_primes':'前の素数','next_primes':'次の素数',
+    'out_of_range':'範囲外 (1〜3999)',
+    'no_unicode':'(対応するUnicode文字なし)',
+    'invalid_input':'無効な入力',
+    'playing':'⏹ 停止','stopped':'▶ 再生',
+    'encode_label_en':'入力 (英文)','encode_label_ja':'入力 (和文)',
+    'decode_label':'モールス符号 (/ で単語区切り)',
+    'strength_strong':'強い 💪','strength_mid':'普通 ⚠️','strength_weak':'弱い ❌',
+    'strength_label':(len,chars)=>`強度: ${len}文字, ${chars}種の文字`,
+    'chars':'文字','words':'語','match_count':(n)=>`${n}件マッチ`,'no_match_re':'マッチなし',
+    'result':'結果','binary':'2進数','hex_label':'16進数',
+    'invalid_ts':'無効なタイムスタンプ',
+    'qr_hint':'テキストを入力するとQRコードが表示されます',
+    'lorem_para':'段落','lorem_sent':'文','lorem_word':'語',
+    'copy_hint':'クリックでコピー',
   }
 };
 function e_(key,...args){
@@ -2590,8 +2624,8 @@ function passGenLive(){
     const score=(upper?1:0)+(lower?1:0)+(num?1:0)+(sym?1:0);
     const lenScore=len>=16?2:len>=12?1:0;
     const total=score+lenScore;
-    const [lbl,clr]=total>=5?['強い 💪','var(--add)']:total>=3?['普通 ⚠️','#f59e0b']:['弱い ❌','var(--del)'];
-    strength.innerHTML=`強度: <strong style="color:${clr};">${lbl}</strong>  (${len}文字, ${chars.length}種の文字)`;
+    const [lbl,clr]=total>=5?[e_('strength_strong'),'var(--add)']:total>=3?[e_('strength_mid'),'#f59e0b']:[e_('strength_weak'),'var(--del)'];
+    strength.innerHTML=`<strong style="color:${clr};">${lbl}</strong>  (${e_('strength_label',len,chars.length)})`;
   }
 }
 
@@ -2599,7 +2633,7 @@ function passGenLive(){
 function tsLive(){
   const v=document.getElementById('tsInput')?.value||'';
   const lc=document.getElementById('tsLiveCount');
-  if(lc)lc.innerText=v.length?`${v.length}文字`:'';
+  if(lc)lc.innerText=v.length?`${v.length}${e_('chars')}`:'';
   const cards=document.getElementById('tsCards');
   if(!cards)return;
   const w=v.trim()?v.trim().split(/\s+/).length:0;
@@ -2610,11 +2644,11 @@ function tsLive(){
   const bytes=new TextEncoder().encode(v).length;
   const readMin=Math.max(1,Math.ceil(w/200));
   const stats=[
-    {lbl:'文字数(空白込)',val:v.length},{lbl:'文字数(空白除)',val:cn},
-    {lbl:'単語数',val:w},{lbl:'行数',val:lines},
-    {lbl:'段落数',val:paras},{lbl:'文数',val:sents},
-    {lbl:'バイト数',val:bytes},{lbl:'読了時間',val:`約${readMin}分`},
-    {lbl:'平均単語長',val:w?(cn/w).toFixed(1)+'文字':'—'},
+    {lbl:lang==='ja'?'文字数(空白込)':'Chars(spaces)',val:v.length},{lbl:lang==='ja'?'文字数(空白除)':'Chars(no sp)',val:cn},
+    {lbl:lang==='ja'?'単語数':'Words',val:w},{lbl:lang==='ja'?'行数':'Lines',val:lines},
+    {lbl:lang==='ja'?'段落数':'Paragraphs',val:paras},{lbl:lang==='ja'?'文数':'Sentences',val:sents},
+    {lbl:lang==='ja'?'バイト数':'Bytes',val:bytes},{lbl:lang==='ja'?'読了時間':'Read time',val:lang==='ja'?`約${readMin}分`:`~${readMin}min`},
+    {lbl:lang==='ja'?'平均単語長':'Avg word',val:w?(cn/w).toFixed(1)+(lang==='ja'?'文字':'ch'):'—'},
   ];
   cards.innerHTML=stats.map(s=>`<div class="stat-card"><div class="val">${s.val}</div><div class="lbl">${s.lbl}</div></div>`).join('');
 }
@@ -2626,7 +2660,7 @@ function qrLive(){
   const size=parseInt(document.getElementById('qrSize')?.value)||5;
   const res=document.getElementById('qrResult');
   if(!res)return;
-  if(!val){res.innerHTML='<span style="color:var(--text-dim);font-size:12px;">テキストを入力するとQRコードが表示されます</span>';return;}
+  if(!val){res.innerHTML=`<span style="color:var(--text-dim);font-size:12px;">${e_('qr_hint')}</span>`;return;}
   try{
     const q=qrcode(0,ecc);
     q.addData(val);q.make();
@@ -2663,7 +2697,7 @@ function epochFromUnix(){
   const res=document.getElementById('epochResult');
   const val=document.getElementById('epochVal');
   if(!res||!val)return;
-  if(isNaN(d)){val.innerText='無効なタイムスタンプ';res.style.display='block';return;}
+  if(isNaN(d)){val.innerText=e_('invalid_ts');res.style.display='block';return;}
   // 同期: date picker
   const pad=n=>String(n).padStart(2,'0');
   const dt=document.getElementById('epochDate');
@@ -2693,7 +2727,7 @@ function loremLive(){
   const n=parseInt(document.getElementById('loremCount')?.value)||3;
   const lv=document.getElementById('loremCountVal');
   const out=document.getElementById('loremOut');
-  if(lv)lv.innerText=n+(loremType==='para'?'段落':loremType==='sent'?'文':'語');
+  if(lv)lv.innerText=n+' '+(loremType==='para'?e_('lorem_para'):loremType==='sent'?e_('lorem_sent'):e_('lorem_word'));
   if(!out)return;
   if(loremType==='para')out.innerText=lorem(n);
   else if(loremType==='sent'){
@@ -2753,7 +2787,7 @@ function paletteLive(){
     sw.innerHTML=colors.map(c=>`
       <div onclick="navigator.clipboard.writeText('${c.hex}')"
         style="cursor:pointer;width:72px;text-align:center;transition:.12s;"
-        title="クリックでコピー: ${c.hex}">
+        title="${e_('copy_hex',c.hex)}">
         <div style="height:56px;border-radius:10px;background:${c.hex};margin-bottom:4px;border:1px solid var(--border);"></div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);">${c.hex}</div>
         <div style="font-size:9px;color:var(--text-dim);">${c.lbl}</div>
@@ -2870,7 +2904,7 @@ function initRoman(){
   const tbl=document.getElementById('romanUniTable');
   if(tbl&&!tbl.children.length){
     tbl.innerHTML=ROMAN_UNI_LIST.map(([up,lo,n])=>`
-      <div onclick="navigator.clipboard.writeText('${up}')" title="${n} — クリックで大文字コピー"
+      <div onclick="navigator.clipboard.writeText('${up}')" title="${n} — ${e_('copy_hint')}"
         style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;
                cursor:pointer;text-align:center;transition:.12s;min-width:60px;"
         onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
@@ -2889,7 +2923,7 @@ function romanFromArabic(){
   if(isNaN(n)||n<1){if(rA)rA.style.display='none';if(rU)rU.style.display='none';return;}
   if(n>3999){
     document.getElementById('romanAsciiUp').innerText='';
-    document.getElementById('romanAsciiLo').innerText='範囲外 (1〜3999)';
+    document.getElementById('romanAsciiLo').innerText=e_('out_of_range');
     document.getElementById('romanAsciiLo').style.color='var(--del)';
     if(rA)rA.style.display='block';
     if(rU)rU.style.display='none';
@@ -2910,7 +2944,7 @@ function romanFromArabic(){
     if(rU)rU.style.display='block';
   }else{
     document.getElementById('romanUniUp').innerText='—';
-    document.getElementById('romanUniLo').innerText='(この値のUnicode単一文字はなし)';
+    document.getElementById('romanUniLo').innerText=e_('no_unicode');
     if(rU)rU.style.display='block';
   }
 }
@@ -2925,7 +2959,7 @@ function romanFromRoman(){
   const n=fromRomanASCII(v);
   const rv=document.getElementById('romanResultRVal');
   if(n===null||isNaN(n)){
-    if(rv)rv.innerText='無効な入力';
+    if(rv)rv.innerText=e_('invalid_input');
     if(rR)rR.style.display='block';
     return;
   }
