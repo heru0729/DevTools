@@ -867,17 +867,26 @@ async function execute(){
       const UNI_EXTRA={50:['Ⅼ','ⅼ'],100:['Ⅽ','ⅽ'],500:['Ⅾ','ⅾ'],1000:['Ⅿ','ⅿ']};
       if(/^\d+$/.test(v)){
         const n=parseInt(v);
-        // ASCII roman
-        const vals=[1000,900,500,400,100,90,50,40,10,9,5,4,1];
-        const syms=['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];
-        let ascii='',rem=n;
-        for(let i=0;i<vals.length;i++)while(rem>=vals[i]){ascii+=syms[i];rem-=vals[i];}
-        // Unicode single-char (1–12 only, or L/C/D/M for exact matches)
-        let uniUp='',uniLo='';
-        if(n>=1&&n<=12){uniUp=UNI_UP[n-1];uniLo=UNI_LO[n-1];}
-        else if(UNI_EXTRA[n]){uniUp=UNI_EXTRA[n][0];uniLo=UNI_EXTRA[n][1];}
-        else{uniUp='(no single Unicode char for '+n+')';uniLo='(no single Unicode char for '+n+')';}
-        r=`ASCII (uppercase): ${ascii}\nASCII (lowercase): ${ascii.toLowerCase()}\n\nUnicode uppercase: ${uniUp}\nUnicode lowercase: ${uniLo}\n\nUnicode reference:\nⅠ Ⅱ Ⅲ Ⅳ Ⅴ Ⅵ Ⅶ Ⅷ Ⅸ Ⅹ Ⅺ Ⅻ Ⅼ Ⅽ Ⅾ Ⅿ\nⅰ ⅱ ⅲ ⅳ ⅴ ⅵ ⅶ ⅷ ⅸ ⅹ ⅺ ⅻ ⅼ ⅽ ⅾ ⅿ`;
+        // 通常のローマ数字は 1〜3999 まで
+        let ascii='',uniUp='',uniLo='';
+        if(n<1){
+          r='Error: ローマ数字は 1 以上の正の整数です。';
+        } else if(n>3999){
+          // 3999超えは表記不可（上線記法は環境依存のため）
+          ascii=`${n} は通常のローマ数字では表記できません。\nローマ数字の範囲は 1〜3999 (I〜MMMCMXCIX) です。\n\n上線付き記法（4000以上）はフォント非対応の環境が多く\nDevToolsでは対応していません。`;
+          r=ascii;
+        } else {
+          // ASCII roman (1–3999)
+          const vals=[1000,900,500,400,100,90,50,40,10,9,5,4,1];
+          const syms=['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];
+          let rem=n;
+          for(let i=0;i<vals.length;i++)while(rem>=vals[i]){ascii+=syms[i];rem-=vals[i];}
+          // Unicode single-char (1–12 only, or L/C/D/M for exact matches)
+          if(n>=1&&n<=12){uniUp=UNI_UP[n-1];uniLo=UNI_LO[n-1];}
+          else if(UNI_EXTRA[n]){uniUp=UNI_EXTRA[n][0];uniLo=UNI_EXTRA[n][1];}
+          else{uniUp='(この数値に対応するUnicode専用文字はありません)';uniLo='(この数値に対応するUnicode専用文字はありません)';}
+          r=`ASCII (uppercase): ${ascii}\nASCII (lowercase): ${ascii.toLowerCase()}\n\nUnicode uppercase: ${uniUp}\nUnicode lowercase: ${uniLo}\n\n※Unicodeのローマ数字専用文字は 1〜12, 50, 100, 500, 1000 のみ\n\nUnicode一覧:\nⅠ Ⅱ Ⅲ Ⅳ Ⅴ Ⅵ Ⅶ Ⅷ Ⅸ Ⅹ Ⅺ Ⅻ Ⅼ Ⅽ Ⅾ Ⅿ\nⅰ ⅱ ⅲ ⅳ ⅴ ⅵ ⅶ ⅷ ⅸ ⅹ ⅺ ⅻ ⅼ ⅽ ⅾ ⅿ`;
+        }
       }else{
         // Roman → Arabic
         const rom={M:1000,D:500,C:100,L:50,X:10,V:5,I:1};
