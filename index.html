@@ -45,8 +45,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .conv-sel{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:9px;font-family:inherit;font-size:13px;outline:none;cursor:pointer;}
 .conv-sel:focus{border-color:var(--accent);}
 .caesar-dir.active{background:var(--accent);color:#fff;border-color:var(--accent);}
-.morse-mode-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
-.morse-lang-btn.active{background:var(--accent2);color:#fff;border-color:var(--accent2);}
 .lorem-type-btn.active,.palette-type-btn.active,.grad-type-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
 .date-mode-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
 .date-field-row{display:flex;flex-direction:column;gap:4px;}
@@ -466,68 +464,6 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
     <div style="background:var(--panel);border-radius:10px;padding:12px;">
       <div style="font-size:10.5px;font-weight:800;color:var(--text-dim);margin-bottom:6px;">All shifts (brute force)</div>
       <div id="caesarBrute" style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text-dim);max-height:140px;overflow-y:auto;white-space:pre;"></div>
-    </div>
-  </div>
-    <!-- モード行 -->
-    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-      <button class="btn-mini morse-mode-btn active" data-mode="encode" onclick="setMorseMode('encode')">Text → Code</button>
-      <button class="btn-mini morse-mode-btn" data-mode="decode" onclick="setMorseMode('decode')">Code → Text</button>
-      <button class="btn-mini morse-mode-btn" data-mode="key" onclick="setMorseMode('key')">⚡ Key input</button>
-      <div style="width:1px;height:18px;background:var(--border);margin:0 4px;"></div>
-      <!-- 和文/英文 切替 -->
-      <button class="btn-mini morse-lang-btn active" data-mlang="en" onclick="setMorseLang('en')">Latin</button>
-      <button class="btn-mini morse-lang-btn" data-mlang="ja" onclick="setMorseLang('ja')">Japanese</button>
-      <div style="margin-left:auto;display:flex;gap:6px;align-items:center;">
-        <button class="btn-mini" id="morseToggleMute" onclick="toggleMorseMute()">🔊</button>
-      </div>
-    </div>
-    <!-- encode/decode mode -->
-    <div id="morseTextArea" style="display:flex;flex-direction:column;gap:8px;flex:1;">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1;">
-        <div style="display:flex;flex-direction:column;gap:4px;">
-          <div style="display:flex;align-items:center;gap:6px;">
-            <div class="calc-result-label" id="morseInputLabel">入力</div>
-            <span id="morseCharCount" style="font-size:10px;color:var(--text-dim);"></span>
-          </div>
-          <textarea id="morseInput" spellcheck="false" oninput="morseLive()"
-            style="flex:1;min-height:140px;background:var(--panel);border:1px solid var(--border);border-radius:10px;
-                   color:var(--text);padding:12px;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;resize:none;"></textarea>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:4px;">
-          <div style="display:flex;align-items:center;gap:6px;">
-            <div class="calc-result-label">出力</div>
-            <button class="btn-mini" id="morsePlayBtn" onclick="toggleMorsePlay()">▶ 再生</button>
-            <button class="btn-mini" onclick="copyMorseResult()">COPY</button>
-          </div>
-          <div id="morseOutput"
-            style="flex:1;min-height:140px;background:var(--panel);border:1px solid var(--border);border-radius:10px;
-                   color:var(--accent);padding:12px;font-family:'JetBrains Mono',monospace;font-size:13px;
-                   white-space:pre-wrap;overflow:auto;line-height:1.8;"></div>
-        </div>
-      </div>
-      <!-- 和文入力ヒント -->
-      <div id="morseJaHint" style="display:none;font-size:11px;color:var(--text-dim);background:var(--panel);border-radius:8px;padding:8px 12px;line-height:1.7;">
-        和文モールス対応: ひらがな・カタカナ・一部記号に対応しています。<br>
-        長音(ー)は <code style="background:var(--bg);padding:1px 4px;border-radius:3px;">−−</code>、促音(っ)は <code style="background:var(--bg);padding:1px 4px;border-radius:3px;">・・</code>
-      </div>
-    </div>
-    <!-- key input mode -->
-    <div id="morseKeyArea" style="display:none;flex-direction:column;gap:10px;flex:1;">
-      <div style="background:var(--panel);border-radius:10px;padding:12px;font-size:12px;color:var(--text-dim);line-height:1.8;">
-        <strong style="color:var(--text);">Press Space to input</strong><br>
-        Short <span style="color:var(--accent);">●</span>: Dit (&lt;200ms)　　Long <span style="color:var(--accent);">━</span>: Dah (≥200ms)<br>
-        Char: release 0.5s　　Space: release 1s+
-      </div>
-      <div id="morseKeyDisplay"
-        style="font-size:44px;text-align:center;padding:20px;background:var(--panel);border-radius:12px;
-               font-family:'JetBrains Mono',monospace;min-height:90px;letter-spacing:6px;transition:.15s;">—</div>
-      <div id="morseKeyDecoded"
-        style="text-align:center;font-size:24px;font-weight:800;color:var(--accent);letter-spacing:6px;min-height:36px;"></div>
-      <div style="display:flex;gap:8px;justify-content:center;">
-        <button class="btn-mini" onclick="morseKeyClear()">クリア</button>
-        <button class="btn-mini" onclick="copyMorseKey()">COPY</button>
-      </div>
-      <div id="morseKeyRaw" style="font-size:11px;color:var(--text-dim);text-align:center;font-family:'JetBrains Mono',monospace;word-break:break-all;"></div>
     </div>
   </div>
 
@@ -1169,33 +1105,6 @@ function unitConvert(input){const conv={'km to miles':v=>v*0.621371,'miles to km
 function slugify(s){return s.toLowerCase().trim().replace(/[^\w\s-]/g,'').replace(/[\s_-]+/g,'-').replace(/^-+|-+$/g,'');}
 function rot13(s){return s.replace(/[a-zA-Z]/g,c=>{const b=c<='Z'?65:97;return String.fromCharCode((c.charCodeAt(0)-b+13)%26+b);});}
 function caesar(s,shift){return s.replace(/[a-zA-Z]/g,c=>{const b=c<='Z'?65:97;return String.fromCharCode((c.charCodeAt(0)-b+((shift%26)+26))%26+b);});}
-const MORSE_ENC={'a':'.-','b':'-...','c':'-.-.','d':'-..','e':'.','f':'..-.','g':'--.','h':'....','i':'..','j':'.---','k':'-.-','l':'.-..','m':'--','n':'-.','o':'---','p':'.--.','q':'--.-','r':'.-.','s':'...','t':'-','u':'..-','v':'...-','w':'.--','x':'-..-','y':'-.--','z':'--..','0':'-----','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....','6':'-....','7':'--...','8':'---..','9':'----.','.'  :'.-.-.-',','  :'--..--','?':'..--..','/':'-..-.','-':'-....-','(':'-.--.',')'  :'.--.-.','_':'..--.-'};
-const MORSE_DEC=Object.fromEntries(Object.entries(MORSE_ENC).map(([k,v])=>[v,k]));
-const MORSE_JA_ENC={
-  'ア':'.-','イ':'.-','ウ':'..-','エ':'-.---','オ':'.-...','カ':'.-..','キ':'-.-.','ク':'...-','ケ':'-.--','コ':'----',
-  'サ':'-.-.-','シ':'--.-','ス':'---.-','セ':'.---.','ソ':'---.','タ':'-.','チ':'..-.','ツ':'.--.','テ':'.-.--','ト':'..-..',
-  'ナ':'.-.',  'ニ':'-.-.','ヌ':'....','ネ':'--.-.',  'ノ':'..--','ハ':'-...','ヒ':'--..-.','フ':'--..','ヘ':'.','ホ':'-..',
-  'マ':'-..-','ミ':'..-.-','ム':'-','メ':'-...-','モ':'-..-.','ヤ':'.--','ユ':'-..--','ヨ':'--',
-  'ラ':'...','リ':'--.','ル':'-..-','レ':'---','ロ':'.-.-','ワ':'-.-','ヲ':'.---','ン':'.-.-.',
-  'ッ':'.--.','ー':'.-.-.-','、':'.-.-.-','。':'.-.-.-',
-};
-const MORSE_JA_DEC=Object.fromEntries(Object.entries(MORSE_JA_ENC).map(([k,v])=>[v,k]));
-function hiraganaToKatakana(s){return s.replace(/[\u3041-\u3096]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60));}
-let morseLangMode='en';
-function morseEncode(s){
-  if(morseLangMode==='ja'){
-    const k=hiraganaToKatakana(s);
-    return [...k].map(c=>{if(c===' ')return'/';return MORSE_JA_ENC[c]||(MORSE_ENC[c.toLowerCase()]||'');}).join(' ');
-  }
-  return s.toLowerCase().split('').map(c=>c===' '?'/':(MORSE_ENC[c]||'')).join(' ');
-}
-function morseDecode(s){
-  return s.split(' / ').map(w=>w.split(' ').map(c=>{
-    if(!c)return'';
-    if(morseLangMode==='ja')return MORSE_JA_DEC[c]||MORSE_DEC[c]||'';
-    return MORSE_DEC[c]||'';
-  }).join('')).join(' ');
-}
 function wrapText(text,width){return text.split('\n').map(line=>{const words=line.split(' ');const lines=[];let cur='';for(const w of words){if((cur+' '+w).trim().length>width&&cur){lines.push(cur);cur=w;}else cur=(cur+' '+w).trim();}if(cur)lines.push(cur);return lines.join('\n');}).join('\n');}
 const NANO_CHARS='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
 function nanoid(size=21){return Array.from(crypto.getRandomValues(new Uint8Array(size)),b=>NANO_CHARS[b%64]).join('');}
@@ -1465,7 +1374,6 @@ async function execute(){
     if(curTool==='slug')r=slugify(val);
     if(curTool==='rot13')r=rot13(val);
     if(curTool==='caesar'){const[shiftStr,...rest]=val.split('\n');const shift=parseInt(shiftStr);if(isNaN(shift))throw new Error('Line 1 must be a number');r=caesar(rest.join('\n'),shift);}
-    if(curTool==='morse'){if(val.startsWith('.'))r=morseDecode(val.slice(1).trim());else r=morseEncode(val);}
     // 専用UIがある場合はそちらで処理済みのためスキップ
     if(curTool==='caesar'){caesarLive();return;}
     if(curTool==='stats'){statsCalc();return;}
@@ -1592,7 +1500,6 @@ function showUI(toolId){
   document.getElementById('lbl-run').style.display=hasSpecial?'none':'';
   document.getElementById('lbl-copy').style.display='';
   if(toolId==='caesar')initCaesar();
-  if(toolId==='morse')initMorse();
   if(toolId==='unit-conv')convInitUnits();
   if(toolId==='stats')initStats();
   if(toolId==='gcd-lcm')initGcdLcm();
@@ -1925,106 +1832,9 @@ function caesarLive(){
 function copyCaesarResult(){navigator.clipboard.writeText(document.getElementById('caesarOutput')?.innerText||'');}
 
 /* ── モールス信号専用UI ── */
-let morseMode='encode',morseMute=false,morseAudioCtx=null;
-let morseKeyPressTime=0,morseKeyTimer=null,morseKeyBuffer='',morseKeyDecodeBuffer='';
-function initMorse(){
-  morseMode='encode';
-  morseLangMode='en';
-  setMorseLang('en');
-  setMorseMode('encode');
-}
-function setMorseMode(m){
-  morseMode=m;
-  document.querySelectorAll('.morse-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));
-  const ta=document.getElementById('morseTextArea');
-  const ka=document.getElementById('morseKeyArea');
-  if(ta)ta.style.display=m==='key'?'none':'flex';
-  if(ka)ka.style.display=m==='key'?'flex':'none';
-  if(m==='key'){
-    const d=document.getElementById('morseKeyDisplay');
-    if(d)d.innerText='—';
-    morseKeyBuffer='';morseKeyDecodeBuffer='';
-  }else morseLive();
-}
-function setMorseLang(l){
-  morseLangMode=l;
-  document.querySelectorAll('.morse-lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.mlang===l));
-  const hint=document.getElementById('morseJaHint');
-  if(hint)hint.style.display=l==='ja'?'block':'none';
-  const inp=document.getElementById('morseInput');
-  if(inp)inp.placeholder=l==='ja'?'ひらがな・カタカナを入力...  例: こんにちは':'Enter text...  e.g. hello world';
-  morseLive();
-}
-function toggleMorseMute(){
-  morseMute=!morseMute;
-  const btn=document.getElementById('morseToggleMute');
-  if(btn)btn.innerText=morseMute?'🔇':'🔊';
-}
-function morseLive(){
-  const inp=document.getElementById('morseInput')?.value||'';
-  const out=document.getElementById('morseOutput');
-  const lbl=document.getElementById('morseInputLabel');
-  const cc=document.getElementById('morseCharCount');
-  if(!out)return;
-  if(cc)cc.innerText=inp.length?`${inp.length}${e_('chars')}`:'';
-  const mode=morseMode||'encode';
-  if(mode==='encode'){
-    if(lbl)lbl.innerText=morseLangMode==='ja'?e_('encode_label_ja'):e_('encode_label_en');
-    out.innerText=morseEncode(inp);
-  }else{
-    if(lbl)lbl.innerText=e_('decode_label');
-    out.innerText=morseDecode(inp);
-  }
-}
 
 
 /* 再生停止トグル */
-let morsePlayNodes=[];
-let morseIsPlaying=false;
-function toggleMorsePlay(){
-  if(morseIsPlaying){stopMorsePlay();return;}
-  playMorseOutput();
-}
-function stopMorsePlay(){
-  morsePlayNodes.forEach(n=>{try{n.stop();}catch(_){}});
-  morsePlayNodes=[];
-  morseIsPlaying=false;
-  const btn=document.getElementById('morsePlayBtn');
-  if(btn)btn.innerText=e_('stopped');
-}
-function playMorseOutput(){
-  const code=document.getElementById('morseOutput')?.innerText||'';
-  playMorseCode(code);
-}
-function getMorseAudio(){if(!morseAudioCtx)morseAudioCtx=new(window.AudioContext||window.webkitAudioContext)();return morseAudioCtx;}
-function playMorseCode(code){
-  if(morseMute)return;
-  stopMorsePlay();
-  const ctx=getMorseAudio();
-  let t=ctx.currentTime+0.05;
-  const dot=0.08,dash=0.24,gap=0.06,cGap=0.20,wGap=0.50;
-  for(const tok of code.split(' ')){
-    if(tok==='/'){t+=wGap;continue;}
-    if(!tok){t+=cGap;continue;}
-    for(const c of tok){
-      if(c!=='.'&&c!=='-')continue;
-      const o=ctx.createOscillator(),g=ctx.createGain();
-      o.connect(g);g.connect(ctx.destination);
-      o.frequency.value=600;g.gain.value=0.3;
-      o.start(t);const d=c==='.'?dot:dash;o.stop(t+d);
-      morsePlayNodes.push(o);
-      t+=d+gap;
-    }t+=cGap;
-  }
-  morseIsPlaying=true;
-  const btn=document.getElementById('morsePlayBtn');
-  if(btn)btn.innerText=e_('playing');
-  // 再生終了後にボタンをリセット
-  const totalTime=(t-ctx.currentTime+0.1)*1000;
-  setTimeout(()=>{
-    if(morseIsPlaying){morseIsPlaying=false;morsePlayNodes=[];if(btn)btn.innerText=e_('stopped');}
-  },totalTime);
-}
 document.addEventListener('keydown',e=>{
   // Enter=実行, Shift+Enter=改行
   if(e.key==='Enter'&&!e.shiftKey){
@@ -2836,7 +2646,6 @@ function copyResult(){
     document.getElementById('convResult')?.innerText||
     document.getElementById('colorValues')?.innerText||
     document.getElementById('caesarOutput')?.innerText||
-    document.getElementById('morseOutput')?.innerText||
     document.getElementById('dateVal')?.innerText||
     '';
   navigator.clipboard.writeText(text);
