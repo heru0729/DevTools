@@ -55,6 +55,27 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .stats-inp:focus{border-color:var(--accent);}
 .gcd-inp{width:90px;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:14px;text-align:center;outline:none;}
 .gcd-inp:focus{border-color:var(--accent);}
+/* ── 新専用UI共通 ── */
+.url-card{background:var(--panel);border-radius:9px;padding:10px 13px;}
+.url-card .uc-lbl{font-size:10px;font-weight:800;color:var(--text-dim);text-transform:uppercase;margin-bottom:3px;}
+.url-card .uc-val{font-family:'JetBrains Mono',monospace;font-size:12.5px;word-break:break-all;}
+.base-card{background:var(--panel);border-radius:10px;padding:12px 14px;cursor:pointer;transition:.12s;}
+.base-card:hover{border-color:var(--accent);}
+.base-card .bc-lbl{font-size:10px;font-weight:800;color:var(--text-dim);}
+.base-card .bc-val{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:800;color:var(--accent);margin-top:4px;word-break:break-all;}
+.regex-match{background:#818cf844;border-radius:3px;outline:2px solid var(--accent);color:var(--accent);}
+.regex-match-item{padding:4px 8px;background:var(--panel);border-radius:6px;margin-bottom:4px;font-size:11.5px;}
+.regex-match-item .rm-idx{color:var(--text-dim);margin-right:6px;}
+.http-status-chip{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;transition:.12s;border:1px solid var(--border);background:var(--panel);}
+.http-status-chip:hover{border-color:var(--accent);color:var(--accent);}
+.angle-card{background:var(--panel);border-radius:10px;padding:12px 14px;}
+.angle-card .ac-lbl{font-size:10px;font-weight:800;color:var(--text-dim);}
+.angle-card .ac-val{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800;color:var(--accent);margin-top:4px;}
+.fib-card{background:var(--panel);border-radius:8px;padding:8px 12px;text-align:center;}
+.fib-card .fc-idx{font-size:10px;color:var(--text-dim);}
+.fib-card .fc-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--accent);word-break:break-all;}
+.tz-inp{width:100%;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:9px;font-family:inherit;font-size:13px;outline:none;}
+.tz-inp:focus{border-color:var(--accent);}
 .btn-fav{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:5px 10px;border-radius:6px;font-size:16px;cursor:pointer;transition:.15s;line-height:1;}
 .btn-fav:hover{border-color:#f59e0b;color:#f59e0b;}
 .btn-fav.active{background:#f59e0b22;border-color:#f59e0b;color:#f59e0b;}
@@ -495,6 +516,195 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
     <div id="dateFields" style="display:flex;flex-direction:column;gap:12px;"></div>
     <div class="pct-result" id="dateResult" style="display:none;">
       <div class="res-val" id="dateVal" style="font-size:18px;white-space:pre-line;font-family:'JetBrains Mono',monospace;"></div>
+    </div>
+  </div>
+
+  <!-- 専用UI: JSONPath -->
+  <div id="ui-jsonpath" style="display:none;flex-direction:column;height:100%;overflow:hidden;">
+    <div style="padding:10px 14px;border-bottom:1px solid var(--border);flex-shrink:0;">
+      <div class="calc-result-label">JSONPath式</div>
+      <input id="jsonpathExpr" class="calc-input" placeholder="例: $.store.book[0].title  /  $..author  /  $.store.*" oninput="jsonpathLive()" style="font-size:14px;text-align:left;margin-top:4px;">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;flex:1;background:var(--border);gap:1px;overflow:hidden;">
+      <div style="background:var(--bg);display:flex;flex-direction:column;overflow:hidden;">
+        <div class="pane-header">JSON INPUT <span id="jsonpathCharCount" style="font-weight:400;"></span></div>
+        <textarea id="jsonpathInput" spellcheck="false" placeholder='{"store":{"book":[{"author":"Alice","title":"Hello"}]}}' oninput="jsonpathLive()" style="flex:1;"></textarea>
+      </div>
+      <div style="background:var(--bg);display:flex;flex-direction:column;overflow:hidden;">
+        <div class="pane-header">RESULT <button class="btn-mini" onclick="navigator.clipboard.writeText(document.getElementById('jsonpathOutput').innerText)" style="font-size:10px;">COPY</button></div>
+        <pre style="flex:1;overflow:auto;margin:0;"><code id="jsonpathOutput" class="hljs" style="padding:13px 16px;display:block;font-size:12.5px;"></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 専用UI: タイムゾーン変換 -->
+  <div id="ui-tz" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:14px;">
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:end;">
+      <div class="date-field-row">
+        <label>日時</label>
+        <input type="datetime-local" id="tzDateTime" onchange="tzLive()" oninput="tzLive()" style="color-scheme:dark;">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;padding-bottom:2px;align-items:center;">
+        <span style="font-size:18px;color:var(--text-dim);">→</span>
+      </div>
+      <div class="date-field-row">
+        <label>変換先タイムゾーン</label>
+        <select class="conv-sel" id="tzTo" onchange="tzLive()" style="width:100%;"></select>
+      </div>
+    </div>
+    <div class="date-field-row">
+      <label>元のタイムゾーン</label>
+      <select class="conv-sel" id="tzFrom" onchange="tzLive()" style="width:100%;"></select>
+    </div>
+    <div class="pct-result" id="tzResult" style="display:none;">
+      <div class="res-val" id="tzVal" style="font-size:16px;white-space:pre-line;font-family:'JetBrains Mono',monospace;"></div>
+    </div>
+    <div style="background:var(--panel);border-radius:10px;padding:12px;">
+      <div style="font-size:10px;font-weight:800;color:var(--text-dim);margin-bottom:8px;">主要タイムゾーン一覧</div>
+      <div id="tzAllResults" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);white-space:pre-wrap;max-height:180px;overflow-y:auto;"></div>
+    </div>
+  </div>
+
+  <!-- 専用UI: 進数変換 -->
+  <div id="ui-baseconv" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:12px;">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <div style="flex:1;min-width:180px;">
+        <div class="calc-result-label">入力値</div>
+        <input id="baseInput" class="calc-input" placeholder="255" oninput="baseConvLive()" style="font-size:20px;text-align:center;">
+      </div>
+      <div>
+        <div class="calc-result-label">入力の基数</div>
+        <select class="conv-sel" id="baseFrom" onchange="baseConvLive()">
+          <option value="10">10進数 (Decimal)</option>
+          <option value="2">2進数 (Binary)</option>
+          <option value="8">8進数 (Octal)</option>
+          <option value="16">16進数 (Hex)</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;" id="baseCards"></div>
+    <div style="background:var(--panel);border-radius:10px;padding:12px;">
+      <div style="font-size:10px;font-weight:800;color:var(--text-dim);margin-bottom:6px;">ビット表示</div>
+      <div id="baseBits" style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:2px;word-break:break-all;"></div>
+    </div>
+  </div>
+
+  <!-- 専用UI: URL解析 -->
+  <div id="ui-urlparse" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:16px;gap:12px;">
+    <div>
+      <div class="calc-result-label">URL</div>
+      <input id="urlParseInput" class="calc-input" placeholder="https://example.com:8080/path?key=value&foo=bar#section" oninput="urlParseLive()" style="font-size:13px;text-align:left;margin-top:4px;">
+    </div>
+    <div id="urlParseCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;"></div>
+    <div id="urlParseParams" style="display:none;background:var(--panel);border-radius:10px;padding:12px;">
+      <div style="font-size:10px;font-weight:800;color:var(--text-dim);margin-bottom:8px;">クエリパラメータ</div>
+      <div id="urlParamsList" style="font-family:'JetBrains Mono',monospace;font-size:12.5px;"></div>
+    </div>
+  </div>
+
+  <!-- 専用UI: Regex テスト -->
+  <div id="ui-regex" style="display:none;flex-direction:column;height:100%;overflow:hidden;">
+    <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-shrink:0;flex-wrap:wrap;">
+      <div style="flex:1;min-width:200px;">
+        <div class="calc-result-label">パターン (正規表現)</div>
+        <div style="display:flex;gap:6px;margin-top:4px;">
+          <span style="font-size:18px;color:var(--text-dim);line-height:1;padding-top:8px;">/</span>
+          <input id="regexPattern" class="calc-input" placeholder="[a-z]+" oninput="regexLive()" style="font-size:14px;text-align:left;flex:1;">
+          <span style="font-size:18px;color:var(--text-dim);line-height:1;padding-top:8px;">/</span>
+          <input id="regexFlags" class="calc-input" placeholder="gm" oninput="regexLive()" style="font-size:14px;width:60px;text-align:center;">
+        </div>
+      </div>
+      <div id="regexSummary" style="font-size:12px;font-weight:700;color:var(--add);align-self:flex-end;padding-bottom:4px;"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;flex:1;background:var(--border);gap:1px;overflow:hidden;">
+      <div style="background:var(--bg);display:flex;flex-direction:column;overflow:hidden;">
+        <div class="pane-header">テキスト</div>
+        <textarea id="regexText" spellcheck="false" placeholder="マッチしたいテキストを入力..." oninput="regexLive()" style="flex:1;"></textarea>
+      </div>
+      <div style="background:var(--bg);display:flex;flex-direction:column;overflow:hidden;">
+        <div class="pane-header">ハイライト結果</div>
+        <div id="regexHighlight" style="flex:1;overflow:auto;padding:13px 16px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.65;white-space:pre-wrap;word-break:break-all;"></div>
+      </div>
+    </div>
+    <div id="regexMatches" style="flex-shrink:0;max-height:160px;overflow-y:auto;padding:8px 14px;border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;"></div>
+  </div>
+
+  <!-- 専用UI: フィボナッチ -->
+  <div id="ui-fib" class="conv-ui" style="display:none;gap:12px;">
+    <div>
+      <div class="calc-result-label">個数 N: <span id="fibNLabel">10</span></div>
+      <input type="range" id="fibSlider" min="1" max="50" value="10" oninput="fibLive()" style="width:100%;margin-top:6px;accent-color:var(--accent);">
+    </div>
+    <div id="fibCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;max-height:300px;overflow-y:auto;"></div>
+  </div>
+
+  <!-- 専用UI: 角度変換 -->
+  <div id="ui-angle" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:12px;">
+    <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap;">
+      <div style="flex:1;min-width:150px;">
+        <div class="calc-result-label">値</div>
+        <input id="angleInput" class="calc-input" placeholder="90" type="number" oninput="angleLive()" style="font-size:22px;text-align:center;">
+      </div>
+      <div>
+        <div class="calc-result-label">単位</div>
+        <select class="conv-sel" id="angleUnit" onchange="angleLive()">
+          <option value="deg">度 (°)</option>
+          <option value="rad">ラジアン (rad)</option>
+          <option value="grad">グラジアン (grad)</option>
+          <option value="turn">回転 (turn)</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;" id="angleCards"></div>
+    <div style="background:var(--panel);border-radius:10px;padding:14px;text-align:center;">
+      <canvas id="angleCanvas" width="200" height="200" style="max-width:100%;"></canvas>
+    </div>
+  </div>
+
+  <!-- 専用UI: HTTP ステータス -->
+  <div id="ui-httpstatus" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:16px;gap:12px;">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <input id="httpStatusInput" class="calc-input" placeholder="404" type="number" oninput="httpStatusLive()" style="font-size:28px;text-align:center;width:140px;flex-shrink:0;">
+      <div id="httpStatusBadge" style="font-size:14px;font-weight:800;padding:8px 16px;border-radius:10px;background:var(--panel);"></div>
+    </div>
+    <div id="httpStatusDetail" style="display:none;background:var(--panel);border-radius:12px;padding:16px;">
+      <div id="httpStatusDesc" style="font-size:13px;line-height:1.7;"></div>
+    </div>
+    <div style="background:var(--panel);border-radius:10px;padding:12px;">
+      <div style="font-size:10px;font-weight:800;color:var(--text-dim);margin-bottom:8px;">よく使うステータスコード</div>
+      <div id="httpStatusList" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+    </div>
+  </div>
+
+  <!-- 専用UI: ビット演算 -->
+  <div id="ui-bitwise" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:12px;">
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end;">
+      <div>
+        <div class="calc-result-label">A</div>
+        <input id="bitwiseA" class="calc-input" placeholder="12" type="number" oninput="bitwiseLive()" style="font-size:20px;text-align:center;">
+      </div>
+      <div>
+        <div class="calc-result-label">演算</div>
+        <select class="conv-sel" id="bitwiseOp" onchange="bitwiseLive()">
+          <option value="AND">AND (&amp;)</option>
+          <option value="OR">OR (|)</option>
+          <option value="XOR">XOR (^)</option>
+          <option value="NOT">NOT (~A)</option>
+          <option value="LSHIFT">左シフト (&lt;&lt;)</option>
+          <option value="RSHIFT">右シフト (&gt;&gt;)</option>
+        </select>
+      </div>
+      <div>
+        <div class="calc-result-label">B (NOT/シフト以外)</div>
+        <input id="bitwiseB" class="calc-input" placeholder="10" type="number" oninput="bitwiseLive()" style="font-size:20px;text-align:center;">
+      </div>
+    </div>
+    <div class="pct-result" id="bitwiseResult" style="display:none;">
+      <div class="res-val" id="bitwiseVal" style="font-size:20px;white-space:pre;font-family:'JetBrains Mono',monospace;"></div>
+    </div>
+    <div style="background:var(--panel);border-radius:10px;padding:12px;">
+      <div style="font-size:10px;font-weight:800;color:var(--text-dim);margin-bottom:8px;">ビット表示</div>
+      <div id="bitwiseBits" style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;"></div>
     </div>
   </div>
 
@@ -940,6 +1150,19 @@ async function execute(){
     if(curTool==='json-min')r=JSON.stringify(JSON.parse(val));
     if(curTool==='json-diff'){const d=jsonDiff(JSON.parse(val),JSON.parse(val2));r=d.length?d.join('\n'):'✓ No differences found';}
     if(curTool==='jsonpath'){const[path,...rest]=val.split('\n');r=JSON.stringify(evalJSONPath(JSON.parse(rest.join('\n')),path.trim()),null,2);}
+    // 専用UIにリダイレクト
+    if(['jsonpath','tz-convert','baseconv','url-parse','regex','fib','angle','http-status','bitwise'].includes(curTool)){
+      if(curTool==='jsonpath')jsonpathLive();
+      if(curTool==='tz-convert')tzLive();
+      if(curTool==='baseconv')baseConvLive();
+      if(curTool==='url-parse')urlParseLive();
+      if(curTool==='regex')regexLive();
+      if(curTool==='fib')fibLive();
+      if(curTool==='angle')angleLive();
+      if(curTool==='http-status')httpStatusLive();
+      if(curTool==='bitwise')bitwiseLive();
+      return;
+    }
     if(curTool==='json-keys')r=listKeys(JSON.parse(val)).join('\n');
     if(curTool==='json-flat')r=JSON.stringify(flattenJson(JSON.parse(val)),null,2);
     if(curTool==='json-schema')r=JSON.stringify(genSchema(JSON.parse(val)),null,2);
@@ -1125,28 +1348,24 @@ async function execute(){
 
 /* ── 専用UI判定 ── */
 const SPECIAL_UI={
-  'calc':'ui-calc',
-  'unit-conv':'ui-conv',
-  'percent':'ui-pct',
-  'tax':'ui-pct',
-  'random':'ui-random',
-  'color':'ui-color',
-  'stats':'ui-stats',
-  'gcd-lcm':'ui-gcdlcm',
-  'prime':'ui-prime',
-  'caesar':'ui-caesar',
-  'morse':'ui-morse',
-  'ts-format':'ui-date',
-  'date-diff':'ui-date',
-  'date-add':'ui-date',
-  'weekday':'ui-date',
-  'iso-week':'ui-date',
-  'countdown':'ui-date',
+  'calc':'ui-calc','unit-conv':'ui-conv','percent':'ui-pct','tax':'ui-pct',
+  'random':'ui-random','color':'ui-color','stats':'ui-stats','gcd-lcm':'ui-gcdlcm',
+  'prime':'ui-prime','caesar':'ui-caesar','morse':'ui-morse',
+  'ts-format':'ui-date','date-diff':'ui-date','date-add':'ui-date',
+  'weekday':'ui-date','iso-week':'ui-date','countdown':'ui-date',
+  'jsonpath':'ui-jsonpath','tz-convert':'ui-tz','baseconv':'ui-baseconv',
+  'url-parse':'ui-urlparse','regex':'ui-regex','fib':'ui-fib',
+  'angle':'ui-angle','http-status':'ui-httpstatus','bitwise':'ui-bitwise',
 };
-const ALL_UIS=['editorGrid','ui-calc','ui-conv','ui-pct','ui-random','ui-color','ui-stats','ui-gcdlcm','ui-prime','ui-caesar','ui-morse','ui-date'];
+const ALL_UIS=['editorGrid','ui-calc','ui-conv','ui-pct','ui-random','ui-color',
+  'ui-stats','ui-gcdlcm','ui-prime','ui-caesar','ui-morse','ui-date',
+  'ui-jsonpath','ui-tz','ui-baseconv','ui-urlparse','ui-regex','ui-fib',
+  'ui-angle','ui-httpstatus','ui-bitwise'];
 function showUI(toolId){
   const target=SPECIAL_UI[toolId]||'editorGrid';
-  const flexUIs=['ui-stats','ui-gcdlcm','ui-caesar','ui-morse','ui-date'];
+  const flexUIs=['ui-stats','ui-gcdlcm','ui-caesar','ui-morse','ui-date',
+    'ui-jsonpath','ui-regex','ui-urlparse','ui-tz','ui-baseconv',
+    'ui-fib','ui-angle','ui-httpstatus','ui-bitwise'];
   ALL_UIS.forEach(id=>{
     const el=document.getElementById(id);
     if(!el)return;
@@ -1164,6 +1383,15 @@ function showUI(toolId){
   if(toolId==='gcd-lcm')initGcdLcm();
   if(toolId==='prime'){setTimeout(()=>document.getElementById('primeInput')?.focus(),50);}
   if(SPECIAL_UI[toolId]==='ui-date')initDateUI(toolId);
+  if(toolId==='jsonpath')initJsonpath();
+  if(toolId==='tz-convert')initTz();
+  if(toolId==='baseconv')initBaseconv();
+  if(toolId==='url-parse')urlParseLive();
+  if(toolId==='regex'){document.getElementById('regexPattern')?.focus();}
+  if(toolId==='fib')fibLive();
+  if(toolId==='angle'){document.getElementById('angleInput')?.focus();angleLive();}
+  if(toolId==='http-status')initHttpStatus();
+  if(toolId==='bitwise')bitwiseLive();
 }
 
 /* ── 計算機専用UI ── */
@@ -1350,7 +1578,10 @@ function updateCharCount(){
 const REALTIME_TOOLS=['b64e','b64d','b64url-e','b64url-d','url-enc','url-dec','html-enc','html-dec',
   'sha256','md5','sha1','sha512','rot13','slug','strip-emoji','normalize','trim-lines',
   'remove-blank','reverse','number-lines','esc-js','ts-format','url-parse','textstats',
-  'baseconv','token-est','extract-url','extract-email','extract-num','morse'];
+  'baseconv','token-est','extract-url','extract-email','extract-num','morse',
+  'json','json-min','json-keys','json-flat','json-schema','yaml','csv-json','xml',
+  'case','dedup','sort-lines','char-codes','semver','cron','url-parse',
+  'http-status','bitwise','angle','fib','jsonpath','roman'];
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('input')?.addEventListener('input',()=>{
     if(REALTIME_TOOLS.includes(curTool))execute();
@@ -1602,6 +1833,252 @@ function dateLive(){
     const res=document.getElementById('dateResult');const val=document.getElementById('dateVal');
     if(res&&val){val.innerText=result||'';res.style.display=result?'block':'none';}
   }catch(e){const val=document.getElementById('dateVal');if(val)val.innerText='Error: '+e.message;document.getElementById('dateResult').style.display='block';}
+}
+
+/* ── JSONPath専用UI ── */
+function initJsonpath(){document.getElementById('jsonpathExpr')?.focus();}
+function jsonpathLive(){
+  const expr=(document.getElementById('jsonpathExpr')?.value||'').trim();
+  const json=document.getElementById('jsonpathInput')?.value||'';
+  const out=document.getElementById('jsonpathOutput');
+  const cc=document.getElementById('jsonpathCharCount');
+  if(cc)cc.innerText=json.length?`${json.length}文字`:'';
+  if(!out)return;
+  if(!expr||!json){out.innerText='';return;}
+  try{
+    const r=evalJSONPath(JSON.parse(json),expr);
+    out.innerText=JSON.stringify(r,null,2);
+    try{hljs.highlightElement(out);}catch(_){}
+  }catch(e){out.innerText='Error: '+e.message;out.style.color='var(--del)';}
+}
+
+/* ── タイムゾーン変換専用UI ── */
+const TZ_LIST=[
+  ['UTC','UTC (協定世界時)'],
+  ['Asia/Tokyo','JST (日本標準時)'],
+  ['Asia/Shanghai','CST (中国標準時)'],
+  ['Asia/Seoul','KST (韓国標準時)'],
+  ['Asia/Singapore','SGT (シンガポール時間)'],
+  ['Asia/Kolkata','IST (インド標準時)'],
+  ['Asia/Dubai','GST (湾岸標準時)'],
+  ['Europe/London','GMT/BST (英国)'],
+  ['Europe/Paris','CET (中央ヨーロッパ)'],
+  ['Europe/Berlin','CET (ドイツ)'],
+  ['Europe/Moscow','MSK (モスクワ)'],
+  ['America/New_York','EST/EDT (米国東部)'],
+  ['America/Chicago','CST/CDT (米国中部)'],
+  ['America/Denver','MST/MDT (米国山岳部)'],
+  ['America/Los_Angeles','PST/PDT (米国西部)'],
+  ['America/Sao_Paulo','BRT (ブラジル)'],
+  ['Australia/Sydney','AEST (オーストラリア東部)'],
+  ['Pacific/Auckland','NZST (ニュージーランド)'],
+];
+function initTz(){
+  ['tzFrom','tzTo'].forEach((id,i)=>{
+    const sel=document.getElementById(id);
+    if(!sel)return;
+    sel.innerHTML=TZ_LIST.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
+    sel.value=i===0?'Asia/Tokyo':'UTC';
+  });
+  // 今の日時をセット
+  const now=new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  const local=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const el=document.getElementById('tzDateTime');
+  if(el)el.value=local;
+  tzLive();
+}
+function tzLive(){
+  const dtStr=document.getElementById('tzDateTime')?.value;
+  const fromTz=document.getElementById('tzFrom')?.value;
+  const toTz=document.getElementById('tzTo')?.value;
+  const res=document.getElementById('tzResult');
+  const val=document.getElementById('tzVal');
+  const allRes=document.getElementById('tzAllResults');
+  if(!dtStr||!fromTz||!toTz){if(res)res.style.display='none';return;}
+  try{
+    // fromTzの日時として解釈してUTCに変換
+    const d=new Date(new Date(dtStr).toLocaleString('en-US',{timeZone:fromTz}));
+    const baseUTC=new Date(dtStr);
+    // toTzに変換して表示
+    const fmt=(tz)=>baseUTC.toLocaleString('ja-JP',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+    val.innerText=`${fmt(fromTz)}\n  → ${fmt(toTz)}`;
+    res.style.display='block';
+    // 全タイムゾーン一覧
+    allRes.innerText=TZ_LIST.map(([tz,lbl])=>`${lbl.padEnd(28,' ')}: ${fmt(tz)}`).join('\n');
+  }catch(e){if(val)val.innerText='Error: '+e.message;if(res)res.style.display='block';}
+}
+
+/* ── 進数変換専用UI ── */
+function initBaseconv(){baseConvLive();}
+function baseConvLive(){
+  const raw=document.getElementById('baseInput')?.value||'';
+  const fromBase=parseInt(document.getElementById('baseFrom')?.value)||10;
+  const cards=document.getElementById('baseCards');
+  const bits=document.getElementById('baseBits');
+  if(!cards)return;
+  if(!raw.trim()){cards.innerHTML='';if(bits)bits.innerHTML='';return;}
+  try{
+    const n=parseInt(raw.trim(),fromBase);
+    if(isNaN(n))throw new Error('無効な値');
+    const defs=[['2進数 (Binary)','2',n.toString(2)],['8進数 (Octal)','8',n.toString(8)],['10進数 (Decimal)','10',n.toString(10)],['16進数 (Hex)','16',n.toString(16).toUpperCase()]];
+    cards.innerHTML=defs.map(([l,b,v])=>`<div class="base-card" onclick="navigator.clipboard.writeText('${v}')"><div class="bc-lbl">${l}</div><div class="bc-val">${v}</div><div style="font-size:9px;color:var(--text-dim);margin-top:4px;">クリックでコピー</div></div>`).join('');
+    if(bits){
+      const bin=n.toString(2).padStart(Math.ceil(n.toString(2).length/8)*8,'0');
+      const groups=bin.match(/.{1,8}/g)||[];
+      bits.innerHTML=groups.map((g,i)=>`<span style="margin-right:8px;">${g}</span>`).join('')+`<br><span style="font-size:10px;color:var(--text-dim);">${n.toString(2).length}ビット</span>`;
+    }
+  }catch(e){cards.innerHTML=`<div style="color:var(--del);font-size:13px;">${esc(e.message)}</div>`;}
+}
+
+/* ── URL解析専用UI ── */
+function urlParseLive(){
+  const raw=document.getElementById('urlParseInput')?.value||'';
+  const cards=document.getElementById('urlParseCards');
+  const params=document.getElementById('urlParseParams');
+  const paramsList=document.getElementById('urlParamsList');
+  if(!cards)return;
+  if(!raw.trim()){cards.innerHTML='';if(params)params.style.display='none';return;}
+  try{
+    const u=new URL(raw.includes('://')?raw:'https://'+raw);
+    const fields=[
+      ['プロトコル',u.protocol],['ホスト',u.host],['ホスト名',u.hostname],
+      ['ポート',u.port||'(デフォルト)'],['パス',u.pathname],
+      ['クエリ',u.search||'(なし)'],['ハッシュ',u.hash||'(なし)'],['オリジン',u.origin]
+    ];
+    cards.innerHTML=fields.map(([l,v])=>`<div class="url-card"><div class="uc-lbl">${l}</div><div class="uc-val">${esc(v)}</div></div>`).join('');
+    const qp={};u.searchParams.forEach((v,k)=>qp[k]=v);
+    if(Object.keys(qp).length){
+      params.style.display='block';
+      paramsList.innerHTML=Object.entries(qp).map(([k,v])=>`<div style="margin-bottom:4px;"><span style="color:var(--accent);">${esc(k)}</span> = <span>${esc(v)}</span></div>`).join('');
+    }else{params.style.display='none';}
+  }catch(e){cards.innerHTML=`<div style="color:var(--del);font-size:13px;">${esc(e.message)}</div>`;if(params)params.style.display='none';}
+}
+
+/* ── Regex テスト専用UI ── */
+function regexLive(){
+  const pattern=document.getElementById('regexPattern')?.value||'';
+  const flags=document.getElementById('regexFlags')?.value||'g';
+  const text=document.getElementById('regexText')?.value||'';
+  const hl=document.getElementById('regexHighlight');
+  const summary=document.getElementById('regexSummary');
+  const matchList=document.getElementById('regexMatches');
+  if(!hl)return;
+  if(!pattern){hl.innerHTML=esc(text);if(summary)summary.innerText='';if(matchList)matchList.innerHTML='';return;}
+  try{
+    const re=new RegExp(pattern,flags.includes('g')?flags:flags+'g');
+    const matches=[...text.matchAll(re)];
+    if(summary)summary.innerText=matches.length?`${matches.length}件マッチ`:'マッチなし';
+    if(summary)summary.style.color=matches.length?'var(--add)':'var(--del)';
+    // ハイライト
+    let last=0,html='';
+    matches.forEach(m=>{
+      html+=esc(text.slice(last,m.index));
+      html+=`<mark class="regex-match">${esc(m[0])}</mark>`;
+      last=m.index+m[0].length;
+    });
+    html+=esc(text.slice(last));
+    hl.innerHTML=html;
+    // マッチ一覧
+    if(matchList)matchList.innerHTML=matches.slice(0,50).map((m,i)=>`<div class="regex-match-item"><span class="rm-idx">#${i+1} @${m.index}</span>"${esc(m[0])}"${m.length>1?` Groups: ${m.slice(1).map((g,j)=>`$${j+1}="${esc(g??'')}"`)}`:''}` +'</div>').join('');
+  }catch(e){hl.innerHTML=`<span style="color:var(--del);">Error: ${esc(e.message)}</span>`;if(summary)summary.innerText='';if(matchList)matchList.innerHTML='';}
+}
+
+/* ── フィボナッチ専用UI ── */
+function fibLive(){
+  const n=parseInt(document.getElementById('fibSlider')?.value)||10;
+  const lbl=document.getElementById('fibNLabel');
+  const cards=document.getElementById('fibCards');
+  if(lbl)lbl.innerText=n;
+  if(!cards)return;
+  const fib=[0n,1n];
+  while(fib.length<n)fib.push(fib[fib.length-1]+fib[fib.length-2]);
+  cards.innerHTML=fib.slice(0,n).map((v,i)=>`<div class="fib-card"><div class="fc-idx">F(${i})</div><div class="fc-val">${v}</div></div>`).join('');
+}
+
+/* ── 角度変換専用UI ── */
+function angleLive(){
+  const raw=parseFloat(document.getElementById('angleInput')?.value);
+  const unit=document.getElementById('angleUnit')?.value||'deg';
+  const cards=document.getElementById('angleCards');
+  const canvas=document.getElementById('angleCanvas');
+  if(!cards)return;
+  if(isNaN(raw)){cards.innerHTML='';return;}
+  let deg;
+  if(unit==='deg')deg=raw;
+  else if(unit==='rad')deg=raw*180/Math.PI;
+  else if(unit==='grad')deg=raw*0.9;
+  else if(unit==='turn')deg=raw*360;
+  const rad=deg*Math.PI/180;
+  const grad=deg/0.9;
+  const turn=deg/360;
+  const defs=[['度 (°)','deg',deg.toFixed(6)],['ラジアン (rad)','rad',rad.toFixed(6)],['グラジアン (grad)','grad',grad.toFixed(6)],['回転 (turn)','turn',turn.toFixed(6)]];
+  cards.innerHTML=defs.map(([l,u,v])=>`<div class="angle-card"><div class="ac-lbl">${l}</div><div class="ac-val">${v}</div></div>`).join('');
+  // 円グラフ描画
+  if(canvas){
+    const ctx=canvas.getContext('2d');
+    const cx=100,cy=100,r=80;
+    ctx.clearRect(0,0,200,200);
+    ctx.strokeStyle='#27272a';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
+    ctx.strokeStyle='#818cf8';ctx.lineWidth=6;
+    ctx.beginPath();ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+rad,rad<0);ctx.stroke();
+    ctx.strokeStyle='#818cf8';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+r*Math.cos(-Math.PI/2+rad),cy+r*Math.sin(-Math.PI/2+rad));ctx.stroke();
+    ctx.fillStyle='#71717a';ctx.font='11px sans-serif';ctx.textAlign='center';
+    ctx.fillText(`${deg.toFixed(1)}°`,cx,cy+4);
+  }
+}
+
+/* ── HTTPステータス専用UI ── */
+function initHttpStatus(){
+  const list=document.getElementById('httpStatusList');
+  if(!list)return;
+  list.innerHTML=Object.entries(HTTP_STATUS).map(([code,name])=>{
+    const color=+code<300?'var(--add)':+code<400?'#f59e0b':+code<500?'var(--del)':'#ef4444';
+    return`<button class="http-status-chip" onclick="document.getElementById('httpStatusInput').value='${code}';httpStatusLive()" style="border-color:${color};color:${color};">${code} ${name}</button>`;
+  }).join('');
+  httpStatusLive();
+}
+function httpStatusLive(){
+  const code=parseInt(document.getElementById('httpStatusInput')?.value);
+  const badge=document.getElementById('httpStatusBadge');
+  const detail=document.getElementById('httpStatusDetail');
+  const desc=document.getElementById('httpStatusDesc');
+  if(!badge)return;
+  if(isNaN(code)){badge.innerText='';if(detail)detail.style.display='none';return;}
+  const name=HTTP_STATUS[code];
+  if(!name){badge.innerText=`${code} 不明`;badge.style.color='var(--text-dim)';if(detail)detail.style.display='none';return;}
+  const color=code<300?'var(--add)':code<400?'#f59e0b':code<500?'var(--del)':'#ef4444';
+  badge.innerText=`${code} ${name}`;badge.style.color=color;
+  const cat=code<200?'1xx 情報':code<300?'2xx 成功':code<400?'3xx リダイレクト':code<500?'4xx クライアントエラー':'5xx サーバーエラー';
+  if(desc)desc.innerHTML=`<strong style="font-size:15px;color:${color};">${code} ${name}</strong><br><span style="color:var(--text-dim);">${cat}</span><br><br>${HTTP_DESC[code]||''}`;
+  if(detail)detail.style.display='block';
+}
+
+/* ── ビット演算専用UI ── */
+function bitwiseLive(){
+  const a=parseInt(document.getElementById('bitwiseA')?.value)||0;
+  const b=parseInt(document.getElementById('bitwiseB')?.value)||0;
+  const op=document.getElementById('bitwiseOp')?.value||'AND';
+  const res=document.getElementById('bitwiseResult');
+  const val=document.getElementById('bitwiseVal');
+  const bits=document.getElementById('bitwiseBits');
+  if(!res)return;
+  const ops={AND:()=>a&b,OR:()=>a|b,XOR:()=>a^b,NOT:()=>~a,LSHIFT:()=>a<<b,RSHIFT:()=>a>>b};
+  try{
+    const r=ops[op]();
+    val.innerText=`結果: ${r}\n2進数: ${r.toString(2)}\n16進数: 0x${r.toString(16).toUpperCase()}`;
+    res.style.display='block';
+    if(bits){
+      const fmt=n=>{const b=n>=0?n.toString(2):((n>>>0).toString(2));return b.padStart(Math.ceil(b.length/8)*8,'0');}
+      const bA=fmt(a),bB=fmt(b),bR=fmt(r);
+      const w=Math.max(bA.length,bB.length,bR.length);
+      bits.innerHTML=`<span style="color:var(--text-dim);">A: </span><span>${bA.padStart(w,'0')}</span> (${a})<br>`+
+        `<span style="color:var(--text-dim);">B: </span><span>${bB.padStart(w,'0')}</span> (${b})<br>`+
+        `<span style="color:var(--text-dim);">= </span><span style="color:var(--accent);">${bR.padStart(w,'0')}</span> (${r})`;
+    }
+  }catch(e){val.innerText='Error: '+e.message;res.style.display='block';}
 }
 
 /* ── copyResult拡張（専用UIも対応） ── */
