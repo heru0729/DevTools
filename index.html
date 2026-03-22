@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DevTools Pro</title>
+    <title>DevTools</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
@@ -11,21 +11,103 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
-    <link rel="stylesheet" href="style.css">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9619368699008291"
-     crossorigin="anonymous"></script>
+<style>
+:root {
+    --bg: #0c0c0e; --sidebar: #141418; --panel: #1c1c22;
+    --accent: #818cf8; --border: #27272a; --text: #f4f4f5; --text-dim: #71717a;
+    --add: #22c55e; --del: #ef4444; --add-bg: #14532d33; --del-bg: #7f1d1d33;
+}
+body.light {
+    --bg: #ffffff; --sidebar: #f4f4f5; --panel: #ffffff;
+    --border: #e2e8f0; --text: #0f172a; --text-dim: #64748b; --accent: #4f46e5;
+    --add-bg: #dcfce7; --del-bg: #fee2e2;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
+.app-shell { display: flex; height: 100vh; width: 100vw; }
+
+.nav-rail { width: 72px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 20px 0; z-index: 1000; flex-shrink: 0; }
+.rail-group { display: flex; flex-direction: column; gap: 12px; }
+.rail-btn { width: 52px; height: 52px; border-radius: 14px; border: none; background: transparent; font-size: 22px; cursor: pointer; color: var(--text-dim); display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+.rail-btn.active { background: var(--accent); color: white; }
+.rail-spacer { flex: 1; }
+.control-btn { width: 48px; height: 48px; border-radius: 12px; border: 1px solid var(--border); background: var(--panel); color: var(--text); cursor: pointer; margin-bottom: 12px; font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+
+.tool-sidebar { width: 180px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+.sidebar-title { padding: 25px 16px 10px; font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; }
+.tool-list { flex: 1; overflow-y: auto; padding: 8px; }
+.tool-item { width: 100%; padding: 11px 14px; border: none; background: transparent; color: var(--text-dim); text-align: left; cursor: pointer; border-radius: 8px; font-weight: 600; font-size: 13px; margin-bottom: 2px; transition: 0.15s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tool-item:hover { background: var(--panel); color: var(--text); }
+.tool-item.active { background: var(--panel); color: var(--accent); }
+
+.workspace { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.workspace-header { padding: 18px 28px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg); flex-shrink: 0; }
+.header-title h1 { margin: 0; font-size: 18px; font-weight: 800; }
+.header-title p  { margin: 4px 0 0; font-size: 12px; color: var(--text-dim); }
+
+.editor-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; background: var(--border); gap: 1px; overflow: hidden; }
+.pane { background: var(--bg); display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+.pane-inputs { display: flex; flex-direction: column; }
+.pane-header { padding: 10px 18px; font-size: 11px; font-weight: 800; color: var(--text-dim); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg); flex-shrink: 0; }
+
+textarea { flex: 1; background: transparent; border: none; color: var(--text); padding: 16px 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; outline: none; resize: none; line-height: 1.6; min-height: 80px; }
+
+pre { margin: 0; flex: 1; overflow: auto; background: var(--bg) !important; }
+code.hljs { padding: 16px 20px !important; background: transparent !important; display: block; border: none !important; font-size: 13px; }
+
+.image-center { display: none; padding: 40px; text-align: center; background: var(--bg); flex: 1; }
+.image-center img { max-width: 100%; height: auto; border-radius: 10px; }
+
+.btn-run { background: var(--accent); color: white; border: none; padding: 10px 24px; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 14px; }
+.btn-mini-copy { background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; }
+
+.diff-wrap { }
+.diff-line { padding: 2px 16px; line-height: 1.5; white-space: pre-wrap; word-break: break-all; }
+.diff-eq   { color: var(--text-dim); }
+.diff-add  { background: var(--add-bg); color: var(--add); }
+.diff-del  { background: var(--del-bg); color: var(--del); }
+.diff-ln   { display: inline-block; width: 20px; user-select: none; opacity: 0.6; }
+
+.md-preview { line-height: 1.8; }
+.md-preview h1 { font-size: 1.6em; font-weight: 800; margin: 0 0 12px; }
+.md-preview h2 { font-size: 1.3em; font-weight: 700; margin: 20px 0 8px; }
+.md-preview h3 { font-size: 1.1em; font-weight: 700; margin: 16px 0 6px; }
+.md-preview code { background: var(--panel); padding: 2px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+.md-preview a { color: var(--accent); }
+.md-preview li { margin: 4px 0; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+#input2-row { display: none; flex-direction: column; flex: 1; border-top: 1px solid var(--border); }
+
+@media (max-width: 768px) {
+    body { overflow: hidden; }
+    .app-shell { flex-direction: column; }
+    .nav-rail { width: 100%; height: 60px; flex-direction: row; padding: 0 10px; border-right: none; border-bottom: 1px solid var(--border); }
+    .rail-group { flex-direction: row; gap: 8px; }
+    .rail-btn { width: 48px; height: 48px; }
+    .control-btn { margin-bottom: 0; margin-left: 8px; width: 44px; height: 44px; }
+    .tool-sidebar { width: 100%; height: auto; flex-shrink: 0; }
+    .tool-list { display: flex; overflow-x: auto; padding: 6px; }
+    .tool-item { white-space: nowrap; width: auto; padding: 8px 14px; margin-bottom: 0; margin-right: 4px; }
+    .workspace { height: calc(100vh - 120px); overflow-y: auto; }
+    .editor-grid { display: block; overflow-y: visible; }
+    .pane { height: 420px; border-bottom: 4px solid var(--border); }
+}
+</style>
 </head>
 <body class="dark">
-
 <div class="app-shell">
     <nav class="nav-rail">
         <div class="rail-group">
-            <button class="rail-btn active" onclick="setCat('data')">📦</button>
-            <button class="rail-btn" onclick="setCat('security')">🔐</button>
-            <button class="rail-btn" onclick="setCat('utils')">🛠️</button>
+            <button class="rail-btn active" onclick="setCat('data')"     title="Data">📦</button>
+            <button class="rail-btn"        onclick="setCat('security')" title="Security">🔐</button>
+            <button class="rail-btn"        onclick="setCat('utils')"    title="Utils">🛠️</button>
         </div>
         <div class="rail-spacer"></div>
-        <button id="langBtn" class="control-btn" onclick="toggleLang()">EN</button>
+        <button id="langBtn"  class="control-btn" onclick="toggleLang()">EN</button>
         <button class="control-btn" onclick="document.body.classList.toggle('light')">🌓</button>
     </nav>
 
@@ -44,22 +126,326 @@
         </header>
 
         <div class="editor-grid">
-            <div class="pane">
+            <div class="pane pane-inputs">
                 <div class="pane-header" id="lbl-input">INPUT</div>
                 <textarea id="input" spellcheck="false" placeholder="Paste data here..."></textarea>
+                <div id="input2-row">
+                    <div class="pane-header" id="lbl-input2">INPUT 2</div>
+                    <textarea id="input2" spellcheck="false" placeholder="Second input..."></textarea>
+                </div>
             </div>
+
             <div class="pane">
                 <div class="pane-header">
                     <span id="lbl-output">OUTPUT</span>
                     <button class="btn-mini-copy" id="lbl-copy" onclick="copyResult()">COPY</button>
                 </div>
                 <div id="imageResult" class="image-center"></div>
+                <div id="diffResult"  style="display:none;overflow:auto;flex:1;padding:12px 0;font-family:'JetBrains Mono',monospace;font-size:13px;"></div>
+                <div id="htmlResult"  style="display:none;overflow:auto;flex:1;padding:20px;"></div>
                 <pre id="outputPre"><code id="outputText" class="hljs"></code></pre>
             </div>
         </div>
     </main>
 </div>
-<script src="script.js"></script>
+<script>
+const ALL_TOOLS = [
+    { id: 'json',      cat: 'data',     en: 'JSON Format',    ja: 'JSON整形',       ed: 'Prettify JSON data',           jd: 'JSONを整形・検証します' },
+    { id: 'json-min',  cat: 'data',     en: 'JSON Minify',    ja: 'JSON圧縮',       ed: 'Minify JSON string',           jd: 'JSONを1行に圧縮します' },
+    { id: 'json-diff', cat: 'data',     en: 'JSON Diff',      ja: 'JSON比較',       ed: 'Compare two JSON objects',     jd: '2つのJSONの差分を表示' },
+    { id: 'jsonpath',  cat: 'data',     en: 'JSONPath',       ja: 'JSONPath抽出',   ed: 'Extract with JSONPath (line 1 = path, rest = JSON)', jd: '1行目にパス、残りにJSONを入力' },
+    { id: 'sql',       cat: 'data',     en: 'SQL Format',     ja: 'SQL整形',        ed: 'Format SQL query',             jd: 'SQLクエリを整形します' },
+    { id: 'yaml',      cat: 'data',     en: 'YAML ↔ JSON',   ja: 'YAML変換',       ed: 'Convert YAML/JSON',            jd: 'YAMLとJSONを相互変換' },
+    { id: 'csv-json',  cat: 'data',     en: 'CSV ↔ JSON',    ja: 'CSV変換',        ed: 'Convert CSV to/from JSON',     jd: 'CSVとJSONを相互変換' },
+    { id: 'xml',       cat: 'data',     en: 'XML Format',     ja: 'XML整形',        ed: 'Prettify XML data',            jd: 'XMLを整形します' },
+    { id: 'b64e',      cat: 'security', en: 'Base64 Enc',     ja: 'B64エンコード',  ed: 'Text to Base64',               jd: 'Base64にエンコード' },
+    { id: 'b64d',      cat: 'security', en: 'Base64 Dec',     ja: 'B64デコード',    ed: 'Base64 to Text',               jd: 'Base64をデコード' },
+    { id: 'sha256',    cat: 'security', en: 'SHA-256',        ja: 'SHA-256',        ed: 'Generate SHA-256 hash',        jd: 'SHA-256ハッシュを計算' },
+    { id: 'md5',       cat: 'security', en: 'MD5',            ja: 'MD5',            ed: 'Generate MD5 hash',            jd: 'MD5ハッシュを計算' },
+    { id: 'sha1',      cat: 'security', en: 'SHA-1',          ja: 'SHA-1',          ed: 'Generate SHA-1 hash',          jd: 'SHA-1ハッシュを計算' },
+    { id: 'jwt',       cat: 'security', en: 'JWT Decode',     ja: 'JWTデコード',    ed: 'Decode JWT payload',           jd: 'JWTのペイロードを解析' },
+    { id: 'jwt-gen',   cat: 'security', en: 'JWT Gen',        ja: 'JWT生成',        ed: 'Generate JWT (HS256) — payload JSON / secret', jd: 'ペイロードJSON / シークレット' },
+    { id: 'url-enc',   cat: 'security', en: 'URL Encode',     ja: 'URLエンコード',  ed: 'Encode URL characters',        jd: 'URL文字をエンコード' },
+    { id: 'url-dec',   cat: 'security', en: 'URL Decode',     ja: 'URLデコード',    ed: 'Decode URL characters',        jd: 'URL文字をデコード' },
+    { id: 'html-enc',  cat: 'security', en: 'HTML Escape',    ja: 'HTMLエスケープ', ed: 'Escape HTML entities',         jd: 'HTMLエンティティに変換' },
+    { id: 'html-dec',  cat: 'security', en: 'HTML Unescape',  ja: 'HTMLアンエスケ', ed: 'Unescape HTML entities',       jd: 'HTMLエンティティを戻す' },
+    { id: 'aes-enc',   cat: 'security', en: 'AES Encrypt',    ja: 'AES暗号化',      ed: 'AES-256 encrypt — text / password', jd: 'テキスト / パスワード' },
+    { id: 'aes-dec',   cat: 'security', en: 'AES Decrypt',    ja: 'AES復号',        ed: 'AES-256 decrypt — cipher / password', jd: '暗号文 / パスワード' },
+    { id: 'qr',        cat: 'utils',    en: 'QR Code',        ja: 'QR作成',         ed: 'Generate QR image',            jd: 'QRコードを生成します' },
+    { id: 'uuid',      cat: 'utils',    en: 'UUID Gen',       ja: 'UUID生成',       ed: 'Create 5× v4 UUIDs',           jd: 'UUID v4を5個生成します' },
+    { id: 'epoch',     cat: 'utils',    en: 'Unix Time',      ja: 'エポック変換',   ed: 'Unix ↔ Date',                 jd: 'Unix時間と日時を変換' },
+    { id: 'color',     cat: 'utils',    en: 'Color Convert',  ja: 'カラー変換',     ed: 'HEX / RGB / HSL convert',     jd: 'カラーコードを相互変換' },
+    { id: 'textstats', cat: 'utils',    en: 'Text Stats',     ja: 'テキスト統計',   ed: 'Count chars, words, lines',    jd: '文字数・単語数・行数を集計' },
+    { id: 'markdown',  cat: 'utils',    en: 'Markdown',       ja: 'MDプレビュー',   ed: 'Preview Markdown as HTML',     jd: 'MarkdownをHTMLでプレビュー' },
+    { id: 'diff',      cat: 'utils',    en: 'Text Diff',      ja: 'テキスト比較',   ed: 'Compare two text blocks',      jd: '2つのテキストの差分を表示' },
+    { id: 'regex',     cat: 'utils',    en: 'Regex Test',     ja: 'Regexテスト',    ed: 'Test regex — pattern / text',  jd: 'パターン / テキスト' },
+    { id: 'lorem',     cat: 'utils',    en: 'Lorem Ipsum',    ja: 'Lorem生成',      ed: 'Generate N paragraphs (enter a number)', jd: '段落数を入力（数字）' },
+    { id: 'baseconv',  cat: 'utils',    en: 'Base Convert',   ja: '進数変換',       ed: 'Convert bases — "FF 16" or "255 10"', jd: '"FF 16" や "255 10" と入力' },
+    { id: 'cron',      cat: 'utils',    en: 'CRON Parse',     ja: 'CRON解析',       ed: 'Explain a CRON expression',    jd: 'CRON式を人間語で説明' },
+];
+
+const DUAL_TOOLS = ['json-diff','diff','regex','aes-enc','aes-dec','jwt-gen'];
+let lang = localStorage.getItem('p_lang') || 'en';
+let curCat = 'data';
+let curTool = 'json';
+
+// ===== Helpers =====
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function computeLCS(a,b){
+    const m=a.length,n=b.length,dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));
+    for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);
+    const res=[];let i=m,j=n;
+    while(i>0&&j>0){if(a[i-1]===b[j-1]){res.unshift(a[i-1]);i--;j--;}else if(dp[i-1][j]>dp[i][j-1])i--;else j--;}
+    return res;
+}
+function computeDiff(a,b){
+    const aL=a.split('\n'),bL=b.split('\n'),lcs=computeLCS(aL,bL);
+    let html='<div class="diff-wrap">',ai=0,bi=0,li=0;
+    while(ai<aL.length||bi<bL.length){
+        if(ai<aL.length&&bi<bL.length&&li<lcs.length&&aL[ai]===lcs[li]&&bL[bi]===lcs[li]){
+            html+=`<div class="diff-line diff-eq"><span class="diff-ln"> </span>${esc(aL[ai])}</div>`;ai++;bi++;li++;
+        }else if(bi<bL.length&&(li>=lcs.length||bL[bi]!==lcs[li])){
+            html+=`<div class="diff-line diff-add"><span class="diff-ln">+</span>${esc(bL[bi])}</div>`;bi++;
+        }else{
+            html+=`<div class="diff-line diff-del"><span class="diff-ln">−</span>${esc(aL[ai])}</div>`;ai++;
+        }
+    }
+    return html+'</div>';
+}
+
+function jsonDiff(a,b,path=''){
+    const lines=[];
+    if(typeof a!==typeof b||Array.isArray(a)!==Array.isArray(b)){lines.push(`~ ${path}: ${JSON.stringify(a)} → ${JSON.stringify(b)}`);return lines;}
+    if(typeof a!=='object'||a===null){if(a!==b)lines.push(`~ ${path}: ${JSON.stringify(a)} → ${JSON.stringify(b)}`);return lines;}
+    const keys=new Set([...Object.keys(a||{}),...Object.keys(b||{})]);
+    for(const k of keys){const p=path?`${path}.${k}`:k;if(!(k in a))lines.push(`+ ${p}: ${JSON.stringify(b[k])}`);else if(!(k in b))lines.push(`- ${p}: ${JSON.stringify(a[k])}`);else lines.push(...jsonDiff(a[k],b[k],p));}
+    return lines;
+}
+
+function evalJSONPath(obj,path){
+    const results=[];
+    function r(node,parts){
+        if(!parts.length){results.push(node);return;}
+        const[head,...rest]=parts;
+        if(head==='$'){r(node,rest);return;}
+        if(head==='..'){r(node,rest);if(typeof node==='object'&&node!==null)for(const v of Object.values(node))r(v,['..', ...rest]);return;}
+        if(head==='*'){if(typeof node==='object'&&node!==null)for(const v of Object.values(node))r(v,rest);return;}
+        const idx=parseInt(head);
+        if(!isNaN(idx)&&Array.isArray(node)){r(node[idx],rest);return;}
+        if(typeof node==='object'&&node!==null&&head in node)r(node[head],rest);
+    }
+    const parts=path.replace(/\[(\d+|\*)\]/g,'.$1').split('.').filter(Boolean);
+    r(obj,['$',...parts.filter(p=>p!=='$')]);
+    return results;
+}
+
+function csvToJson(csv){
+    const lines=csv.trim().split('\n');
+    const headers=lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,''));
+    return lines.slice(1).map(line=>{const vals=line.split(',').map(v=>v.trim().replace(/^"|"$/g,''));const obj={};headers.forEach((h,i)=>obj[h]=vals[i]??'');return obj;});
+}
+function jsonToCsv(arr){
+    if(!arr.length)return'';
+    const h=Object.keys(arr[0]);
+    return[h.join(','),...arr.map(o=>h.map(k=>`"${String(o[k]??'').replace(/"/g,'""')}"`).join(','))].join('\n');
+}
+
+function formatXml(xml){
+    let d=0;
+    return xml.replace(/>\s*</g,'><').split(/(<[^>]+>)/).filter(Boolean).map(n=>{
+        if(n.match(/^<\//))d--;
+        const ind='    '.repeat(Math.max(0,d));
+        if(n.match(/^<[^/][^>]*[^/]>$/)&&!n.match(/^<[^>]+\/>$/))d++;
+        return ind+n;
+    }).join('\n');
+}
+
+const LOREM_WORDS='lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum'.split(' ');
+function generateLorem(n=5){
+    return Array.from({length:Math.min(n,20)},()=>{
+        const len=40+Math.floor(Math.random()*40);
+        const w=Array.from({length:len},()=>LOREM_WORDS[Math.floor(Math.random()*LOREM_WORDS.length)]);
+        w[0]=w[0][0].toUpperCase()+w[0].slice(1);
+        return w.join(' ')+'.';
+    }).join('\n\n');
+}
+
+function hexToRgb(hex){hex=hex.replace(/^#/,'');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return{r:(n>>16)&255,g:(n>>8)&255,b:n&255};}
+function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b);let h,s,l=(max+min)/2;if(max===min){h=s=0;}else{const d=max-min;s=l>0.5?d/(2-max-min):d/(max+min);switch(max){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;case b:h=(r-g)/d+4;break;}h/=6;}return{h:Math.round(h*360),s:Math.round(s*100),l:Math.round(l*100)};}
+function convertColor(input){
+    input=input.trim();let r,g,b;
+    if(/^#?[0-9a-fA-F]{3,6}$/.test(input)){const rgb=hexToRgb(input.startsWith('#')?input:'#'+input);r=rgb.r;g=rgb.g;b=rgb.b;}
+    else if(/^rgb/i.test(input)){const m=input.match(/(\d+),\s*(\d+),\s*(\d+)/);r=+m[1];g=+m[2];b=+m[3];}
+    else if(/^hsl/i.test(input)){
+        const m=input.match(/(\d+),\s*(\d+)%?,\s*(\d+)%?/);
+        const h=+m[1]/360,s=+m[2]/100,l=+m[3]/100;
+        if(s===0){r=g=b=Math.round(l*255);}
+        else{const q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q,h2r=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};r=Math.round(h2r(p,q,h+1/3)*255);g=Math.round(h2r(p,q,h)*255);b=Math.round(h2r(p,q,h-1/3)*255);}
+    }else throw new Error('Unsupported format. Use #HEX, rgb(r,g,b), or hsl(h,s%,l%)');
+    const hex='#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+    const hsl=rgbToHsl(r,g,b);
+    return`HEX  : ${hex}\nRGB  : rgb(${r}, ${g}, ${b})\nHSL  : hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)\nRGBA : rgba(${r}, ${g}, ${b}, 1.0)`;
+}
+
+function b64url(s){return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+async function generateJWT(payloadStr,secret){
+    const header=b64url(JSON.stringify({alg:'HS256',typ:'JWT'}));
+    const payload=b64url(payloadStr);
+    const data=`${header}.${payload}`;
+    const enc=new TextEncoder();
+    const key=await crypto.subtle.importKey('raw',enc.encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+    const sig=await crypto.subtle.sign('HMAC',key,enc.encode(data));
+    return`${data}.${b64url(String.fromCharCode(...new Uint8Array(sig)))}`;
+}
+
+const DOW=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MON=['','January','February','March','April','May','June','July','August','September','October','November','December'];
+function parseCF(v,names){if(v==='*')return null;if(v.startsWith('*/'))return`every ${v.slice(2)} units`;if(v.includes(','))return v.split(',').map(x=>names?names[+x]||x:x).join(', ');if(v.includes('-')){const[a,b]=v.split('-');return`${a} to ${b}`;}return names?(names[+v]||v):v;}
+function explainCron(expr){
+    const p=expr.trim().split(/\s+/);
+    if(p.length!==5)return'Invalid CRON expression (needs 5 fields)';
+    const[min,hr,dom,mon,dow]=p;
+    let out='Runs ';
+    if(min==='*'&&hr==='*')out+='every minute';
+    else if(min==='*')out+=`every minute of hour ${parseCF(hr,null)}`;
+    else if(hr==='*')out+=`at minute ${parseCF(min,null)} of every hour`;
+    else out+=`at ${hr.padStart(2,'0')}:${min.padStart(2,'0')}`;
+    if(dom!=='*')out+=`, on day ${parseCF(dom,null)} of month`;
+    if(mon!=='*')out+=`, in ${parseCF(mon,MON)}`;
+    if(dow!=='*')out+=`, on ${parseCF(dow,DOW)}`;
+    out+='.\n\nFields:\n';
+    out+=`  Minute:        ${min}\n  Hour:          ${hr}\n  Day of month:  ${dom}\n  Month:         ${mon}\n  Day of week:   ${dow}`;
+    return out;
+}
+
+// ===== UI =====
+function render(){
+    const isEn=lang==='en';
+    document.getElementById('lbl-run').innerText   =isEn?'RUN':'実行';
+    document.getElementById('lbl-copy').innerText  =isEn?'COPY':'コピー';
+    document.getElementById('lbl-output').innerText=isEn?'OUTPUT':'出力';
+    document.getElementById('lbl-tools').innerText =isEn?'TOOLS':'ツール';
+    document.getElementById('langBtn').innerText   =lang.toUpperCase();
+
+    const list=document.getElementById('toolList');
+    list.innerHTML='';
+    ALL_TOOLS.filter(t=>t.cat===curCat).forEach(t=>{
+        const btn=document.createElement('button');
+        btn.className=`tool-item${curTool===t.id?' active':''}`;
+        btn.innerText=isEn?t.en:t.ja;
+        btn.onclick=()=>{curTool=t.id;render();};
+        list.appendChild(btn);
+    });
+
+    const active=ALL_TOOLS.find(t=>t.id===curTool);
+    document.getElementById('toolName').innerText=isEn?active.en:active.ja;
+    document.getElementById('toolDesc').innerText=isEn?active.ed:active.jd;
+    document.getElementById('input').value=localStorage.getItem('last_'+curTool)||'';
+
+    const dual=DUAL_TOOLS.includes(curTool);
+    const i2row=document.getElementById('input2-row');
+    i2row.style.display=dual?'flex':'none';
+    if(dual){
+        document.getElementById('input2').value=localStorage.getItem('last2_'+curTool)||'';
+        const lblMap={
+            'json-diff':['JSON A','JSON B'],
+            'diff':      [isEn?'TEXT A':'テキスト A', isEn?'TEXT B':'テキスト B'],
+            'regex':     [isEn?'PATTERN':'パターン',  isEn?'TEXT':'テキスト'],
+            'aes-enc':   [isEn?'TEXT':'テキスト',     isEn?'PASSWORD':'パスワード'],
+            'aes-dec':   [isEn?'CIPHER':'暗号文',     isEn?'PASSWORD':'パスワード'],
+            'jwt-gen':   [isEn?'PAYLOAD JSON':'ペイロード JSON', isEn?'SECRET':'シークレット'],
+        };
+        document.getElementById('lbl-input').innerText =(lblMap[curTool]||['INPUT','INPUT 2'])[0];
+        document.getElementById('lbl-input2').innerText=(lblMap[curTool]||['INPUT','INPUT 2'])[1];
+    }else{
+        document.getElementById('lbl-input').innerText=isEn?'INPUT':'入力';
+    }
+    clearOutput();
+}
+
+function clearOutput(){
+    document.getElementById('outputText').innerText='';
+    document.getElementById('imageResult').style.display='none';
+    document.getElementById('diffResult').style.display='none';
+    document.getElementById('htmlResult').style.display='none';
+    document.getElementById('outputPre').style.display='block';
+}
+
+function setCat(cat){
+    curCat=cat;
+    curTool=ALL_TOOLS.find(t=>t.cat===cat).id;
+    document.querySelectorAll('.rail-btn').forEach((b,i)=>b.classList.toggle('active',['data','security','utils'][i]===cat));
+    render();
+}
+function toggleLang(){lang=lang==='en'?'ja':'en';localStorage.setItem('p_lang',lang);render();}
+
+async function execute(){
+    const val =document.getElementById('input').value;
+    const val2=document.getElementById('input2').value;
+    const txt =document.getElementById('outputText');
+    const img =document.getElementById('imageResult');
+    const pre =document.getElementById('outputPre');
+    const diffDiv=document.getElementById('diffResult');
+    const htmlDiv=document.getElementById('htmlResult');
+    txt.innerText='';img.style.display='none';pre.style.display='block';diffDiv.style.display='none';htmlDiv.style.display='none';
+    if(!val&&!['uuid','lorem'].includes(curTool))return;
+    localStorage.setItem('last_'+curTool,val);
+    if(DUAL_TOOLS.includes(curTool))localStorage.setItem('last2_'+curTool,val2);
+    try{
+        let r='';
+        if(curTool==='json')     r=JSON.stringify(JSON.parse(val),null,4);
+        if(curTool==='json-min') r=JSON.stringify(JSON.parse(val));
+        if(curTool==='json-diff'){const d=jsonDiff(JSON.parse(val),JSON.parse(val2));r=d.length?d.join('\n'):'✓ No differences found';}
+        if(curTool==='jsonpath'){const[path,...rest]=val.split('\n');r=JSON.stringify(evalJSONPath(JSON.parse(rest.join('\n')),path.trim()),null,2);}
+        if(curTool==='sql')      r=sqlFormatter.format(val,{language:'sql',tabWidth:4,keywordCase:'upper'});
+        if(curTool==='yaml'){try{r=JSON.stringify(jsyaml.load(val),null,4);}catch{r=jsyaml.dump(JSON.parse(val));}}
+        if(curTool==='csv-json'){try{r=JSON.stringify(csvToJson(val),null,2);}catch{r=jsonToCsv(JSON.parse(val));}}
+        if(curTool==='xml')      r=formatXml(val);
+        if(curTool==='b64e')     r=btoa(unescape(encodeURIComponent(val)));
+        if(curTool==='b64d')     r=decodeURIComponent(escape(atob(val)));
+        if(curTool==='sha256')   r=CryptoJS.SHA256(val).toString();
+        if(curTool==='md5')      r=CryptoJS.MD5(val).toString();
+        if(curTool==='sha1')     r=CryptoJS.SHA1(val).toString();
+        if(curTool==='jwt'){const p=val.split('.');r='// Header\n'+JSON.stringify(JSON.parse(atob(p[0])),null,2)+'\n\n// Payload\n'+JSON.stringify(JSON.parse(atob(p[1])),null,2);}
+        if(curTool==='jwt-gen')  r=await generateJWT(val,val2||'secret');
+        if(curTool==='url-enc')  r=encodeURIComponent(val);
+        if(curTool==='url-dec')  r=decodeURIComponent(val);
+        if(curTool==='html-enc') r=val.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+        if(curTool==='html-dec'){const p=document.createElement('p');p.innerHTML=val;r=p.textContent;}
+        if(curTool==='aes-enc')  r=CryptoJS.AES.encrypt(val,val2||'devtools').toString();
+        if(curTool==='aes-dec')  r=CryptoJS.AES.decrypt(val,val2||'devtools').toString(CryptoJS.enc.Utf8);
+        if(curTool==='qr'){const q=qrcode(0,'M');q.addData(val);q.make();img.innerHTML=q.createImgTag(6);img.style.display='block';pre.style.display='none';return;}
+        if(curTool==='uuid')     r=Array.from({length:5},()=>crypto.randomUUID()).join('\n');
+        if(curTool==='epoch')    r=isNaN(val)?Math.floor(new Date(val).getTime()/1000):new Date(val*1000).toLocaleString();
+        if(curTool==='color')    r=convertColor(val);
+        if(curTool==='textstats'){
+            const w=val.trim()?val.trim().split(/\s+/).length:0,c=val.length,cn=val.replace(/\s/g,'').length,l=val.split('\n').length,s=(val.match(/[.!?]+/g)||[]).length,pa=val.split(/\n\s*\n/).filter(Boolean).length;
+            r=`Characters (with spaces):    ${c}\nCharacters (without spaces):  ${cn}\nWords:                        ${w}\nLines:                        ${l}\nSentences:                    ${s}\nParagraphs:                   ${pa}\nAvg word length:              ${w?(cn/w).toFixed(1):0} chars\nReading time (~200wpm):       ${Math.max(1,Math.ceil(w/200))} min`;
+        }
+        if(curTool==='markdown'){
+            htmlDiv.innerHTML='<div class="md-preview">'+val.replace(/^### (.+)$/gm,'<h3>$1</h3>').replace(/^## (.+)$/gm,'<h2>$1</h2>').replace(/^# (.+)$/gm,'<h1>$1</h1>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/`(.+?)`/g,'<code>$1</code>').replace(/\[(.+?)\]\((.+?)\)/g,'<a href="$2" target="_blank">$1</a>').replace(/^[-*] (.+)$/gm,'<li>$1</li>').replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')+'</div>';
+            htmlDiv.style.display='block';pre.style.display='none';return;
+        }
+        if(curTool==='diff'){diffDiv.innerHTML=computeDiff(val,val2);diffDiv.style.display='block';pre.style.display='none';return;}
+        if(curTool==='regex'){
+            const flags='gm',regex=new RegExp(val,flags),matches=[...val2.matchAll(regex)];
+            if(!matches.length){r='No matches found.';}
+            else{r=`${matches.length} match(es) found:\n\n`;matches.forEach((m,i)=>{r+=`Match ${i+1}: "${m[0]}" at index ${m.index}`;if(m.length>1)r+=`\n  Groups: ${m.slice(1).map((g,j)=>`$${j+1}="${g??'undefined'}"`).join(', ')}`;r+='\n';});r+='\nHighlighted:\n'+val2.replace(regex,m=>`【${m}】`);}
+        }
+        if(curTool==='lorem')   r=generateLorem(parseInt(val)||5);
+        if(curTool==='baseconv'){const[ns,fb]=val.trim().split(/\s+/);const base=parseInt(fb)||10;const n=parseInt(ns,base);if(isNaN(n))throw new Error('Invalid number or base');r=`Decimal (10): ${n}\nBinary   (2): ${n.toString(2)}\nOctal    (8): ${n.toString(8)}\nHex     (16): ${n.toString(16).toUpperCase()}`;}
+        if(curTool==='cron')    r=explainCron(val);
+        txt.innerText=r;
+        if(r){try{hljs.highlightElement(txt);}catch(_){}}
+    }catch(e){txt.innerText='Error: '+e.message;}
+}
+
+function copyResult(){
+    navigator.clipboard.writeText(document.getElementById('outputText').innerText||document.getElementById('htmlResult').innerText);
+}
+
+render();
+</script>
 </body>
 </html>
-
