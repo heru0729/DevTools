@@ -273,6 +273,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
     <button class="rail-btn" onclick="setCat('time')">🕐<span class="rail-tip">Time</span></button>
     <button class="rail-btn" id="favRailBtn" onclick="setCat('favorites')">⭐<span class="rail-tip">Favorites</span></button>
   </div>
+  <div class="rail-spacer"></div>
   <!-- 右: コントロール（2×2固定） -->
   <div class="nav-rail-ctrl">
     <button class="ctrl-btn" onclick="openOv('aboutOverlay')">ℹ️</button>
@@ -892,6 +893,27 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
     </div>
     <div id="spacingBars" style="flex:1;overflow:auto;display:flex;flex-direction:column;gap:6px;"></div>
   </div>
+
+  <!-- 専用UI: ローマ数字 -->
+  <div id="ui-roman" style="display:none;flex-direction:column;height:100%;overflow:auto;padding:20px;gap:14px;">
+    <!-- Unicode一覧テーブル（上） -->
+    <div style="background:var(--panel);border-radius:12px;padding:14px;">
+      <div style="font-size:10.5px;font-weight:800;color:var(--text-dim);margin-bottom:10px;">Unicode Roman numerals (click to copy)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;" id="romanUniTable"></div>
+    </div>
+    <!-- 変換入力 -->
+    <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap;">
+      <div style="flex:1;min-width:180px;">
+        <div class="calc-result-label">Arabic → Roman</div>
+        <input id="romanArabic" class="calc-input" type="number" min="1" max="3999" placeholder="1〜3999"
+          oninput="romanFromArabic()" style="font-size:20px;text-align:center;margin-top:4px;">
+      </div>
+      <div style="flex:1;min-width:180px;">
+        <div class="calc-result-label">Roman → Arabic</div>
+        <input id="romanRoman" class="calc-input" placeholder="XIV" oninput="romanFromRoman()"
+          style="font-size:20px;text-align:center;margin-top:4px;font-family:'JetBrains Mono',monospace;">
+      </div>
+    </div>
     <!-- 変換結果 -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
       <div class="pct-result" id="romanResultA" style="display:none;text-align:center;">
@@ -911,11 +933,6 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
     <div class="pct-result" id="romanResultR" style="display:none;text-align:center;">
       <div class="res-val" id="romanResultRVal" style="font-size:36px;"></div>
       <div style="font-size:11px;color:var(--text-dim);margin-top:4px;">アラビア数字</div>
-    </div>
-    <!-- Unicode一覧テーブル -->
-    <div style="background:var(--panel);border-radius:12px;padding:14px;">
-      <div style="font-size:10.5px;font-weight:800;color:var(--text-dim);margin-bottom:10px;">Unicode Roman numerals (click to copy)</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;" id="romanUniTable"></div>
     </div>
   </div>
 
