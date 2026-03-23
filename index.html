@@ -161,7 +161,7 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
 .md-preview blockquote{border-left:3px solid var(–accent);margin:8px 0;padding:3px 12px;color:var(–text-dim);}
 .overlay{display:none;position:fixed;inset:0;background:#00000088;z-index:9000;align-items:center;justify-content:center;}
 .overlay.open{display:flex;}
-.ov-card{background:var(–sidebar);border:1px solid var(–border);border-radius:20px;padding:30px 34px;max-width:460px;width:90%;position:relative;max-height:88vh;overflow-y:auto;}
+.ov-card{background:var(–sidebar);border:1px solid var(–border);border-radius:20px;padding:30px 34px;max-width:460px;width:90%;position:relative;max-height:88dvh;max-height:88vh;overflow-y:auto;}
 .ov-card h2{font-size:20px;font-weight:800;margin-bottom:5px;}
 .ov-card .sub{color:var(–text-dim);font-size:12px;margin-bottom:20px;}
 .ov-close{position:absolute;top:14px;right:16px;background:transparent;border:none;color:var(–text-dim);font-size:22px;cursor:pointer;line-height:1;}
@@ -258,6 +258,14 @@ overflow:hidden;
 
 /* 専用UI: flex:1で残り全部 */
 [id^=“ui-”]{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+/* オーバーレイ: モバイルで全幅・スクロール可能に */
+.overlay{align-items:flex-end;}
+.ov-card{
+width:100%;max-width:100%;
+border-radius:20px 20px 0 0;
+max-height:85dvh;max-height:85vh;
+padding:20px 18px 32px;
+}
 }
 </style>
 
