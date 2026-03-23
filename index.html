@@ -178,37 +178,37 @@ code.hljs{padding:13px 16px!important;background:transparent!important;display:b
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(–border);border-radius:3px;}
 @media(max-width:768px){
-body{overflow:hidden;touch-action:pan-y;}
+/* overflow:hiddenで固定 + overscroll-behaviorでプルダウン更新を許可 */
+html,body{height:100%;overflow:hidden;}
+body{overscroll-behavior-y:contain;}
 
-/* アプリ全体を100dvhで縦に積む */
 .app-shell{
 flex-direction:column;
-height:100dvh;
-height:100vh;
+height:100dvh;height:100vh;
 overflow:hidden;
 }
 
-/* ナビバー: 高さ固定 */
+/* ナビバー: 52px固定 */
 .nav-rail{
-width:100%;height:52px;
-flex-direction:row;flex-shrink:0;
-padding:0;gap:0;align-items:stretch;
+width:100%;height:52px;flex-shrink:0;
+flex-direction:row;padding:0;gap:0;align-items:stretch;
 border-right:none;border-bottom:1px solid var(–border);
+background:var(–sidebar);
 }
 
-/* カテゴリ: 横スクロール */
+/* カテゴリ横スクロール */
 .nav-rail-cats{
-display:flex;flex-direction:row;
-flex:1;overflow-x:auto;overflow-y:hidden;
-align-items:center;
-scrollbar-width:none;padding:0 2px;
+display:flex;flex-direction:row;flex:1;
+overflow-x:auto;overflow-y:hidden;
+align-items:stretch;
+scrollbar-width:none;
 }
 .nav-rail-cats::-webkit-scrollbar{display:none;}
 
-/* カテゴリボタン: 絵文字のみ・5個表示 */
+/* カテゴリボタン: 絵文字のみ・5個 */
 .rail-btn{
 flex:0 0 calc((100% - 80px) / 5);
-height:52px;font-size:22px;
+height:100%;font-size:22px;
 border-radius:0;margin:0;border:none;
 display:flex;align-items:center;justify-content:center;
 background:transparent;color:var(–text-dim);cursor:pointer;transition:.15s;
@@ -217,7 +217,7 @@ background:transparent;color:var(–text-dim);cursor:pointer;transition:.15s;
 .rail-tip{display:none;}
 .rail-btn.active{background:var(–accent);color:#fff;}
 
-/* コントロール: 右に2×2固定 */
+/* コントロール右2×2 */
 .nav-rail-ctrl{
 display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;
 gap:2px;padding:3px;width:80px;flex-shrink:0;
@@ -225,33 +225,39 @@ border-left:1px solid var(–border);background:var(–sidebar);
 }
 .ctrl-btn{width:100%;height:100%;margin:0;border-radius:6px;font-size:13px;}
 
-/* ツールリスト: 高さ固定 */
-.tool-sidebar{width:100%;height:36px;flex-shrink:0;overflow:hidden;}
+/* ツールリスト: 34px固定 */
+.tool-sidebar{width:100%;height:34px;flex-shrink:0;overflow:hidden;background:var(–sidebar);}
 .sidebar-title{display:none;}
 .tool-list{
-display:flex;flex-direction:row;
-height:100%;padding:3px 6px;
-overflow-x:auto;scrollbar-width:none;
-align-items:center;
+display:flex;flex-direction:row;width:100%;height:100%;
+padding:3px 4px;overflow-x:auto;scrollbar-width:none;
+align-items:center;gap:0;
 }
 .tool-list::-webkit-scrollbar{display:none;}
-.tool-item{white-space:nowrap;flex-shrink:0;margin:0 2px;font-size:11px;padding:3px 8px;}
+.tool-item{
+white-space:nowrap;flex-shrink:0;
+padding:2px 6px;margin:0 1px;
+font-size:11px;width:auto;
+}
 
-/* ワークスペース: 残り全部 */
-.workspace{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
-
-/* ツール名ヘッダー: コンパクト */
+/* ワークスペース: 残り全部をflexで使う */
+.workspace{
+flex:1;min-height:0;
+display:flex;flex-direction:column;
+overflow:hidden;
+}
 .workspace-header{padding:5px 10px;flex-shrink:0;}
 .header-title h1{font-size:13px;margin:0;}
 .header-title p{display:none;}
 
-/* エディタ・専用UI: 残りを全部使う */
-#editorGrid,[id^=“ui-”]{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;}
-
-/* 入出力ペイン: 縦に並べて各50% */
+/* エディタグリッド: flex縦で残り全部 */
+#editorGrid{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
 .editor-grid{display:flex;flex-direction:column;height:100%;}
-.pane{flex:1;min-height:0;border-bottom:2px solid var(–border);overflow:hidden;}
-.pane textarea,.pane [id$=“Text”]{height:100%;}
+.pane{flex:1;min-height:0;border-bottom:2px solid var(–border);overflow:hidden;display:flex;flex-direction:column;}
+.pane textarea{flex:1;min-height:0;resize:none;}
+
+/* 専用UI: flex:1で残り全部 */
+[id^=“ui-”]{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;}
 }
 </style>
 
